@@ -1,0 +1,31 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Manager - HRMS</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+<body>
+
+    <header>
+        <h2>HRMS - Manager Panel</h2>
+    </header>
+
+    <nav>
+        <a asp-controller="Manager" asp-action="Dashboard">Dashboard</a>
+        <a asp-controller="Manager" asp-action="Team">My Team</a>
+        <a asp-controller="Manager" asp-action="LeaveRequests">Leave Requests</a>
+    </nav>
+
+    <main>
+        @RenderBody()
+    </main>
+
+    <footer>
+        <p>Manager Layout</p>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
