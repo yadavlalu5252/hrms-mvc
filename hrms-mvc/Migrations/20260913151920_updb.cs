@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace hrms_mvc.Migrations
 {
     /// <inheritdoc />
-    public partial class leave : Migration
+    public partial class updb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -22,6 +22,25 @@ namespace hrms_mvc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeductionTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Departments",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NoOfEmployee = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Departments", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -51,16 +70,39 @@ namespace hrms_mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "Organizations",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    OrganizationName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    OrganizationLogo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.PrimaryKey("PK_Organizations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Roles",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    RoleName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Roles", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -85,6 +127,32 @@ namespace hrms_mvc.Migrations
                         principalTable: "DeductionTypes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Designations",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
+                    DesignationName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    NoOfEmployee = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Designations", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Designations_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -133,15 +201,65 @@ namespace hrms_mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Users",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    MobileNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    RoleId = table.Column<int>(type: "int", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: true),
+                    DesignationId = table.Column<int>(type: "int", nullable: true),
+                    DateOfJoining = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AboutEmployee = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ProfilePicture = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ReportingManager = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ModifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Users_Designations_DesignationId",
+                        column: x => x.DesignationId,
+                        principalTable: "Designations",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Users_Roles_RoleId",
+                        column: x => x.RoleId,
+                        principalTable: "Roles",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmployeeBankDetails",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    BankName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    IFSCCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    BranchName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    BankName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    AccountNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IFSCCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    BranchName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -149,6 +267,29 @@ namespace hrms_mvc.Migrations
                     table.PrimaryKey("PK_EmployeeBankDetails", x => x.Id);
                     table.ForeignKey(
                         name: "FK_EmployeeBankDetails_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EmployeeFamilyDetails",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Relation = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    MobileNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeFamilyDetails", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeeFamilyDetails_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -172,6 +313,40 @@ namespace hrms_mvc.Migrations
                     table.PrimaryKey("PK_EmployeeSalaries", x => x.Id);
                     table.ForeignKey(
                         name: "FK_EmployeeSalaries_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "LeaveBalances",
+                columns: table => new
+                {
+                    LeaveBalanceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DepartmentLeavesId = table.Column<int>(type: "int", nullable: false),
+                    TotalLeaves = table.Column<int>(type: "int", nullable: false),
+                    UsedLeaves = table.Column<int>(type: "int", nullable: false),
+                    MasterLeaveTypeId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LeaveBalances", x => x.LeaveBalanceId);
+                    table.ForeignKey(
+                        name: "FK_LeaveBalances_DepartmentLeaves_DepartmentLeavesId",
+                        column: x => x.DepartmentLeavesId,
+                        principalTable: "DepartmentLeaves",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_LeaveBalances_MasterLeaveTypes_MasterLeaveTypeId",
+                        column: x => x.MasterLeaveTypeId,
+                        principalTable: "MasterLeaveTypes",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_LeaveBalances_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -261,40 +436,6 @@ namespace hrms_mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "LeaveBalances",
-                columns: table => new
-                {
-                    LeaveBalanceId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    UserId = table.Column<int>(type: "int", nullable: false),
-                    DepartmentLeavesId = table.Column<int>(type: "int", nullable: false),
-                    TotalLeaves = table.Column<int>(type: "int", nullable: false),
-                    UsedLeaves = table.Column<int>(type: "int", nullable: false),
-                    MasterLeaveTypeId = table.Column<int>(type: "int", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_LeaveBalances", x => x.LeaveBalanceId);
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_DepartmentLeaves_DepartmentLeavesId",
-                        column: x => x.DepartmentLeavesId,
-                        principalTable: "DepartmentLeaves",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_MasterLeaveTypes_MasterLeaveTypeId",
-                        column: x => x.MasterLeaveTypeId,
-                        principalTable: "MasterLeaveTypes",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_LeaveBalances_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "EmployeeDeductions",
                 columns: table => new
                 {
@@ -360,6 +501,11 @@ namespace hrms_mvc.Migrations
                 column: "LeaveTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Designations_DepartmentId",
+                table: "Designations",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Earning_EarntypeId",
                 table: "Earning",
                 column: "EarntypeId");
@@ -388,6 +534,11 @@ namespace hrms_mvc.Migrations
                 name: "IX_EmployeeEarnings_SalaryId",
                 table: "EmployeeEarnings",
                 column: "SalaryId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeFamilyDetails_UserId",
+                table: "EmployeeFamilyDetails",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeSalaries_UserId",
@@ -428,6 +579,21 @@ namespace hrms_mvc.Migrations
                 name: "IX_Timesheet_UserId",
                 table: "Timesheet",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_DepartmentId",
+                table: "Users",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_DesignationId",
+                table: "Users",
+                column: "DesignationId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_RoleId",
+                table: "Users",
+                column: "RoleId");
         }
 
         /// <inheritdoc />
@@ -443,10 +609,16 @@ namespace hrms_mvc.Migrations
                 name: "EmployeeEarnings");
 
             migrationBuilder.DropTable(
+                name: "EmployeeFamilyDetails");
+
+            migrationBuilder.DropTable(
                 name: "LeaveBalances");
 
             migrationBuilder.DropTable(
                 name: "LeaveRequests");
+
+            migrationBuilder.DropTable(
+                name: "Organizations");
 
             migrationBuilder.DropTable(
                 name: "Payslips");
@@ -477,6 +649,15 @@ namespace hrms_mvc.Migrations
 
             migrationBuilder.DropTable(
                 name: "MasterLeaveTypes");
+
+            migrationBuilder.DropTable(
+                name: "Designations");
+
+            migrationBuilder.DropTable(
+                name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Departments");
         }
     }
 }
