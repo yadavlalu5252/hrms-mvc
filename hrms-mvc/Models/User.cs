@@ -69,7 +69,7 @@ namespace hrms_mvc.Models
         //public List<LeaveBalance> LeaveBalances { get; set; }
         //public List<LeaveRequest> LeaveRequests { get; set; }
 
-        //public ICollection<FileUpload> FileUploads { get; set; }
+        //public List<FileUpload> FileUploads { get; set; }
 
         //public virtual ICollection<Projects> Projects { get; set; } = new List<Projects>();
     }

@@ -13,6 +13,12 @@ namespace hrms_mvc.Data
         public DbSet<EmployeeBankDetails> EmployeeBankDetails { get; set; }
         public DbSet<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+        public DbSet<EventModel> Events { get; set; }
+        public DbSet<EventTypes> EventsTypes { get; set; }
+        public DbSet<Projects> AllProjects { get; set; }
+        public DbSet<TaskBoards> TaskBoards { get; set; }
+        public DbSet<Tasks> Tasks { get; set; }
+        public DbSet<TaskMembers> Taskmembers { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -41,6 +47,17 @@ namespace hrms_mvc.Data
                 .HasForeignKey(d => d.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<TaskBoards>()
+                .HasOne(x => x.Project)
+                .WithMany()
+                .HasForeignKey(x => x.ProjectId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<TaskBoards>()
+                .HasOne(x => x.Task)
+                .WithMany()
+                .HasForeignKey(x => x.TaskId)
+                .OnDelete(DeleteBehavior.Cascade);
             base.OnModelCreating(modelBuilder);
         }
 
