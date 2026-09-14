@@ -26,7 +26,9 @@ builder.Services.AddSession(options =>
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
-
+builder.Services.AddScoped<IDepartmentService, DepartmentService>();
+builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IDesignationService, DesignationService>();
 
 
 
@@ -34,10 +36,13 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+
+
+// Global exception handling
+app.UseExceptionHandler("/Error/Index");
+
 if (!app.Environment.IsDevelopment())
 {
-    app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
 
@@ -45,7 +50,8 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
-// Enable Session
+app.UseStatusCodePagesWithReExecute("/Error/NotFound");
+
 app.UseSession();
 
 app.UseAuthorization();

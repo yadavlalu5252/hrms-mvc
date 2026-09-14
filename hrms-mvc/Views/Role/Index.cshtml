@@ -1,0 +1,468 @@
+﻿@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Role";
+}
+
+@model List<hrms_mvc.Models.Role>
+
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" />
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Role</h2>
+
+        <button type="button"
+                class="btn"
+                style="background-color: #F26522; color: white;"
+                data-bs-toggle="modal"
+                data-bs-target="#addRoleModal">
+            Add Role
+        </button>
+    </div>
+
+    <!-- Role Card -->
+    <div class="card">
+
+        <!-- Card Header -->
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <h5 class="mb-0">Role List</h5>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                <!-- Status Filter -->
+                <select id="statusFilter"
+                        class="form-select"
+                        style="width: 130px;">
+
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+
+                <!-- Sorting Filter -->
+                <select id="sortFilter"
+                        class="form-select"
+                        style="width: 130px;">
+
+                    <option value="">Sort By</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+                </select>
+
+                <!-- Export Dropdown -->
+                <div class="dropdown">
+
+                    <button type="button"
+                            class="btn dropdown-toggle"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        Export
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item"
+                                    id="exportPdf">
+                                Export as PDF
+                            </button>
+                        </li>
+
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item"
+                                    id="exportExcel">
+                                Export as Excel
+                            </button>
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Card Body -->
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="roleTable"
+                       class="table table-bordered table-hover align-middle w-100">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>Role Name</th>
+                            <th>Status</th>
+                            <th>Created By</th>
+                            <th>Modified By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+
+                                <td>@item.RoleName</td>
+
+
+                                <td>
+                                    @if (item.Status == "Active")
+                                    {
+                                        <span class="badge bg-success">
+                                            ● Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            ● Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>@item.CreatedBy</td>
+
+                                <td>@item.ModifiedBy</td>
+
+                                <td>
+                                    <!-- Edit Button -->
+                                    <button type="button"
+                                            class="btn btn-sm editRoleButton"
+                                            data-id="@item.Id"
+                                            data-name="@item.RoleName"
+                                            data-status="@item.Status"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editRoleModal"
+                                            title="Edit">
+
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+
+                                    <!-- Delete Button -->
+                                    <form asp-controller="Role"
+                                          asp-action="DeleteRole"
+                                          asp-route-id="@item.Id"
+                                          method="post"
+                                          style="display: inline;">
+
+                                        <button type="submit"
+                                                class="btn btn-sm"
+                                                onclick="return confirm('Are you sure you want to delete this role?');"
+                                                title="Delete">
+
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Role Modal -->
+<div class="modal fade"
+     id="addRoleModal"
+     tabindex="-1"
+     aria-labelledby="addRoleModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="addRoleModalLabel">
+                    Add Role
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+
+            <form asp-controller="Role"
+                  asp-action="AddRole"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+                        <label for="Name" class="form-label">
+                            Role Name
+                        </label>
+
+                        <input type="text"
+                               id="Name"
+                               name="Name"
+                               class="form-control"
+                               placeholder="Enter Role name"
+                               required />
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Status" class="form-label">
+                            Status
+                        </label>
+
+                        <select id="Status"
+                                name="Status"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn"
+                            style="background-color: #F26522; color: white;">
+                        Add Role
+                    </button>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@* Edit Role Modal *@
+<div class="modal fade"
+     id="editRoleModal"
+     tabindex="-1"
+     aria-labelledby="editRoleModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="editRoleModalLabel">
+                    Edit Role
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+
+            <form asp-controller="Role"
+                  asp-action="EditRole"
+                  method="post"
+                  novalidate>
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="editRoleId"
+                           name="Id" />
+
+                    <div class="mb-3">
+                        <label for="editRoleName"
+                               class="form-label">
+                            Role Name
+                        </label>
+
+                        <input type="text"
+                               id="editRoleName"
+                               name="RoleName"
+                               class="form-control"
+                               placeholder="Enter Role name" />
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("RoleName")
+                        </span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="editRoleStatus"
+                               class="form-label">
+                            Status
+                        </label>
+
+                        <select id="editRoleStatus"
+                                name="Status"
+                                class="form-select">
+
+                            <option value="">Select</option>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("Status")
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn"
+                            style="background-color: #F26522; color: white;">
+                        Update Role
+                    </button>
+
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <!-- DataTables Core -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+
+    <!-- Excel Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- PDF Export -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <!-- HTML5 Export -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            var table = $('#roleTable').DataTable({
+
+                pageLength: 5,
+
+                order: [[1, 'asc']],
+
+                dom:
+                    '<"row mb-3"<"col-md-6"l><"col-md-6"f>>' +
+                    'rt' +
+                    '<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Role List',
+                        className: 'export-excel'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Role List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'export-pdf'
+                    }
+                ]
+            });
+
+            // Hide original DataTables export buttons
+            $('.dt-buttons').hide();
+
+
+            // Status Filter
+            $('#statusFilter').on('change', function() {
+                var status = $(this).val();
+
+                if (status === '') {
+                    table.column(2).search('').draw();
+                }
+                else {
+                    table.column(2)
+                        .search('\\b' + status + '\\b', true, false)
+                        .draw();
+                }
+            });
+
+
+            // Sort by Role Name
+            $('#sortFilter').on('change', function() {
+
+                var sortValue = $(this).val();
+
+                if (sortValue !== '') {
+                    table.order([1, sortValue]).draw();
+                }
+            });
+
+
+            // Export as Excel
+            $('#exportExcel').on('click', function() {
+                table.button('.export-excel').trigger();
+            });
+
+
+            // Export as PDF
+            $('#exportPdf').on('click', function() {
+                table.button('.export-pdf').trigger();
+            });
+
+
+            // Fill Edit Modal
+            $('.editRoleButton').on('click', function() {
+
+                var id = $(this).data('id');
+                var name = $(this).data('name');
+                var status = $(this).data('status');
+
+                $('#editRoleId').val(id);
+                $('#editRoleName').val(name);
+                $('#editRoleStatus').val(status);
+            });
+
+        });
+    </script>
+}

@@ -1,31 +1,59 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Manager - HRMS</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - HRMS Manager</title>
+
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
+
 <body>
 
-    <header>
-        <h2>HRMS - Manager Panel</h2>
-    </header>
+    <div class="manager-layout">
 
-    <nav>
-        <a asp-controller="Manager" asp-action="Dashboard">Dashboard</a>
-        <a asp-controller="Manager" asp-action="Team">My Team</a>
-        <a asp-controller="Manager" asp-action="LeaveRequests">Leave Requests</a>
-    </nav>
+        <aside class="manager-sidebar">
+            <h2>HRMS</h2>
 
-    <main>
-        @RenderBody()
-    </main>
+            <nav>
+                <a asp-controller="Auth" asp-action="ManagerD">
+                    Dashboard
+                </a>
 
-    <footer>
-        <p>Manager Layout</p>
-    </footer>
+                <a asp-controller="Manager" asp-action="Team">
+                    My Team
+                </a>
+
+                <a asp-controller="Manager" asp-action="LeaveRequests">
+                    Leave Requests
+                </a>
+
+                <a asp-controller="Auth" asp-action="Logout">
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <div class="manager-content">
+
+            <header class="manager-header">
+                <h2>HRMS - Manager Panel</h2>
+            </header>
+
+            <main>
+                @RenderBody()
+            </main>
+
+            <footer>
+                <p>Manager Layout</p>
+            </footer>
+
+        </div>
+
+    </div>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>

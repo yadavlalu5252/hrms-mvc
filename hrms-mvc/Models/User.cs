@@ -78,6 +78,7 @@ namespace hrms_mvc.Models
         public List<Timesheet> Timesheets { get; set; }
             = new List<Timesheet>();
 
+        //public List<FileUpload> FileUploads { get; set; }
         public List<LeaveBalance> LeaveBalances { get; set; }
             = new List<LeaveBalance>();
 
