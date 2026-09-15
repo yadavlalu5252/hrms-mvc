@@ -7,7 +7,7 @@ namespace hrms_mvc.Models
     {
         public int Id { get; set; }
 
-        public string? Name { get; set; }
+        //public string? Name { get; set; }
 
         [Required(ErrorMessage = "First Name is required.")]
         public string? FirstName { get; set; }

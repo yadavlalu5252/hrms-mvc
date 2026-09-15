@@ -13,7 +13,7 @@ namespace hrms_mvc.Data
         public DbSet<EmployeeBankDetails> EmployeeBankDetails { get; set; }
         public DbSet<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; }
         public DbSet<Organization> Organizations { get; set; }
-
+        public DbSet<Attendance> Attendances { get; set; }
         public DbSet<Deduction> Deductions { get; set; }
         public DbSet<DeductionType> DeductionTypes { get; set; }
         public DbSet<Earning> Earning { get; set; }

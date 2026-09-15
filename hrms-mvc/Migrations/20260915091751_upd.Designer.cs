@@ -12,8 +12,8 @@ using hrms_mvc.Data;
 namespace hrms_mvc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260913151920_updb")]
-    partial class updb
+    [Migration("20260915091751_upd")]
+    partial class upd
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,6 +24,58 @@ namespace hrms_mvc.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("hrms_mvc.Models.Attendance", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<decimal>("BreakHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<DateTime?>("Checkin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Checkout")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Late")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("Lunchin")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("Lunchout")
+                        .HasColumnType("datetime2");
+
+                    b.Property<decimal>("OTHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<decimal>("ProdHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("WorkHours")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Attendances");
+                });
 
             modelBuilder.Entity("hrms_mvc.Models.Deduction", b =>
                 {
@@ -45,6 +97,12 @@ namespace hrms_mvc.Migrations
                     b.Property<int>("DeductionTypeId")
                         .HasColumnType("int");
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("DesignationId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("ModifiedAt")
                         .HasColumnType("datetime2");
 
@@ -54,6 +112,10 @@ namespace hrms_mvc.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("DeductionTypeId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("DesignationId");
 
                     b.ToTable("Deductions");
                 });
@@ -120,6 +182,9 @@ namespace hrms_mvc.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
@@ -131,6 +196,8 @@ namespace hrms_mvc.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("LeaveTypeId");
 
@@ -192,6 +259,9 @@ namespace hrms_mvc.Migrations
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("DepartmentId")
+                        .HasColumnType("int");
+
                     b.Property<decimal>("EarningsPercentage")
                         .HasColumnType("decimal(18,2)");
 
@@ -205,6 +275,8 @@ namespace hrms_mvc.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
 
                     b.HasIndex("EarntypeId");
 
@@ -467,6 +539,10 @@ namespace hrms_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("MasterLeaveTypes");
@@ -667,9 +743,6 @@ namespace hrms_mvc.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -698,6 +771,17 @@ namespace hrms_mvc.Migrations
                     b.ToTable("Users");
                 });
 
+            modelBuilder.Entity("hrms_mvc.Models.Attendance", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("hrms_mvc.Models.Deduction", b =>
                 {
                     b.HasOne("hrms_mvc.Models.DeductionType", "DeductionType")
@@ -706,16 +790,40 @@ namespace hrms_mvc.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany("Deductions")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Designation", "Designation")
+                        .WithMany()
+                        .HasForeignKey("DesignationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("DeductionType");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Designation");
                 });
 
             modelBuilder.Entity("hrms_mvc.Models.DepartmentLeaves", b =>
                 {
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany("DepartmentLeaves")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("hrms_mvc.Models.MasterLeaveType", "MasterLeaveType")
                         .WithMany("DepartmentLeaves")
                         .HasForeignKey("LeaveTypeId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.Navigation("Department");
 
                     b.Navigation("MasterLeaveType");
                 });
@@ -732,6 +840,10 @@ namespace hrms_mvc.Migrations
 
             modelBuilder.Entity("hrms_mvc.Models.Earning", b =>
                 {
+                    b.HasOne("hrms_mvc.Models.Department", null)
+                        .WithMany("Earnings")
+                        .HasForeignKey("DepartmentId");
+
                     b.HasOne("hrms_mvc.Models.EarningType", "EarningType")
                         .WithMany("Earnings")
                         .HasForeignKey("EarntypeId")
@@ -908,7 +1020,13 @@ namespace hrms_mvc.Migrations
 
             modelBuilder.Entity("hrms_mvc.Models.Department", b =>
                 {
+                    b.Navigation("Deductions");
+
+                    b.Navigation("DepartmentLeaves");
+
                     b.Navigation("Designations");
+
+                    b.Navigation("Earnings");
                 });
 
             modelBuilder.Entity("hrms_mvc.Models.DepartmentLeaves", b =>

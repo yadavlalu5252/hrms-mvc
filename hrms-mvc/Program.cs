@@ -26,9 +26,8 @@ builder.Services.AddSession(options =>
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-
-
+builder.Services.AddScoped<ILeaveService, LeaveService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 
 
