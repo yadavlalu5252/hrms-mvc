@@ -28,5 +28,12 @@ namespace hrms_mvc.Repository
         Task ChangeLeaveTypeStatus(
             int id,
             string status);
+        Task<List<LeaveRequest>> GetMyLeaveRequests(int userId);
+
+        Task<List<LeaveBalance>>GetMyLeaveBalances(int userId);
+
+        Task<List<MasterLeaveType>>GetAvailableLeaveTypes();
+
+        Task AddLeaveRequest( LeaveRequest leaveRequest);
     }
 }
