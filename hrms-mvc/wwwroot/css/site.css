@@ -29,3 +29,445 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Admin */
+.admin-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.admin-content {
+    flex: 1;
+    background-color: #f5f6fa;
+}
+
+.admin-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddddd;
+    padding: 20px 25px;
+}
+
+.admin-content main {
+    padding: 25px;
+}
+
+.admin-content footer {
+    padding: 20px 25px;
+    background-color: #ffffff;
+}
+
+.admin-sidebar {
+    width: 230px;
+    min-height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    padding: 20px 14px;
+}
+
+.sidebar-logo h2 {
+    color: #ff762f;
+    font-weight: bold;
+    margin-bottom: 25px;
+}
+
+.sidebar-title {
+    font-size: 11px;
+    color: #8b8b8b;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.sidebar-menu {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .sidebar-link,
+    .sidebar-menu summary {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        width: 100%;
+        padding: 11px 12px;
+        color: #172554;
+        text-decoration: none;
+        font-size: 14px;
+        border-radius: 6px;
+        cursor: pointer;
+        list-style: none;
+    }
+
+        .sidebar-link:hover,
+        .sidebar-menu summary:hover {
+            background-color: #f3f4f6;
+            color: #ff762f;
+        }
+
+        .sidebar-link.active {
+            background-color: #fff1e8;
+            color: #ff762f;
+        }
+
+.hot-badge {
+    background-color: red;
+    color: white;
+    font-size: 10px;
+    padding: 2px 5px;
+    border-radius: 3px;
+    margin-left: auto;
+}
+
+.menu-arrow {
+    margin-left: auto;
+}
+
+.submenu {
+    display: flex;
+    flex-direction: column;
+    padding-left: 28px;
+}
+
+    .submenu a {
+        padding: 9px 8px;
+        color: #172554;
+        text-decoration: none;
+        font-size: 13px;
+        border-radius: 5px;
+    }
+
+        .submenu a:hover {
+            background-color: #f3f4f6;
+            color: #ff762f;
+        }
+
+.logout-link {
+    margin-top: 20px;
+    color: #dc2626;
+}
+/*employee*/
+.employee-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.employee-sidebar {
+    width: 240px;
+    background-color: #ffffff;
+    border-right: 1px solid #dddddd;
+    padding: 20px;
+}
+
+    .employee-sidebar h2 {
+        color: #ff6b22;
+        margin-bottom: 30px;
+    }
+
+    .employee-sidebar nav {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .employee-sidebar a {
+        color: #333333;
+        text-decoration: none;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+    }
+
+        .employee-sidebar a:hover {
+            color: #ffffff;
+            background-color: #ff6b22;
+        }
+
+.employee-content {
+    flex: 1;
+    background-color: #f5f6fa;
+}
+
+.employee-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddddd;
+    padding: 20px 25px;
+}
+
+    .employee-header h2 {
+        margin: 0;
+    }
+
+.employee-content main {
+    padding: 25px;
+}
+
+.employee-content footer {
+    padding: 20px 25px;
+    background-color: #ffffff;
+}
+
+/*manager*/
+.manager-layout {
+    display: flex;
+    min-height: 100vh;
+}
+
+.manager-sidebar {
+    width: 240px;
+    background-color: #ffffff;
+    border-right: 1px solid #dddddd;
+    padding: 20px;
+}
+
+    .manager-sidebar h2 {
+        color: #ff6b22;
+        margin-bottom: 30px;
+    }
+
+    .manager-sidebar nav {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .manager-sidebar a {
+        color: #333333;
+        text-decoration: none;
+        padding: 12px;
+        margin-bottom: 8px;
+        border-radius: 5px;
+    }
+
+        .manager-sidebar a:hover {
+            color: #ffffff;
+            background-color: #ff6b22;
+        }
+
+.manager-content {
+    flex: 1;
+    background-color: #f5f6fa;
+}
+
+.manager-header {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dddddd;
+    padding: 20px 25px;
+}
+
+    .manager-header h2 {
+        margin: 0;
+    }
+
+.manager-content main {
+    padding: 25px;
+}
+
+.manager-content footer {
+    padding: 20px 25px;
+    background-color: #ffffff;
+}
+
+
+/* Department Page */
+
+.department-card {
+    background-color: #ffffff;
+    border: 1px solid #e3e7ed;
+    border-radius: 8px;
+    margin-top: 20px;
+    overflow: hidden;
+}
+
+.department-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 20px;
+    border-bottom: 1px solid #e3e7ed;
+    background-color: #ffffff;
+}
+
+    .department-card-header h5 {
+        margin: 0;
+        color: #172b4d;
+        font-size: 17px;
+        font-weight: 600;
+    }
+
+.department-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.department-filter {
+    width: 130px;
+    height: 36px;
+    border: 1px solid #dce1e7;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #172b4d;
+}
+
+.export-button {
+    height: 36px;
+    background-color: #ffb000;
+    border-color: #ffb000;
+    color: #ffffff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+    .export-button:hover {
+        background-color: #e69c00;
+        border-color: #e69c00;
+        color: #ffffff;
+    }
+
+.department-card-body {
+    padding: 0 20px 15px 20px;
+}
+
+.department-table {
+    width: 100% !important;
+    margin-top: 10px !important;
+    border-collapse: collapse !important;
+}
+
+    .department-table thead th {
+        background-color: #e9edf2;
+        color: #172b4d;
+        font-size: 13px;
+        font-weight: 600;
+        border-bottom: 1px solid #172b4d;
+        padding: 13px 12px;
+        white-space: nowrap;
+    }
+
+    .department-table tbody td {
+        color: #172b4d;
+        font-size: 13px;
+        padding: 12px;
+        vertical-align: middle;
+        border-bottom: 1px solid #e3e7ed;
+    }
+
+    .department-table tbody tr:hover {
+        background-color: #f8f9fb;
+    }
+
+.status-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.active-status {
+    background-color: #00c875;
+    color: #ffffff;
+}
+
+.inactive-status {
+    background-color: #f5222d;
+    color: #ffffff;
+}
+
+.edit-button {
+    background-color: #ffb000;
+    border-color: #ffb000;
+    color: #ffffff;
+    margin-right: 4px;
+}
+
+    .edit-button:hover {
+        background-color: #e69c00;
+        border-color: #e69c00;
+        color: #ffffff;
+    }
+
+.delete-button {
+    background-color: #f5222d;
+    border-color: #f5222d;
+    color: #ffffff;
+}
+
+    .delete-button:hover {
+        background-color: #d91625;
+        border-color: #d91625;
+        color: #ffffff;
+    }
+
+/* DataTables controls */
+
+.dataTables_wrapper .dataTables_length,
+.dataTables_wrapper .dataTables_filter {
+    margin-top: 12px;
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+    .dataTables_wrapper .dataTables_length select,
+    .dataTables_wrapper .dataTables_filter input {
+        border: 1px solid #dce1e7;
+        border-radius: 5px;
+        padding: 6px 10px;
+        color: #172b4d;
+    }
+
+.dataTables_wrapper .dataTables_info {
+    color: #6c757d;
+    font-size: 13px;
+    padding-top: 18px;
+}
+
+.dataTables_wrapper .dataTables_paginate {
+    padding-top: 12px;
+}
+
+    .dataTables_wrapper .dataTables_paginate .paginate_button {
+        border: 1px solid #dce1e7 !important;
+        background: #ffffff !important;
+        color: #172b4d !important;
+        border-radius: 4px;
+        margin-left: 4px;
+        padding: 5px 10px;
+    }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #ff6b1a !important;
+            border-color: #ff6b1a !important;
+            color: #ffffff !important;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #ff6b1a !important;
+            border-color: #ff6b1a !important;
+            color: #ffffff !important;
+        }
+
+.dt-buttons {
+    display: none !important;
+}
+
+@media (max-width: 768px) {
+    .department-card-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .department-toolbar {
+        justify-content: flex-start;
+        width: 100%;
+    }
+
+    .department-filter {
+        width: 120px;
+    }
+
+    .department-card-body {
+        overflow-x: auto;
+    }
+}

@@ -4,7 +4,7 @@ namespace hrms_mvc.Models
 {
     public class Department
     {
-
+        
         public int Id { get; set; }
         [Required(ErrorMessage = "Department Name is required.")]
         public string? Name { get; set; }

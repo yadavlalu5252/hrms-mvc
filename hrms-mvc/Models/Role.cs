@@ -4,7 +4,7 @@ namespace hrms_mvc.Models
 {
     public class Role
     {
-
+       
         public int Id { get; set; }
         [Required(ErrorMessage = "Role Name is required.")]
         public string? RoleName { get; set; }

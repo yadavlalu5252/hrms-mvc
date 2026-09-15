@@ -5,7 +5,7 @@ namespace hrms_mvc.Models
 {
     public class Designation
     {
-
+        
         public int Id { get; set; }
 
         [ForeignKey("Department")]

@@ -1,6 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Data;
 
 namespace hrms_mvc.Models
 {
@@ -8,6 +7,7 @@ namespace hrms_mvc.Models
     {
         public int Id { get; set; }
 
+        //public string? Name { get; set; }
 
         [Required(ErrorMessage = "First Name is required.")]
         public string? FirstName { get; set; }
@@ -29,14 +29,17 @@ namespace hrms_mvc.Models
         [ForeignKey("Role")]
         [Required(ErrorMessage = "Role is required.")]
         public int RoleId { get; set; }
+
         public Role? Role { get; set; }
 
         [ForeignKey("Department")]
         public int? DepartmentId { get; set; }
+
         public Department? Department { get; set; }
 
         [ForeignKey("Designation")]
         public int? DesignationId { get; set; }
+
         public Designation? Designation { get; set; }
 
         [Required(ErrorMessage = "Date of Joining is required.")]
@@ -54,22 +57,32 @@ namespace hrms_mvc.Models
         public string? Gender { get; set; }
 
         public string? Address { get; set; }
+
         public string? AboutEmployee { get; set; }
+
         public string? ProfilePicture { get; set; }
 
         public string? ReportingManager { get; set; }
+
         public DateTime? CreatedAt { get; set; }
+
         public string? CreatedBy { get; set; }
+
         public string? ModifiedBy { get; set; }
+
         public DateTime? ModifiedAt { get; set; }
 
-        //public List<Timesheet> Timesheets { get; set; }
 
-        //public List<LeaveBalance> LeaveBalances { get; set; }
-        //public List<LeaveRequest> LeaveRequests { get; set; }
+        // Navigation properties
 
-        //public ICollection<FileUpload> FileUploads { get; set; }
+        public List<Timesheet> Timesheets { get; set; }
+            = new List<Timesheet>();
 
-        //public virtual ICollection<Projects> Projects { get; set; } = new List<Projects>();
+        //public List<FileUpload> FileUploads { get; set; }
+        public List<LeaveBalance> LeaveBalances { get; set; }
+            = new List<LeaveBalance>();
+
+        public List<LeaveRequest> LeaveRequests { get; set; }
+            = new List<LeaveRequest>();
     }
 }
