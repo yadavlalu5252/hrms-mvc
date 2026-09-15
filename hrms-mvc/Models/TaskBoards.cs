@@ -6,7 +6,7 @@ namespace hrms_mvc.Models
     public class TaskBoards
     {
 
-        
+        [Key]
         public int TaskBoardsId { get; set; }
 
         [ForeignKey("Project")]
@@ -19,10 +19,10 @@ namespace hrms_mvc.Models
 
         public Tasks Task { get; set; }
 
-        
+
         public int Percentage { get; set; }
 
-        
+
         public DateTime DueDate { get; set; }
     }
 }

@@ -1,0 +1,63 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - HRMS Employee</title>
+
+    <link rel="stylesheet" href="~/css/site.css" />
+</head>
+
+<body>
+
+    <div class="employee-layout">
+
+        <aside class="employee-sidebar">
+            <h2>HRMS</h2>
+
+            <nav>
+                <a asp-controller="Auth" asp-action="EmpD">
+                    Dashboard
+                </a>
+
+                <a asp-controller="Employee" asp-action="Profile">
+                    My Profile
+                </a>
+
+                <a asp-controller="Employee" asp-action="Attendance">
+                    Attendance
+                </a>
+
+                <a asp-controller="Employee" asp-action="Leave">
+                    Leave
+                </a>
+
+                <a asp-controller="Auth" asp-action="Logout">
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <div class="employee-content">
+
+            <header class="employee-header">
+                <h2>HRMS - Employee Panel</h2>
+            </header>
+
+            <main>
+                @RenderBody()
+            </main>
+
+            <footer>
+                <p>Employee Layout</p>
+            </footer>
+
+        </div>
+
+    </div>
+
+    @await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>
