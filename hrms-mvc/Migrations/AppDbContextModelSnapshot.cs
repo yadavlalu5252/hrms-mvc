@@ -22,6 +22,46 @@ namespace hrms_mvc.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
+<<<<<<< HEAD
+            modelBuilder.Entity("hrms_mvc.Models.EventModel", b =>
+                {
+                    b.Property<int>("EventModelId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventModelId"));
+
+                    b.Property<string>("Date")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EventTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Titles")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EventModelId");
+
+                    b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EventTypes", b =>
+                {
+                    b.Property<int>("EventTypesId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EventTypesId"));
+
+                    b.Property<string>("Colour")
+                        .IsRequired()
+=======
             modelBuilder.Entity("hrms_mvc.Models.Deduction", b =>
                 {
                     b.Property<int>("Id")
@@ -91,12 +131,33 @@ namespace hrms_mvc.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
+>>>>>>> origin
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< HEAD
+                    b.HasKey("EventTypesId");
+
+                    b.ToTable("EventsTypes");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Projects", b =>
+                {
+                    b.Property<int>("ProjectsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectsId"));
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+=======
                     b.Property<int?>("NoOfEmployee")
                         .HasColumnType("int");
 
@@ -413,12 +474,42 @@ namespace hrms_mvc.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("ApprovedBy")
+>>>>>>> origin
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime2");
 
+<<<<<<< HEAD
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("ProjectValue")
+                        .HasColumnType("float");
+
+=======
                     b.Property<int>("LeaveTypeId")
                         .HasColumnType("int");
 
@@ -429,6 +520,7 @@ namespace hrms_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+>>>>>>> origin
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime2");
 
@@ -436,6 +528,88 @@ namespace hrms_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< HEAD
+                    b.HasKey("ProjectsId");
+
+                    b.ToTable("AllProjects");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TaskBoards", b =>
+                {
+                    b.Property<int>("TaskBoardsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TaskBoardsId"));
+
+                    b.Property<DateTime>("DueDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Percentage")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TaskId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TasksId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TaskBoardsId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("TaskId");
+
+                    b.HasIndex("TasksId");
+
+                    b.ToTable("TaskBoards");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TaskMembers", b =>
+                {
+                    b.Property<int>("AssignedId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AssignedId"));
+
+                    b.Property<int?>("TaskId")
+                        .HasColumnType("int");
+
+                    b.HasKey("AssignedId");
+
+                    b.HasIndex("TaskId");
+
+                    b.ToTable("Taskmembers");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tasks", b =>
+                {
+                    b.Property<int>("TasksId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TasksId"));
+
+                    b.Property<DateTime>("Deadline")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ProjectId")
+=======
                     b.Property<string>("StatusHistory")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -678,12 +852,79 @@ namespace hrms_mvc.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("RoleId")
+>>>>>>> origin
                         .HasColumnType("int");
 
                     b.Property<string>("Status")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+<<<<<<< HEAD
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TasksId");
+
+                    b.HasIndex("ProjectId");
+
+                    b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TaskBoards", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Projects", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tasks", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tasks", null)
+                        .WithMany("TaskBoards")
+                        .HasForeignKey("TasksId");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TaskMembers", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Tasks", "Task")
+                        .WithMany("Taskmember")
+                        .HasForeignKey("TaskId");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tasks", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Projects", "Project")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Projects", b =>
+                {
+                    b.Navigation("Tasks");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tasks", b =>
+                {
+                    b.Navigation("TaskBoards");
+
+                    b.Navigation("Taskmember");
+=======
                     b.HasKey("Id");
 
                     b.HasIndex("DepartmentId");
@@ -946,6 +1187,7 @@ namespace hrms_mvc.Migrations
                     b.Navigation("LeaveRequests");
 
                     b.Navigation("Timesheets");
+>>>>>>> origin
                 });
 #pragma warning restore 612, 618
         }
