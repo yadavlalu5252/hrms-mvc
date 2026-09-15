@@ -1,32 +1,63 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Employee - HRMS</title>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>@ViewData["Title"] - HRMS Employee</title>
+
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
+
 <body>
 
-    <header>
-        <h2>HRMS - Employee Panel</h2>
-    </header>
+    <div class="employee-layout">
 
-    <nav>
-        <a asp-controller="Employee" asp-action="Dashboard">Dashboard</a>
-        <a asp-controller="Employee" asp-action="Profile">My Profile</a>
-        <a asp-controller="Employee" asp-action="Attendance">Attendance</a>
-        <a asp-controller="Employee" asp-action="Leave">Leave</a>
-    </nav>
+        <aside class="employee-sidebar">
+            <h2>HRMS</h2>
 
-    <main>
-        @RenderBody()
-    </main>
+            <nav>
+                <a asp-controller="Auth" asp-action="EmpD">
+                    Dashboard
+                </a>
 
-    <footer>
-        <p>Employee Layout</p>
-    </footer>
+                <a asp-controller="Employee" asp-action="Profile">
+                    My Profile
+                </a>
+
+                <a asp-controller="Employee" asp-action="Attendance">
+                    Attendance
+                </a>
+
+                <a asp-controller="Employee" asp-action="Leave">
+                    Leave
+                </a>
+
+                <a asp-controller="Auth" asp-action="Logout">
+                    Logout
+                </a>
+            </nav>
+        </aside>
+
+        <div class="employee-content">
+
+            <header class="employee-header">
+                <h2>HRMS - Employee Panel</h2>
+            </header>
+
+            <main>
+                @RenderBody()
+            </main>
+
+            <footer>
+                <p>Employee Layout</p>
+            </footer>
+
+        </div>
+
+    </div>
 
     @await RenderSectionAsync("Scripts", required: false)
+
 </body>
 </html>
