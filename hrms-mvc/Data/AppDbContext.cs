@@ -13,6 +13,9 @@ namespace hrms_mvc.Data
         public DbSet<EmployeeBankDetails> EmployeeBankDetails { get; set; }
         public DbSet<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+
+        public DbSet<Attendance> Attendances { get; set; }
+
         public DbSet<EventModel> Events { get; set; }
         public DbSet<EventTypes> EventsTypes { get; set; }
         public DbSet<Projects> AllProjects { get; set; }
