@@ -137,5 +137,39 @@ namespace hrms_mvc.Services
                 await db.SaveChangesAsync();
             }
         }
+        public async Task<List<LeaveRequest>>
+    GetMyLeaveRequests(int userId)
+        {
+            return await db.LeaveRequests
+                .Include(x => x.MasterLeaveType)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<List<LeaveBalance>>
+            GetMyLeaveBalances(int userId)
+        {
+            return await db.LeaveBalances
+                .Include(x => x.DepartmentLeaves)
+                .ThenInclude(x => x.MasterLeaveType)
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<List<MasterLeaveType>>
+            GetAvailableLeaveTypes()
+        {
+            return await db.MasterLeaveTypes
+                .Where(x => x.Status == "Active")
+                .ToListAsync();
+        }
+
+        public async Task AddLeaveRequest(
+            LeaveRequest leaveRequest)
+        {
+            db.LeaveRequests.Add(leaveRequest);
+
+            await db.SaveChangesAsync();
+        }
     }
 }
