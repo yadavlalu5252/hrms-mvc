@@ -4,24 +4,29 @@ namespace hrms_mvc.Repository
 {
     public interface ILeaveService
     {
-        List<MasterLeaveType> GetLeaveTypes();
+        Task<List<MasterLeaveType>> GetLeaveTypes();
 
-        MasterLeaveType? GetLeaveType(int id);
+        Task<MasterLeaveType?> GetLeaveType(int id);
 
-        void AddLeaveType(MasterLeaveType leaveType);
+        Task AddLeaveType(MasterLeaveType leaveType);
 
-        void DeleteLeaveType(int id);
+        Task UpdateLeaveType(MasterLeaveType leaveType);
 
-        List<DepartmentLeaves> GetDepartmentLeaves();
+        Task DeleteLeaveType(int id);
 
-        DepartmentLeaves? GetDepartmentLeave(int id);
+        Task<List<DepartmentLeaves>> GetDepartmentLeaves();
 
-        void AddDepartmentLeave(DepartmentLeaves departmentLeave);
+        Task<DepartmentLeaves?> GetDepartmentLeave(int id);
 
-        void DeleteDepartmentLeave(int id);
+        Task AddDepartmentLeave(
+            DepartmentLeaves departmentLeave);
 
-        List<Department> GetDepartments();
+        Task DeleteDepartmentLeave(int id);
 
-        void ChangeLeaveTypeStatus(int id, string status);
+        Task<List<Department>> GetDepartments();
+
+        Task ChangeLeaveTypeStatus(
+            int id,
+            string status);
     }
 }

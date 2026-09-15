@@ -13,48 +13,182 @@ namespace hrms_mvc.Controllers
             this.service = service;
         }
 
-        [HttpGet]
-        public IActionResult ManageLeaveType()
+
+
+        public async Task<IActionResult> ManageLeaveType()
         {
-            var leaveTypes = service.GetLeaveTypes();
+            var leaveTypes =
+                await service.GetLeaveTypes();
 
             return View(leaveTypes);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddLeaveType(MasterLeaveType leaveType)
+        public async Task<IActionResult> AddLeaveType(
+            MasterLeaveType leaveType)
         {
+            ModelState.Remove("DepartmentLeaves");
+            ModelState.Remove("LeaveBalances");
+            ModelState.Remove("LeaveRequests");
+
+            leaveType.Status = "Active";
+
             if (ModelState.IsValid)
             {
-                leaveType.Status = "Active";
+                await service.AddLeaveType(leaveType);
 
-                service.AddLeaveType(leaveType);
+                TempData["success"] =
+                    "Leave type added successfully!";
 
-                return RedirectToAction("ManageLeaveType");
+                return RedirectToAction(
+                    nameof(ManageLeaveType));
             }
 
-            var leaveTypes = service.GetLeaveTypes();
+            var leaveTypes =
+                await service.GetLeaveTypes();
 
-            return View("ManageLeaveType", leaveTypes);
+            return View(
+                nameof(ManageLeaveType),
+                leaveTypes);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult DeleteLeaveType(int id)
+        public async Task<IActionResult> EditLeaveType(
+            MasterLeaveType leaveType)
         {
-            service.DeleteLeaveType(id);
+            ModelState.Remove("DepartmentLeaves");
+            ModelState.Remove("LeaveBalances");
+            ModelState.Remove("LeaveRequests");
 
-            return RedirectToAction("ManageLeaveType");
+            if (ModelState.IsValid)
+            {
+                await service.UpdateLeaveType(leaveType);
+
+                TempData["success"] =
+                    "Leave type updated successfully!";
+
+                return RedirectToAction(
+                    nameof(ManageLeaveType));
+            }
+
+            var leaveTypes =
+                await service.GetLeaveTypes();
+
+            return View(
+                nameof(ManageLeaveType),
+                leaveTypes);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult ManageLeaveStatus(int id, string status)
+        public async Task<IActionResult> DeleteLeaveType(
+            int id)
         {
-            service.ChangeLeaveTypeStatus(id, status);
+            await service.DeleteLeaveType(id);
 
-            return RedirectToAction("ManageLeaveType");
+            TempData["success"] =
+                "Leave type deleted successfully!";
+
+            return RedirectToAction(
+                nameof(ManageLeaveType));
+        }
+
+
+
+        public async Task<IActionResult> ManageLeaveSettings()
+        {
+            var leaveTypes =
+                await service.GetLeaveTypes();
+
+            return View(leaveTypes);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ManageLeaveStatus(
+            int id,
+            string status)
+        {
+            await service.ChangeLeaveTypeStatus(
+                id,
+                status);
+
+            TempData["success"] =
+                "Leave status updated successfully!";
+
+            return RedirectToAction(
+                nameof(ManageLeaveSettings));
+        }
+
+
+
+        [HttpGet]
+        public async Task<IActionResult> AddLeaveDeptwise()
+        {
+            ViewBag.Departments =
+                await service.GetDepartments();
+
+            ViewBag.LeaveTypes =
+                await service.GetLeaveTypes();
+
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddLeaveDeptwise(
+     DepartmentLeaves departmentLeave)
+        {
+            ModelState.Remove("Department");
+            ModelState.Remove("MasterLeaveType");
+            ModelState.Remove("LeaveBalances");
+            ModelState.Remove("Status");
+
+            departmentLeave.Status = "Active";
+
+            if (ModelState.IsValid)
+            {
+                await service.AddDepartmentLeave(
+                    departmentLeave);
+
+                TempData["success"] =
+                    "Leave allocated successfully!";
+
+                return RedirectToAction(
+                    "DepartmentLeaveDetails");
+            }
+
+            ViewBag.Departments =
+                await service.GetDepartments();
+
+            ViewBag.LeaveTypes =
+                await service.GetLeaveTypes();
+
+            return View(departmentLeave);
+        }
+        [HttpGet]
+        public async Task<IActionResult> DepartmentLeaveDetails()
+        {
+            var departmentLeaves =
+                await service.GetDepartmentLeaves();
+
+            return View(departmentLeaves);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteDepartmentLeave(
+            int id)
+        {
+            await service.DeleteDepartmentLeave(id);
+
+            TempData["success"] =
+                "Department leave deleted successfully!";
+
+            return RedirectToAction(
+                nameof(DepartmentLeaveDetails));
         }
     }
 }
