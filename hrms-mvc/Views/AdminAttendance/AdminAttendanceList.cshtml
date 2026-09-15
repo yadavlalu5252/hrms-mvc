@@ -1,87 +1,35 @@
 ﻿@model List<hrms_mvc.Models.Attendance>
 
 @{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Attendance";
 }
 
 <div class="container-fluid">
 
-
+    <!-- Page Header -->
     <div class="d-flex justify-content-between align-items-center mb-4">
+
         <div>
-            <h4 class="mb-1">Attendance</h4>
+            <h2>Attendance</h2>
             <p class="text-muted mb-0">
                 Manage employee attendance
             </p>
         </div>
 
-        <a asp-controller="AdminAttendance"
-           asp-action="Create"
-           class="btn btn-primary">
+        <button type="button"
+                class="btn btn-warning"
+                data-bs-toggle="modal"
+                data-bs-target="#addAttendanceModal">
+
             <i class="bi bi-plus-circle"></i>
             Add Attendance
-        </a>
+
+        </button>
+
     </div>
 
 
-    <div class="card shadow-sm mb-4">
-        <div class="card-body">
-
-            <form asp-controller="AdminAttendance"
-                  asp-action="FilterAttendance"
-                  method="get">
-
-                <div class="row g-3 align-items-end">
-
-
-                    <div class="col-md-4">
-                        <label class="form-label">
-                            Start Date
-                        </label>
-
-                        <input type="date"
-                               name="startDate"
-                               class="form-control" />
-                    </div>
-
-
-
-                    <div class="col-md-4">
-                        <label class="form-label">
-                            End Date
-                        </label>
-
-                        <input type="date"
-                               name="endDate"
-                               class="form-control" />
-                    </div>
-
-
-
-                    <div class="col-md-4">
-
-                        <button type="submit"
-                                class="btn btn-primary me-2">
-                            <i class="bi bi-search"></i>
-                            Search
-                        </button>
-
-                        <a asp-controller="AdminAttendance"
-                           asp-action="AdminAttendanceList"
-                           class="btn btn-secondary">
-                            Reset
-                        </a>
-
-                    </div>
-
-                </div>
-
-            </form>
-
-        </div>
-    </div>
-
-\
     @if (TempData["success"] != null)
     {
         <div class="alert alert-success alert-dismissible fade show"
@@ -98,17 +46,107 @@
     }
 
 
-
     <div class="card shadow-sm">
 
         <div class="card-header bg-white">
+
             <div class="d-flex justify-content-between align-items-center">
 
                 <h5 class="mb-0">
-                    Attendance Details
+                    Attendance List
                 </h5>
 
+                <div class="d-flex gap-2">
+
+                    <select id="statusFilter"
+                            class="form-select form-select-sm"
+                            style="width:150px;">
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        @if (Model != null)
+                        {
+                            var statuses = Model
+                                .Where(x => !string.IsNullOrWhiteSpace(x.Status))
+                                .Select(x => x.Status)
+                                .Distinct()
+                                .OrderBy(x => x);
+
+                            foreach (var status in statuses)
+                            {
+                                <option value="@status">
+                                    @status
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+
+                    <select id="sortFilter"
+                            class="form-select form-select-sm"
+                            style="width:150px;">
+
+                        <option value="">
+                            Sort By
+                        </option>
+
+                        <option value="asc">
+                            Date ↑
+                        </option>
+
+                        <option value="desc">
+                            Date ↓
+                        </option>
+
+                    </select>
+
+
+                    <div class="dropdown">
+
+                        <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                                type="button"
+                                data-bs-toggle="dropdown">
+
+                            <i class="bi bi-download"></i>
+                            Export
+
+                        </button>
+
+                        <ul class="dropdown-menu">
+
+                            <li>
+                                <a class="dropdown-item"
+                                   href="#"
+                                   id="exportExcel">
+
+                                    <i class="bi bi-file-earmark-excel"></i>
+                                    Excel
+
+                                </a>
+                            </li>
+
+                            <li>
+                                <a class="dropdown-item"
+                                   href="#"
+                                   id="exportPdf">
+
+                                    <i class="bi bi-file-earmark-pdf"></i>
+                                    PDF
+
+                                </a>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
             </div>
+
         </div>
 
 
@@ -122,32 +160,39 @@
                     <thead class="table-light">
 
                         <tr>
-                            <th>Sr. No.</th>
+
+                            <th>Id</th>
                             <th>Employee</th>
                             <th>Date</th>
+                            <th>Check In</th>
+                            <th>Check Out</th>
+                            <th>Lunch In</th>
+                            <th>Lunch Out</th>
+                            <th>Work Hours</th>
+                            <th>Prod Hours</th>
+                            <th>OT Hours</th>
+                            <th>Break Hours</th>
+                            <th>Late</th>
+                            <th>Status</th>
                             <th>Actions</th>
+
                         </tr>
 
                     </thead>
-
 
                     <tbody>
 
                         @if (Model != null && Model.Count > 0)
                         {
-                            int srNo = 1;
-
                             foreach (var attendance in Model)
                             {
                                 <tr>
 
-                                
                                     <td>
-                                        @srNo
+                                        @attendance.Id
                                     </td>
 
 
-                      
                                     <td>
                                         @if (attendance.User != null)
                                         {
@@ -169,37 +214,135 @@
 
 
                                     <td>
+                                        @if (attendance.Checkin.HasValue)
+                                        {
+                                            @attendance.Checkin.Value.ToString("hh:mm tt")
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
 
-                                        <a asp-controller="AdminAttendance"
-                                           asp-action="Details"
-                                           asp-route-id="@attendance.Id"
-                                           class="btn btn-sm btn-info text-white me-1"
-                                           title="View">
 
-                                            <i class="bi bi-eye"></i>
+                                    <td>
+                                        @if (attendance.Checkout.HasValue)
+                                        {
+                                            @attendance.Checkout.Value.ToString("hh:mm tt")
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
 
-                                        </a>
+
+                                    <td>
+                                        @if (attendance.Lunchin.HasValue)
+                                        {
+                                            @attendance.Lunchin.Value.ToString("hh:mm tt")
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
 
 
-                                        <a asp-controller="AdminAttendance"
-                                           asp-action="Edit"
-                                           asp-route-id="@attendance.Id"
-                                           class="btn btn-sm btn-warning me-1"
-                                           title="Edit">
+                                    <td>
+                                        @if (attendance.Lunchout.HasValue)
+                                        {
+                                            @attendance.Lunchout.Value.ToString("hh:mm tt")
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+
+
+                                 
+                                    <td>
+                                        @attendance.WorkHours
+                                    </td>
+
+
+                             
+                                    <td>
+                                        @attendance.ProdHours
+                                    </td>
+
+
+                          
+                                    <td>
+                                        @attendance.OTHours
+                                    </td>
+
+
+                         
+                                    <td>
+                                        @attendance.BreakHours
+                                    </td>
+
+
+                            
+                                    <td>
+                                        @attendance.Late
+                                    </td>
+
+
+                                    <td>
+                                        @if (!string.IsNullOrWhiteSpace(attendance.Status))
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @attendance.Status
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>-</span>
+                                        }
+                                    </td>
+
+
+                           
+                                    <td>
+
+                                        <button type="button"
+                                                class="btn btn-sm btn-warning editAttendance"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#editAttendanceModal"
+                                                data-id="@attendance.Id"
+                                                data-userid="@attendance.UserId"
+                                                data-date="@attendance.Date.ToString("yyyy-MM-dd")"
+                                                data-checkin="@attendance.Checkin?.ToString("yyyy-MM-ddTHH:mm")"
+                                                data-checkout="@attendance.Checkout?.ToString("yyyy-MM-ddTHH:mm")"
+                                                data-lunchin="@attendance.Lunchin?.ToString("yyyy-MM-ddTHH:mm")"
+                                                data-lunchout="@attendance.Lunchout?.ToString("yyyy-MM-ddTHH:mm")"
+                                                data-workhours="@attendance.WorkHours"
+                                                data-prodhours="@attendance.ProdHours"
+                                                data-othours="@attendance.OTHours"
+                                                data-breakhours="@attendance.BreakHours"
+                                                data-late="@attendance.Late"
+                                                data-status="@attendance.Status"
+                                                title="Edit">
 
                                             <i class="bi bi-pencil"></i>
 
-                                        </a>
+                                        </button>
 
 
-
+                                      
                                         <form asp-controller="AdminAttendance"
                                               asp-action="Delete"
-                                              asp-route-id="@attendance.Id"
                                               method="post"
                                               class="d-inline">
 
                                             @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@attendance.Id" />
 
                                             <button type="submit"
                                                     class="btn btn-sm btn-danger"
@@ -215,22 +358,7 @@
                                     </td>
 
                                 </tr>
-
-                                srNo++;
                             }
-                        }
-                        else
-                        {
-                            <tr>
-
-                                <td colspan="4"
-                                    class="text-center text-muted py-4">
-
-                                    No attendance records found.
-
-                                </td>
-
-                            </tr>
                         }
 
                     </tbody>
@@ -246,32 +374,787 @@
 </div>
 
 
+
+<div class="modal fade"
+     id="addAttendanceModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form asp-controller="AdminAttendance"
+                  asp-action="Create"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Add Attendance
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Employee
+                            </label>
+
+                            <select name="UserId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Employee
+                                </option>
+
+                                @if (ViewBag.Employees != null)
+                                {
+                                    foreach (var employee in ViewBag.Employees)
+                                    {
+                                        <option value="@employee.Id">
+                                            @employee.FirstName @employee.LastName
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Date
+                            </label>
+
+                            <input type="date"
+                                   name="Date"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+
+                        
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Check In
+                            </label>
+
+                            <input type="datetime-local"
+                                   name="Checkin"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Check Out
+                            </label>
+
+                            <input type="datetime-local"
+                                   name="Checkout"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Lunch In
+                            </label>
+
+                            <input type="datetime-local"
+                                   name="Lunchin"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Lunch Out
+                            </label>
+
+                            <input type="datetime-local"
+                                   name="Lunchout"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Work Hours
+                            </label>
+
+                            <input type="number"
+                                   name="WorkHours"
+                                   class="form-control"
+                                   step="0.01"
+                                   value="0" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Production Hours
+                            </label>
+
+                            <input type="number"
+                                   name="ProdHours"
+                                   class="form-control"
+                                   step="0.01"
+                                   value="0" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                OT Hours
+                            </label>
+
+                            <input type="number"
+                                   name="OTHours"
+                                   class="form-control"
+                                   step="0.01"
+                                   value="0" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Break Hours
+                            </label>
+
+                            <input type="number"
+                                   name="BreakHours"
+                                   class="form-control"
+                                   step="0.01"
+                                   value="0" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Late
+                            </label>
+
+                            <input type="number"
+                                   name="Late"
+                                   class="form-control"
+                                   value="0" />
+
+                        </div>
+
+
+                    
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Status
+                            </label>
+
+                            <select name="Status"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select Status
+                                </option>
+
+                                <option value="Present">
+                                    Present
+                                </option>
+
+                                <option value="Absent">
+                                    Absent
+                                </option>
+
+                                <option value="Late">
+                                    Late
+                                </option>
+
+                                <option value="Permission">
+                                    Permission
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-warning">
+
+                        <i class="bi bi-check-circle"></i>
+                        Save Attendance
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div class="modal fade"
+     id="editAttendanceModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <form asp-controller="AdminAttendance"
+                  asp-action="Edit"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title">
+                        Edit Attendance
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal">
+                    </button>
+
+                </div>
+
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="editId"
+                           name="Id" />
+
+
+                    <div class="row g-3">
+
+                        
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Employee
+                            </label>
+
+                            <select id="editUserId"
+                                    name="UserId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Employee
+                                </option>
+
+                                @if (ViewBag.Employees != null)
+                                {
+                                    foreach (var employee in ViewBag.Employees)
+                                    {
+                                        <option value="@employee.Id">
+                                            @employee.FirstName @employee.LastName
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                        </div>
+
+
+                        
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Date
+                            </label>
+
+                            <input type="date"
+                                   id="editDate"
+                                   name="Date"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Check In
+                            </label>
+
+                            <input type="datetime-local"
+                                   id="editCheckin"
+                                   name="Checkin"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Check Out
+                            </label>
+
+                            <input type="datetime-local"
+                                   id="editCheckout"
+                                   name="Checkout"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Lunch In
+                            </label>
+
+                            <input type="datetime-local"
+                                   id="editLunchin"
+                                   name="Lunchin"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-6">
+
+                            <label class="form-label">
+                                Lunch Out
+                            </label>
+
+                            <input type="datetime-local"
+                                   id="editLunchout"
+                                   name="Lunchout"
+                                   class="form-control" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Work Hours
+                            </label>
+
+                            <input type="number"
+                                   id="editWorkHours"
+                                   name="WorkHours"
+                                   class="form-control"
+                                   step="0.01" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Production Hours
+                            </label>
+
+                            <input type="number"
+                                   id="editProdHours"
+                                   name="ProdHours"
+                                   class="form-control"
+                                   step="0.01" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                OT Hours
+                            </label>
+
+                            <input type="number"
+                                   id="editOTHours"
+                                   name="OTHours"
+                                   class="form-control"
+                                   step="0.01" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Break Hours
+                            </label>
+
+                            <input type="number"
+                                   id="editBreakHours"
+                                   name="BreakHours"
+                                   class="form-control"
+                                   step="0.01" />
+
+                        </div>
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Late
+                            </label>
+
+                            <input type="number"
+                                   id="editLate"
+                                   name="Late"
+                                   class="form-control" />
+
+                        </div>
+
+
+
+                        <div class="col-md-4">
+
+                            <label class="form-label">
+                                Status
+                            </label>
+
+                            <select id="editStatus"
+                                    name="Status"
+                                    class="form-select">
+
+                                <option value="">
+                                    Select Status
+                                </option>
+
+                                <option value="Present">
+                                    Present
+                                </option>
+
+                                <option value="Absent">
+                                    Absent
+                                </option>
+
+                                <option value="Late">
+                                    Late
+                                </option>
+
+                                <option value="Permission">
+                                    Permission
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-warning">
+
+                        <i class="bi bi-check-circle"></i>
+                        Update Attendance
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
 @section Scripts
 {
-    <!-- DataTables -->
-    <link rel="stylesheet"
-          href="https://cdn.datatables.net/2.0.8/css/dataTables.bootstrap5.css" />
 
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.js"></script>
 
-    <script src="https://cdn.datatables.net/2.0.8/js/dataTables.bootstrap5.js"></script>
+    <!-- DataTables -->
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" />
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
 
 
     <script>
 
-        $(document).ready(function() {
+        $(document).ready(function () {
 
-            $('#attendanceTable').DataTable({
+
+
+            var table = $('#attendanceTable').DataTable({
+
                 pageLength: 10,
+
                 ordering: true,
+
                 searching: true,
+
                 lengthChange: true,
-                responsive: true
+
+                order: [[2, 'desc']],
+
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: 13
+                    }
+                ],
+
+                language: {
+                    emptyTable: "No attendance records found."
+                }
+
+            });
+
+
+
+
+            $('#statusFilter').on('change', function () {
+
+                table
+                    .column(12)
+                    .search(this.value)
+                    .draw();
+
+            });
+
+
+            $('#sortFilter').on('change', function () {
+
+                if (this.value === "asc") {
+
+                    table
+                        .order([2, 'asc'])
+                        .draw();
+
+                }
+
+                if (this.value === "desc") {
+
+                    table
+                        .order([2, 'desc'])
+                        .draw();
+
+                }
+
+            });
+
+
+
+            new $.fn.dataTable.Buttons(table, {
+
+                buttons: [
+
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Attendance List',
+                        className: 'buttons-excel'
+                    },
+
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Attendance List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'buttons-pdf'
+                    }
+
+                ]
+
+            });
+
+
+
+            table
+                .buttons()
+                .container()
+                .hide();
+
+
+            $('#exportExcel').on('click', function (e) {
+
+                e.preventDefault();
+
+                table
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+
+            $('#exportPdf').on('click', function (e) {
+
+                e.preventDefault();
+
+                table
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+
+
+            $('.editAttendance').on('click', function () {
+
+                var button = $(this);
+
+
+                $('#editId').val(
+                    button.data('id')
+                );
+
+
+                $('#editUserId').val(
+                    button.data('userid')
+                );
+
+
+                $('#editDate').val(
+                    button.data('date')
+                );
+
+
+                $('#editCheckin').val(
+                    button.attr('data-checkin')
+                );
+
+
+                $('#editCheckout').val(
+                    button.attr('data-checkout')
+                );
+
+
+                $('#editLunchin').val(
+                    button.attr('data-lunchin')
+                );
+
+
+                $('#editLunchout').val(
+                    button.attr('data-lunchout')
+                );
+
+
+                $('#editWorkHours').val(
+                    button.data('workhours')
+                );
+
+
+                $('#editProdHours').val(
+                    button.data('prodhours')
+                );
+
+
+                $('#editOTHours').val(
+                    button.data('othours')
+                );
+
+
+                $('#editBreakHours').val(
+                    button.data('breakhours')
+                );
+
+
+                $('#editLate').val(
+                    button.data('late')
+                );
+
+
+                $('#editStatus').val(
+                    button.data('status')
+                );
+
             });
 
         });
 
     </script>
+
 }

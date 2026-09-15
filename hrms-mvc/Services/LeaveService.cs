@@ -5,98 +5,137 @@ using Microsoft.EntityFrameworkCore;
 
 namespace hrms_mvc.Services
 {
-  public class LeaveService : ILeaveService
+    public class LeaveService : ILeaveService
+    {
+        private readonly AppDbContext db;
+
+        public LeaveService(AppDbContext db)
         {
-            private readonly AppDbContext db;
+            this.db = db;
+        }
 
-            public LeaveService(AppDbContext db)
+        public async Task<List<MasterLeaveType>> GetLeaveTypes()
+        {
+            return await db.MasterLeaveTypes
+                .ToListAsync();
+        }
+
+        public async Task<MasterLeaveType?> GetLeaveType(int id)
+        {
+            return await db.MasterLeaveTypes
+                .FirstOrDefaultAsync(x => x.Id == id);
+        }
+
+        public async Task AddLeaveType(
+            MasterLeaveType leaveType)
+        {
+            db.MasterLeaveTypes.Add(leaveType);
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task UpdateLeaveType(
+            MasterLeaveType leaveType)
+        {
+            var existingLeave =
+                await db.MasterLeaveTypes
+                    .FirstOrDefaultAsync(
+                        x => x.Id == leaveType.Id);
+
+            if (existingLeave != null)
             {
-                this.db = db;
+                existingLeave.Leave =
+                    leaveType.Leave;
+
+                existingLeave.Status =
+                    leaveType.Status;
+
+                await db.SaveChangesAsync();
             }
+        }
 
-            public List<MasterLeaveType> GetLeaveTypes()
+        public async Task DeleteLeaveType(int id)
+        {
+            var leaveType =
+                await db.MasterLeaveTypes
+                    .FirstOrDefaultAsync(
+                        x => x.Id == id);
+
+            if (leaveType != null)
             {
-                return db.MasterLeaveTypes
-                    .OrderByDescending(x => x.Id)
-                    .ToList();
+                db.MasterLeaveTypes.Remove(
+                    leaveType);
+
+                await db.SaveChangesAsync();
             }
+        }
 
-            public MasterLeaveType? GetLeaveType(int id)
+        public async Task<List<DepartmentLeaves>>
+            GetDepartmentLeaves()
+        {
+            return await db.DepartmentLeaves
+                .Include(x => x.Department)
+                .Include(x => x.MasterLeaveType)
+                .ToListAsync();
+        }
+
+        public async Task<DepartmentLeaves?>
+            GetDepartmentLeave(int id)
+        {
+            return await db.DepartmentLeaves
+                .Include(x => x.Department)
+                .Include(x => x.MasterLeaveType)
+                .FirstOrDefaultAsync(
+                    x => x.Id == id);
+        }
+
+        public async Task AddDepartmentLeave(
+            DepartmentLeaves departmentLeave)
+        {
+            db.DepartmentLeaves.Add(
+                departmentLeave);
+
+            await db.SaveChangesAsync();
+        }
+
+        public async Task DeleteDepartmentLeave(int id)
+        {
+            var departmentLeave =
+                await db.DepartmentLeaves
+                    .FirstOrDefaultAsync(
+                        x => x.Id == id);
+
+            if (departmentLeave != null)
             {
-                return db.MasterLeaveTypes
-                    .FirstOrDefault(x => x.Id == id);
+                db.DepartmentLeaves.Remove(
+                    departmentLeave);
+
+                await db.SaveChangesAsync();
             }
+        }
 
-            public void AddLeaveType(MasterLeaveType leaveType)
+        public async Task<List<Department>>
+            GetDepartments()
+        {
+            return await db.Departments
+                .ToListAsync();
+        }
+
+        public async Task ChangeLeaveTypeStatus(
+            int id,
+            string status)
+        {
+            var leaveType =
+                await db.MasterLeaveTypes
+                    .FirstOrDefaultAsync(
+                        x => x.Id == id);
+
+            if (leaveType != null)
             {
-                db.MasterLeaveTypes.Add(leaveType);
-                db.SaveChanges();
-            }
+                leaveType.Status = status;
 
-            public void DeleteLeaveType(int id)
-            {
-                var leaveType = db.MasterLeaveTypes
-                    .FirstOrDefault(x => x.Id == id);
-
-                if (leaveType != null)
-                {
-                    db.MasterLeaveTypes.Remove(leaveType);
-                    db.SaveChanges();
-                }
-            }
-
-            public List<DepartmentLeaves> GetDepartmentLeaves()
-            {
-                return db.DepartmentLeaves
-                    .Include(x => x.Department)
-                    .Include(x => x.MasterLeaveType)
-                    .OrderByDescending(x => x.Id)
-                    .ToList();
-            }
-
-            public DepartmentLeaves? GetDepartmentLeave(int id)
-            {
-                return db.DepartmentLeaves
-                    .Include(x => x.Department)
-                    .Include(x => x.MasterLeaveType)
-                    .FirstOrDefault(x => x.Id == id);
-            }
-
-            public void AddDepartmentLeave(DepartmentLeaves departmentLeave)
-            {
-                db.DepartmentLeaves.Add(departmentLeave);
-                db.SaveChanges();
-            }
-
-            public void DeleteDepartmentLeave(int id)
-            {
-                var departmentLeave = db.DepartmentLeaves
-                    .FirstOrDefault(x => x.Id == id);
-
-                if (departmentLeave != null)
-                {
-                    db.DepartmentLeaves.Remove(departmentLeave);
-                    db.SaveChanges();
-                }
-            }
-
-            public List<Department> GetDepartments()
-            {
-                return db.Departments
-                    .OrderBy(x => x.Name)
-                    .ToList();
-            }
-
-            public void ChangeLeaveTypeStatus(int id, string status)
-            {
-                var leaveType = db.MasterLeaveTypes
-                    .FirstOrDefault(x => x.Id == id);
-
-                if (leaveType != null)
-                {
-                    leaveType.Status = status;
-                    db.SaveChanges();
-                }
+                await db.SaveChangesAsync();
             }
         }
     }
+}
