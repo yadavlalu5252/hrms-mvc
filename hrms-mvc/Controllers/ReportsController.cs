@@ -53,7 +53,7 @@ namespace hrms_mvc.Controllers
 
         public async Task<IActionResult> LeaveReport(string? dateFilter,string? status,string? sortBy)
         {
-            // Summary cards
+            
             ViewBag.TotalLeaves = await lrs.TotalLeaves();
 
             ViewBag.ApprovedLeaves = await lrs.ApprovedLeaves();
@@ -62,10 +62,8 @@ namespace hrms_mvc.Controllers
 
             ViewBag.RejectedLeaves = await lrs.RejectedLeaves();
 
-            // Leave records
             var records =await lrs.GetLeaveRecords(dateFilter,status,sortBy);
-
-            // Keep selected filter values
+            
             ViewBag.DateFilter = dateFilter;
             ViewBag.Status = status;
             ViewBag.SortBy = sortBy;
