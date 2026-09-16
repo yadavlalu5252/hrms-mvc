@@ -37,6 +37,9 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
+<<<<<<< HEAD
+builder.Services.AddScoped<IResignationService, ResignationService>();
+=======
 builder.Services.AddScoped<IEmployeeListService, EmployeeListService>();
 builder.Services.AddScoped<IEmployeeReportService, EmployeeReportService>();
 builder.Services.AddScoped<IAttendanceReportService, AttendanceReportService>();
@@ -47,6 +50,7 @@ builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
 
 
 
+>>>>>>> main
 
 
 
