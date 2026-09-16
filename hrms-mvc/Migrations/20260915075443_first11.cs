@@ -6,11 +6,35 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace hrms_mvc.Migrations
 {
     /// <inheritdoc />
-    public partial class updb : Migration
+    public partial class first11 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "AllProjects",
+                columns: table => new
+                {
+                    ProjectsId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClientName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ProjectValue = table.Column<double>(type: "float", nullable: false),
+                    PriceType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    LogoPath = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ManagerName = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AllProjects", x => x.ProjectsId);
+                });
+
             migrationBuilder.CreateTable(
                 name: "DeductionTypes",
                 columns: table => new
@@ -54,6 +78,36 @@ namespace hrms_mvc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_EarningTypes", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    EventModelId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Date = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    EventTypeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.EventModelId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "EventsTypes",
+                columns: table => new
+                {
+                    EventTypesId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Colour = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EventsTypes", x => x.EventTypesId);
                 });
 
             migrationBuilder.CreateTable(
@@ -103,6 +157,31 @@ namespace hrms_mvc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Roles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tasks",
+                columns: table => new
+                {
+                    TasksId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Priority = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Deadline = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tasks", x => x.TasksId);
+                    table.ForeignKey(
+                        name: "FK_Tasks_AllProjects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "AllProjects",
+                        principalColumn: "ProjectsId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -201,12 +280,62 @@ namespace hrms_mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "TaskBoards",
+                columns: table => new
+                {
+                    TaskBoardsId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProjectId = table.Column<int>(type: "int", nullable: false),
+                    TaskId = table.Column<int>(type: "int", nullable: false),
+                    Percentage = table.Column<int>(type: "int", nullable: false),
+                    DueDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TasksId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TaskBoards", x => x.TaskBoardsId);
+                    table.ForeignKey(
+                        name: "FK_TaskBoards_AllProjects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "AllProjects",
+                        principalColumn: "ProjectsId");
+                    table.ForeignKey(
+                        name: "FK_TaskBoards_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "TasksId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TaskBoards_Tasks_TasksId",
+                        column: x => x.TasksId,
+                        principalTable: "Tasks",
+                        principalColumn: "TasksId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Taskmembers",
+                columns: table => new
+                {
+                    AssignedId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TaskId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Taskmembers", x => x.AssignedId);
+                    table.ForeignKey(
+                        name: "FK_Taskmembers_Tasks_TaskId",
+                        column: x => x.TaskId,
+                        principalTable: "Tasks",
+                        principalColumn: "TasksId");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Email = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -576,6 +705,31 @@ namespace hrms_mvc.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_TaskBoards_ProjectId",
+                table: "TaskBoards",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskBoards_TaskId",
+                table: "TaskBoards",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TaskBoards_TasksId",
+                table: "TaskBoards",
+                column: "TasksId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Taskmembers_TaskId",
+                table: "Taskmembers",
+                column: "TaskId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tasks_ProjectId",
+                table: "Tasks",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Timesheet_UserId",
                 table: "Timesheet",
                 column: "UserId");
@@ -612,6 +766,12 @@ namespace hrms_mvc.Migrations
                 name: "EmployeeFamilyDetails");
 
             migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "EventsTypes");
+
+            migrationBuilder.DropTable(
                 name: "LeaveBalances");
 
             migrationBuilder.DropTable(
@@ -622,6 +782,12 @@ namespace hrms_mvc.Migrations
 
             migrationBuilder.DropTable(
                 name: "Payslips");
+
+            migrationBuilder.DropTable(
+                name: "TaskBoards");
+
+            migrationBuilder.DropTable(
+                name: "Taskmembers");
 
             migrationBuilder.DropTable(
                 name: "Timesheet");
@@ -639,6 +805,9 @@ namespace hrms_mvc.Migrations
                 name: "DepartmentLeaves");
 
             migrationBuilder.DropTable(
+                name: "Tasks");
+
+            migrationBuilder.DropTable(
                 name: "DeductionTypes");
 
             migrationBuilder.DropTable(
@@ -649,6 +818,9 @@ namespace hrms_mvc.Migrations
 
             migrationBuilder.DropTable(
                 name: "MasterLeaveTypes");
+
+            migrationBuilder.DropTable(
+                name: "AllProjects");
 
             migrationBuilder.DropTable(
                 name: "Designations");

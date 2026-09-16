@@ -1,0 +1,347 @@
+﻿@model List<hrms_mvc.Models.Attendance>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Attendance Report";
+
+    var selectedDateFilter = Context.Request.Query["dateFilter"].ToString();
+    var selectedStatus = Context.Request.Query["status"].ToString();
+    var selectedSortBy = Context.Request.Query["sortBy"].ToString();
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1">Attendance Report</h3>
+            <p class="text-muted mb-0">
+                Employee attendance overview
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+
+        <div class="col-md-6 col-lg">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Working Days</h6>
+                    <h3>@ViewBag.TotalWorkingDays</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Leave Taken</h6>
+                    <h3>@ViewBag.TotalLeaveTaken</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Holidays</h6>
+                    <h3>@ViewBag.TotalHolidays</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Total Half Days</h6>
+                    <h3>@ViewBag.TotalHalfDays</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <h6 class="text-muted">Attendance Records</h6>
+                    <h3>@Model.Count</h3>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="card shadow-sm border-0 mb-4">
+        <div class="card-body">
+
+            <form method="get"
+                  asp-controller="Reports"
+                  asp-action="Attendance">
+
+                <div class="row">
+
+                    <!-- Date Filter -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Select Date Filter:
+                        </label>
+
+                        <select name="dateFilter"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">--Select Date Filter--</option>
+
+                            <option value="Yesterday"
+                                    selected="@(selectedDateFilter == "Yesterday")">
+                                Yesterday
+                            </option>
+
+                            <option value="Last 7 Days"
+                                    selected="@(selectedDateFilter == "Last 7 Days")">
+                                Last 7 Days
+                            </option>
+
+                            <option value="Last 30 Days"
+                                    selected="@(selectedDateFilter == "Last 30 Days")">
+                                Last 30 Days
+                            </option>
+
+                            <option value="Last Year"
+                                    selected="@(selectedDateFilter == "Last Year")">
+                                Last Year
+                            </option>
+
+                            <option value="This Year"
+                                    selected="@(selectedDateFilter == "This Year")">
+                                This Year
+                            </option>
+
+                            <option value="Custom Range"
+                                    selected="@(selectedDateFilter == "Custom Range")">
+                                Custom Range
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status Filter -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Select Status Filter:
+                        </label>
+
+                        <select name="status"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">--Select Status--</option>
+
+                            <option value="Present"
+                                    selected="@(selectedStatus == "Present")">
+                                Present
+                            </option>
+
+                            <option value="Absent"
+                                    selected="@(selectedStatus == "Absent")">
+                                Absent
+                            </option>
+
+                            <option value="Half Day"
+                                    selected="@(selectedStatus == "Half Day")">
+                                Half Day
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Sort By -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Sort By:
+                        </label>
+
+                        <select name="sortBy"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">--Select--</option>
+
+                            <option value="Ascending"
+                                    selected="@(selectedSortBy == "Ascending")">
+                                Ascending
+                            </option>
+
+                            <option value="Descending"
+                                    selected="@(selectedSortBy == "Descending")">
+                                Descending
+                            </option>
+
+                            <option value="Last 7 Days"
+                                    selected="@(selectedSortBy == "Last 7 Days")">
+                                Last 7 Days
+                            </option>
+
+                            <option value="Last Month"
+                                    selected="@(selectedSortBy == "Last Month")">
+                                Last Month
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+
+    <!-- Attendance Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h5 class="mb-0">
+                    Attendance Records
+                </h5>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Attendance Id</th>
+                            <th>Employee</th>
+                            <th>Date</th>
+                            <th>Check-In</th>
+                            <th>Check-Out</th>
+                            <th>Lunch In</th>
+                            <th>Lunch Out</th>
+                            <th>Status</th>
+                            <th>Working Hours</th>
+                            <th>Overtime Hours</th>
+                            <th>Break Hours</th>
+                            <th>Late</th>
+                            <th>Production Hours</th>
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @item.Id
+                                </td>
+
+                                <td>
+                                    @(item.User?.FirstName + " " + item.User?.LastName)
+                                </td>
+
+                                <td>
+                                    @item.Date.ToString("dd-MM-yyyy")
+                                </td>
+
+                                <td>
+                                    @(item.Checkin?.ToString("hh:mm tt") ?? "-")
+                                </td>
+
+                                <td>
+                                    @(item.Checkout?.ToString("hh:mm tt") ?? "-")
+                                </td>
+
+                                <td>
+                                    @(item.Lunchin?.ToString("hh:mm tt") ?? "-")
+                                </td>
+
+                                <td>
+                                    @(item.Lunchout?.ToString("hh:mm tt") ?? "-")
+                                </td>
+
+                                <td>
+
+                                    @if (item.Status == "Present")
+                                    {
+                                        <span class="badge bg-success">
+                                            Present
+                                        </span>
+                                    }
+                                    else if (item.Status == "Absent")
+                                    {
+                                        <span class="badge bg-danger">
+                                            Absent
+                                        </span>
+                                    }
+                                    else if (item.Status == "Half Day")
+                                    {
+                                        <span class="badge bg-warning text-dark">
+                                            Half Day
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-secondary">
+                                            @item.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+                                <td>
+                                    @item.WorkHours
+                                </td>
+
+                                <td>
+                                    @item.OTHours
+                                </td>
+
+                                <td>
+                                    @item.BreakHours
+                                </td>
+
+                                <td>
+                                    @item.Late min
+                                </td>
+
+                                <td>
+                                    @item.ProdHours
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

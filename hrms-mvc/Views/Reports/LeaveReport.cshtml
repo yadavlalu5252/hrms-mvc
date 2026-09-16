@@ -1,0 +1,542 @@
+﻿@model List<hrms_mvc.Models.LeaveRequest>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Leave Report";
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h3 class="mb-1">Leave Report</h3>
+            <p class="text-muted mb-0">
+                View and analyze employee leave records
+            </p>
+        </div>
+    </div>
+
+
+    <!-- Summary Cards -->
+    <div class="row g-3 mb-4">
+
+        <!-- Total Leaves -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">Total Leaves</p>
+                            <h3 class="mb-0">
+                                @ViewBag.TotalLeaves
+                            </h3>
+                        </div>
+
+                        <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-calendar-check fs-4 text-primary"></i>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Approved Leaves -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">Approved Leaves</p>
+                            <h3 class="mb-0">
+                                @ViewBag.ApprovedLeaves
+                            </h3>
+                        </div>
+
+                        <div class="bg-success bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-check-circle fs-4 text-success"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Pending -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">Pending Requests</p>
+                            <h3 class="mb-0">
+                                @ViewBag.PendingLeaves
+                            </h3>
+                        </div>
+
+                        <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Rejected -->
+        <div class="col-xl-3 col-md-6">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center">
+
+                        <div>
+                            <p class="text-muted mb-1">Rejected Leaves</p>
+                            <h3 class="mb-0">
+                                @ViewBag.RejectedLeaves
+                            </h3>
+                        </div>
+
+                        <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+                            <i class="bi bi-x-circle fs-4 text-danger"></i>
+                        </div>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- Date Filter -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Date
+                    </label>
+
+                    <select id="dateFilter"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.DateFilter))">
+                            All Dates
+                        </option>
+
+                        <option value="Yesterday"
+                                selected="@(ViewBag.DateFilter == "Yesterday")">
+                            Yesterday
+                        </option>
+
+                        <option value="Last 7 Days"
+                                selected="@(ViewBag.DateFilter == "Last 7 Days")">
+                            Last 7 Days
+                        </option>
+
+                        <option value="Last 30 Days"
+                                selected="@(ViewBag.DateFilter == "Last 30 Days")">
+                            Last 30 Days
+                        </option>
+
+                        <option value="Last Year"
+                                selected="@(ViewBag.DateFilter == "Last Year")">
+                            Last Year
+                        </option>
+
+                        <option value="This Year"
+                                selected="@(ViewBag.DateFilter == "This Year")">
+                            This Year
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status Filter -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Status
+                    </label>
+
+                    <select id="status"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.Status))">
+                            All Status
+                        </option>
+
+                        <option value="Approved"
+                                selected="@(ViewBag.Status == "Approved")">
+                            Approved
+                        </option>
+
+                        <option value="Pending"
+                                selected="@(ViewBag.Status == "Pending")">
+                            Pending
+                        </option>
+
+                        <option value="Rejected"
+                                selected="@(ViewBag.Status == "Rejected")">
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Sort -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Sort By
+                    </label>
+
+                    <select id="sortBy"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.SortBy))">
+                            Default
+                        </option>
+
+                        <option value="Ascending"
+                                selected="@(ViewBag.SortBy == "Ascending")">
+                            Date - Oldest First
+                        </option>
+
+                        <option value="Descending"
+                                selected="@(ViewBag.SortBy == "Descending")">
+                            Date - Newest First
+                        </option>
+
+                        <option value="Last 7 Days"
+                                selected="@(ViewBag.SortBy == "Last 7 Days")">
+                            Last 7 Days
+                        </option>
+
+                        <option value="Last Month"
+                                selected="@(ViewBag.SortBy == "Last Month")">
+                            Last Month
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Leave Table -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Leave Records
+                </h5>
+
+                <span class="text-muted">
+                    @Model.Count record(s)
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-0">
+
+            <div class="table-responsive">
+
+                <table class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Employee</th>
+
+                            <th>Leave Type</th>
+
+                            <th>Start Date</th>
+
+                            <th>End Date</th>
+
+                            <th>Days</th>
+
+                            <th>Reason</th>
+
+                            <th>Approved By</th>
+
+                            <th>Status</th>
+
+                            <th style="min-width:250px;">
+                                Status History
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var leave in Model)
+                            {
+                                <tr>
+
+                                    <!-- ID -->
+                                    <td>
+                                        <span class="fw-semibold">
+                                            @leave.Id
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Employee -->
+                                    <td>
+                                        @if (leave.User != null)
+                                        {
+                                            <div class="fw-semibold">
+                                                @leave.User.FirstName
+                                                @leave.User.LastName
+                                            </div>
+
+                                            <small class="text-muted">
+                                                @leave.User.Email
+                                            </small>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+                                        }
+                                    </td>
+
+
+                                    <!-- Leave Type -->
+                                    <td>
+                                        @if (leave.MasterLeaveType != null)
+                                        {
+                                            <span>
+                                                @leave.MasterLeaveType.Leave
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+                                        }
+                                    </td>
+
+
+                                    <!-- Start Date -->
+                                    <td>
+                                        @leave.StartDate.ToString("dd/MM/yyyy")
+                                    </td>
+
+
+                                    <!-- End Date -->
+                                    <td>
+                                        @leave.EndDate.ToString("dd/MM/yyyy")
+                                    </td>
+
+
+                                    <!-- Days -->
+                                    <td>
+                                        <span class="badge bg-light text-dark">
+                                            @leave.NumberOfDays
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Reason -->
+                                    <td>
+                                        @leave.Reason
+                                    </td>
+
+
+                                    <!-- Approved By -->
+                                    <td>
+                                        @leave.ApprovedBy
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        @if (leave.Status == "Approved")
+                                        {
+                                            <span class="badge bg-success">
+                                                Approved
+                                            </span>
+                                        }
+                                        else if (leave.Status == "Rejected")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+                                        }
+                                        else if (leave.Status == "Pending")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Pending
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @leave.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Status History -->
+                                    <td>
+
+                                        @if (!string.IsNullOrEmpty(leave.StatusHistory))
+                                        {
+                                            <div style="white-space: normal; line-height: 1.6;">
+                                                @leave.StatusHistory
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                No history
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="10"
+                                    class="text-center py-5">
+
+                                    <div class="text-muted">
+
+                                        <i class="bi bi-calendar-x fs-2"></i>
+
+                                        <p class="mt-2 mb-0">
+                                            No leave records found.
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- Automatic Filter Script -->
+
+<script>
+
+    function applyLeaveFilter() {
+
+        const dateFilter =
+            document.getElementById("dateFilter").value;
+
+        const status =
+            document.getElementById("status").value;
+
+        const sortBy =
+            document.getElementById("sortBy").value;
+
+
+        const params = new URLSearchParams();
+
+
+        if (dateFilter) {
+            params.append("dateFilter", dateFilter);
+        }
+
+        if (status) {
+            params.append("status", status);
+        }
+
+        if (sortBy) {
+            params.append("sortBy", sortBy);
+        }
+
+
+        window.location.href =
+            '@Url.Action("LeaveReport", "Reports")'
+            + (params.toString()
+                ? "?" + params.toString()
+                : "");
+    }
+
+
+    document
+        .getElementById("dateFilter")
+        .addEventListener("change", applyLeaveFilter);
+
+
+    document
+        .getElementById("status")
+        .addEventListener("change", applyLeaveFilter);
+
+
+    document
+        .getElementById("sortBy")
+        .addEventListener("change", applyLeaveFilter);
+
+</script>
