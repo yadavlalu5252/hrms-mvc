@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.Design;
 
 namespace hrms_mvc.Models
 {
@@ -8,9 +9,9 @@ namespace hrms_mvc.Models
 
         public int Id { get; set; }
 
-        //[ForeignKey("Department")]
-        //public int DepartmentId { get; set; }
-        //public Department Department { get; set; }
+        [ForeignKey("Department")]
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; }
 
         [ForeignKey("MasterLeaveType")]
         public int LeaveTypeId { get; set; }
