@@ -1,0 +1,39 @@
+﻿@model List<hrms_mvc.Models.EventModel>
+
+<h2>Add Event</h2>
+
+<form asp-controller="Event" asp-action="AddEvent" method="post">
+
+    <label>Title</label>
+    <input type="text" name="Title" />
+
+    <br /><br />
+
+    <label>Date</label>
+    <input type="text" name="Date" />
+
+    <br /><br />
+
+    <label>Event Type Id</label>
+    <input type="number" name="EventTypeId" />
+
+    <br /><br />
+
+    <button type="submit">Add Event</button>
+
+</form>
+
+<hr />
+
+<h2>Events</h2>
+
+@foreach (var item in Model)
+{
+    <p>
+        @item.EventModelId |
+        @item.Title |
+        @item.Date |
+        @item.Status |
+        @item.EventTypeId
+    </p>
+}
