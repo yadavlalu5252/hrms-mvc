@@ -20,7 +20,7 @@ namespace hrms_mvc.Models
         public string Status { get; set; }
         public string ManagerName { get; set; }
         public List<Tasks> Tasks { get; set; }
-        
+
 
     }
 }

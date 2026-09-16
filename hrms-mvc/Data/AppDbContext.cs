@@ -9,17 +9,21 @@ namespace hrms_mvc.Data
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<Department> Departments { get; set; }
+        public DbSet <DepartmentLeaves> DepartmentLeaves { get; set; }
         public DbSet<Designation> Designations { get; set; }
         public DbSet<EmployeeBankDetails> EmployeeBankDetails { get; set; }
         public DbSet<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; }
         public DbSet<Organization> Organizations { get; set; }
+
+        public DbSet<Attendance> Attendances { get; set; }
+
         public DbSet<EventModel> Events { get; set; }
         public DbSet<EventTypes> EventsTypes { get; set; }
         public DbSet<Projects> AllProjects { get; set; }
         public DbSet<TaskBoards> TaskBoards { get; set; }
         public DbSet<Tasks> Tasks { get; set; }
         public DbSet<TaskMembers> Taskmembers { get; set; }
-
+        public DbSet<Timesheet> Timesheets { get; set; }
         public DbSet<Deduction> Deductions { get; set; }
         public DbSet<DeductionType> DeductionTypes { get; set; }
         public DbSet<Earning> Earning { get; set; }
@@ -29,10 +33,18 @@ namespace hrms_mvc.Data
         public DbSet<EmployeeSalaries> EmployeeSalaries { get; set; }
         public DbSet<Payslips> Payslips { get; set; }
 
-        public DbSet<DepartmentLeaves> DepartmentLeaves { get; set; }
+   
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<MasterLeaveType> MasterLeaveTypes { get; set; }
+        public DbSet<Attendance> Attendances { get; set; }
+        public DbSet<TrainingType> TrainingType { get; set; }
+        public DbSet<Traininglist> Traininglist { get; set; }
+
+        public DbSet<Trainers> Trainers { get; set; }
+        public DbSet<MasterDocAdmin> MasterDocAdmin { get; set; }
+        public DbSet<MasterDocEmp> MasterDocEmp { get; set; }
+        public DbSet<Documents> Documents { get; set; }
 
 
         public DbSet<Promotion> Promotions { get; set; } 
@@ -93,6 +105,11 @@ namespace hrms_mvc.Data
                 .HasForeignKey(dl => dl.LeaveTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<User>()
+            .HasOne(x => x.EmployeeBankDetails)
+            .WithOne(x => x.User)
+            .HasForeignKey<EmployeeBankDetails>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Promotion>()
                .HasOne(p => p.User)
                .WithMany()

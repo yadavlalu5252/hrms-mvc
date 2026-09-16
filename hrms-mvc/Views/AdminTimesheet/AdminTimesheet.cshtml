@@ -1,0 +1,580 @@
+﻿@model List<hrms_mvc.Models.Timesheet>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <h2 class="page-title">
+            Admin Timesheet Management
+        </h2>
+
+        <div class="dropdown">
+
+            <button type="button"
+                    class="btn btn-outline-secondary dropdown-toggle"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download"></i>
+                Export
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <button type="button"
+                            class="dropdown-item"
+                            id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel"></i>
+                        Export as Excel
+
+                    </button>
+                </li>
+
+                <li>
+                    <button type="button"
+                            class="dropdown-item"
+                            id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf"></i>
+                        Export as PDF
+
+                    </button>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show">
+
+            @TempData["success"]
+
+            <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="alert">
+            </button>
+
+        </div>
+    }
+
+
+    <div class="d-flex gap-2 mb-3">
+
+        <form asp-controller="AdminTimesheet"
+              asp-action="ApproveSelected"
+              method="post"
+              id="approveForm">
+
+            @Html.AntiForgeryToken()
+
+            <div id="approveIds"></div>
+
+            <button type="submit"
+                    class="btn btn-success">
+
+                Approve Selected
+
+            </button>
+
+        </form>
+
+
+        <form asp-controller="AdminTimesheet"
+              asp-action="RejectSelected"
+              method="post"
+              id="rejectForm">
+
+            @Html.AntiForgeryToken()
+
+            <div id="rejectIds"></div>
+
+            <button type="submit"
+                    class="btn btn-danger">
+
+                Reject Selected
+
+            </button>
+
+        </form>
+
+    </div>
+
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Timesheet
+                </h5>
+
+                <div class="d-flex gap-2">
+
+                    <input type="text"
+                           id="projectSearch"
+                           class="form-control form-control-sm"
+                           placeholder="Search by Project Name"
+                           style="width:190px;" />
+
+
+                    <select id="statusFilter"
+                            class="form-select form-select-sm"
+                            style="width:150px;">
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        @if (Model != null)
+                        {
+                            var statuses = Model
+                                .Where(x => !string.IsNullOrWhiteSpace(x.Status))
+                                .Select(x => x.Status)
+                                .Distinct()
+                                .OrderBy(x => x);
+
+                            foreach (var status in statuses)
+                            {
+                                <option value="@status">
+                                    @status
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+
+                    <select id="employeeFilter"
+                            class="form-select form-select-sm"
+                            style="width:150px;">
+
+                        <option value="">
+                            All Employees
+                        </option>
+
+                        @if (Model != null)
+                        {
+                            var employees = Model
+                                .Where(x => x.User != null)
+                                .Select(x =>
+                                    x.User.FirstName + " " +
+                                    x.User.LastName)
+                                .Distinct()
+                                .OrderBy(x => x);
+
+                            foreach (var employee in employees)
+                            {
+                                <option value="@employee">
+                                    @employee
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="timesheetTable"
+                       class="table table-bordered table-hover align-middle w-100">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>
+                                <input type="checkbox"
+                                       id="selectAll" />
+                            </th>
+
+                            <th>
+                                Employee
+                            </th>
+
+                            <th>
+                                Created At
+                            </th>
+
+                            <th>
+                                Project
+                            </th>
+
+                            <th>
+                                Worked Hours
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Actions
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Count > 0)
+                        {
+                            foreach (var timesheet in Model)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        <input type="checkbox"
+                                               class="timesheetCheck"
+                                               value="@timesheet.Id" />
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (timesheet.User != null)
+                                        {
+                                            <div class="d-flex align-items-center">
+
+                                                @if (!string.IsNullOrWhiteSpace(
+                                                    timesheet.User.ProfilePicture))
+                                                {
+                                                    <img src="@timesheet.User.ProfilePicture"
+                                                         class="rounded-circle me-2"
+                                                         style="width:35px;height:35px;object-fit:cover;" />
+                                                }
+                                                else
+                                                {
+                                                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center me-2"
+                                                         style="width:35px;height:35px;">
+
+                                                        <i class="bi bi-person"></i>
+
+                                                    </div>
+                                                }
+
+                                                <span>
+                                                    @timesheet.User.FirstName
+                                                    @timesheet.User.LastName
+                                                </span>
+
+                                            </div>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                Employee not found
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @timesheet.CreatedAt.ToLocalTime()
+                                        .ToString("dd-MM-yyyy")
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="text-muted">
+                                            -
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @timesheet.WorkHours
+
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (timesheet.Status == "Approved")
+                                        {
+                                            <span class="badge bg-success">
+                                                Approved
+                                            </span>
+                                        }
+                                        else if (timesheet.Status == "Rejected")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Rejected
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                @timesheet.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <form asp-controller="AdminTimesheet"
+                                              asp-action="Delete"
+                                              method="post"
+                                              class="d-inline">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <input type="hidden"
+                                                   name="id"
+                                                   value="@timesheet.Id" />
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-danger"
+                                                    title="Delete"
+                                                    onclick="return confirm('Are you sure you want to delete this timesheet?');">
+
+                                                <i class="bi bi-trash"></i>
+
+                                            </button>
+
+                                        </form>
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+            var table = $('#timesheetTable').DataTable({
+
+                pageLength: 5,
+
+                order: [[2, 'desc']],
+
+                dom:
+                    '<"row mb-3"<"col-md-6"l><"col-md-6"f>>' +
+                    'rt' +
+                    '<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+
+                columnDefs: [
+                    {
+                        orderable: false,
+                        targets: [0, 6]
+                    }
+                ],
+
+                buttons: [
+
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Timesheet List',
+                        className: 'export-excel'
+                    },
+
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Timesheet List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'export-pdf'
+                    }
+
+                ]
+
+            });
+
+
+            $('.dt-buttons').hide();
+
+
+            $('#statusFilter').on('change', function() {
+
+                var status = $(this).val();
+
+                table
+                    .column(5)
+                    .search(status)
+                    .draw();
+
+            });
+
+
+            $('#employeeFilter').on('change', function() {
+
+                var employee = $(this).val();
+
+                table
+                    .column(1)
+                    .search(employee)
+                    .draw();
+
+            });
+
+
+            $('#projectSearch').on('keyup', function() {
+
+                table
+                    .column(3)
+                    .search(this.value)
+                    .draw();
+
+            });
+
+
+            $('#exportExcel').on('click', function() {
+
+                table
+                    .button('.export-excel')
+                    .trigger();
+
+            });
+
+
+            $('#exportPdf').on('click', function() {
+
+                table
+                    .button('.export-pdf')
+                    .trigger();
+
+            });
+
+
+            $('#selectAll').on('change', function() {
+
+                $('.timesheetCheck')
+                    .prop('checked', this.checked);
+
+            });
+
+
+            $('#approveForm').on('submit', function(e) {
+
+                var checked =
+                    $('.timesheetCheck:checked');
+
+                if (checked.length === 0) {
+
+                    alert('Please select at least one timesheet.');
+
+                    e.preventDefault();
+
+                    return;
+
+                }
+
+
+                $('#approveIds').empty();
+
+
+                checked.each(function() {
+
+                    $('#approveIds').append(
+                        '<input type="hidden" name="selectedIds" value="' +
+                        $(this).val() +
+                        '" />'
+                    );
+
+                });
+
+            });
+
+
+            $('#rejectForm').on('submit', function(e) {
+
+                var checked =
+                    $('.timesheetCheck:checked');
+
+                if (checked.length === 0) {
+
+                    alert('Please select at least one timesheet.');
+
+                    e.preventDefault();
+
+                    return;
+
+                }
+
+
+                $('#rejectIds').empty();
+
+
+                checked.each(function() {
+
+                    $('#rejectIds').append(
+                        '<input type="hidden" name="selectedIds" value="' +
+                        $(this).val() +
+                        '" />'
+                    );
+
+                });
+
+            });
+
+
+        });
+
+    </script>
+}

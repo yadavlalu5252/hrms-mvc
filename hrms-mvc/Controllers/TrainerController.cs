@@ -2,7 +2,7 @@
 
 namespace hrms_mvc.Controllers
 {
-    public class LeaveController : Controller
+    public class TrainerController : Controller
     {
         public IActionResult Index()
         {

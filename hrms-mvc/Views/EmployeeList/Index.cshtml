@@ -1,0 +1,825 @@
+﻿@model List<hrms_mvc.Models.User>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Employee List";
+}
+
+<div class="container-fluid py-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2 class="fw-bold">Employee</h2>
+            <p class="text-muted mb-0">Employee / Employee List</p>
+        </div>
+
+        <button type="button"
+                class="btn"
+                style="background-color: #F26522; color: white;"
+                data-bs-toggle="modal"
+                data-bs-target="#addEmployeeModal">
+            <i class="bi bi-plus-circle"></i>
+            Add Employee
+        </button>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row mb-4">
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">Total Employee</small>
+                    <h4 class="fw-bold">@Model.Count</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">Active</small>
+                    <h4 class="fw-bold text-success">
+                        @Model.Count(x => x.Status == "Active")
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">Inactive</small>
+                    <h4 class="fw-bold text-danger">
+                        @Model.Count(x => x.Status == "Inactive")
+                    </h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="card shadow-sm border-0">
+                <div class="card-body">
+                    <small class="text-muted">New Joiners</small>
+                    <h4 class="fw-bold text-primary">
+    @Model.Count(x =>
+        x.DateOfJoining.Month == DateTime.Now.Month &&
+        x.DateOfJoining.Year == DateTime.Now.Year)
+</h4>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Employee List Card -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-header bg-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold">Employee List</h5>
+
+            <div class="d-flex gap-2">
+
+                <select id="statusFilter" class="form-select form-select-sm">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+
+                <select id="sortFilter" class="form-select form-select-sm">
+                    <option value="">Sort By</option>
+                    <option value="asc">Name A-Z</option>
+                    <option value="desc">Name Z-A</option>
+                </select>
+
+                <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown">
+                        Export
+                    </button>
+
+                    <ul class="dropdown-menu">
+                        <li>
+                            <button class="dropdown-item" id="exportExcel">
+                                <i class="bi bi-file-earmark-excel"></i>
+                                Excel
+                            </button>
+                        </li>
+
+                        <li>
+                            <button class="dropdown-item" id="exportPdf">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                                PDF
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+                <table id="employeeTable"
+                       class="table table-bordered table-hover align-middle">
+
+                    <thead class="table-light">
+                        <tr>
+                            <th>Id</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Number</th>
+                            <th>Designation</th>
+                            <th>Reporting Manager</th>
+                            <th>DOJ</th>
+                            <th>Status</th>
+                            <th>Created By</th>
+                            <th>Modified By</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>@item.Id</td>
+
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+
+                                        @if (!string.IsNullOrEmpty(item.ProfilePicture))
+                                        {
+                                            <img src="@item.ProfilePicture"
+                                                 width="38"
+                                                 height="38"
+                                                 class="rounded-circle"
+                                                 style="object-fit: cover;"
+                                                 alt="Profile Picture" />
+                                        }
+                                        else
+                                        {
+                                            <img src="https://i.pravatar.cc/100?img=12"
+                                                 width="38"
+                                                 height="38"
+                                                 class="rounded-circle"
+                                                 style="object-fit: cover;"
+                                                 alt="Profile Picture" />
+                                        }
+
+                                        <span>
+                                            @item.FirstName @item.LastName
+                                        </span>
+
+                                    </div>
+                                </td>
+
+                                <td>@item.Email</td>
+
+                                <td>@item.MobileNumber</td>
+
+                                <td>
+                                    @item.Designation?.DesignationName
+                                </td>
+
+                                <td>
+                                    @item.ReportingManager
+                                </td>
+
+                                <td>
+                                    @(item.DateOfJoining.ToString("dd-MM-yyyy") ?? "-")
+                                </td>
+
+                                <td>
+                                    @if (item.Status == "Active")
+                                    {
+                                        <span class="badge bg-success">
+                                            ● Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">
+                                            ● Inactive
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>@item.CreatedBy</td>
+
+                                <td>@item.ModifiedBy</td>
+
+                                <td>
+                                    <!-- Edit Button -->
+                                    <button type="button"
+                                            class="btn btn-sm editEmployeeButton"
+                                            data-id="@item.Id"
+                                            data-profilepicture="@item.ProfilePicture"
+                                            data-firstname="@item.FirstName"
+                                            data-lastname="@item.LastName"
+                                            data-email="@item.Email"
+                                            data-password="@item.Password"
+                                            data-mobilenumber="@item.MobileNumber"
+                                            data-roleid="@item.RoleId"
+                                            data-departmentid="@item.DepartmentId"
+                                            data-designationid="@item.DesignationId"
+                                            data-dateofjoining="@item.DateOfJoining.ToString("yyyy-MM-dd")"
+                                            data-dateofbirth="@item.DateOfBirth.ToString("yyyy-MM-dd")"
+                                            data-gender="@item.Gender"
+                                            data-address="@item.Address"
+                                            data-aboutemployee="@item.AboutEmployee"
+                                            data-reportingmanager="@item.ReportingManager"
+                                            data-status="@item.Status"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editEmployeeModal"
+                                            title="Edit">
+
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+
+                                    <!-- Delete Button -->
+                                    <form asp-controller="EmployeeList"
+                                          asp-action="DeleteEmployeeList"
+                                          asp-route-id="@item.Id"
+                                          method="post"
+                                          style="display: inline;">
+
+                                        <button type="submit"
+                                                class="btn btn-sm"
+                                                onclick="return confirm('Are you sure you want to delete this employee?');"
+                                                title="Delete">
+
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Employee Modal -->
+<div class="modal fade"
+     id="addEmployeeModal"
+     tabindex="-1"
+     aria-labelledby="addEmployeeModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="addEmployeeModalLabel">
+                    Add Employee
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <form asp-controller="EmployeeList"
+                  asp-action="AddEmployeeList"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text"
+                                   name="FirstName"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text"
+                                   name="LastName"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email"
+                                   name="Email"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password"
+                                   name="Password"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="text"
+                                   name="MobileNumber"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Role</label>
+                            <select name="RoleId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Select Role</option>
+
+                                @foreach (var role in ViewBag.Roles)
+                                {
+                                    <option value="@role.Id">
+                                        @role.RoleName
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Department</label>
+                            <select name="DepartmentId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Select Department</option>
+
+                                @foreach (var department in ViewBag.Departments)
+                                {
+                                    <option value="@department.Id">
+                                        @department.Name
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Designation</label>
+                            <select name="DesignationId"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Select Designation</option>
+
+                                @foreach (var designation in ViewBag.Designations)
+                                {
+                                    <option value="@designation.Id">
+                                        @designation.DesignationName
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date of Joining</label>
+                            <input type="date"
+                                   name="DateOfJoining"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date"
+                                   name="DateOfBirth"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select name="Gender"
+                                    class="form-select">
+
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select name="Status"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Reporting Manager</label>
+                            <input type="text"
+                                   name="ReportingManager"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Profile Picture URL</label>
+                            <input type="text"
+                                   name="ProfilePicture"
+                                   class="form-control"
+                                   placeholder="Enter profile picture URL" />
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea name="Address"
+                                      class="form-control"
+                                      rows="2"></textarea>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">About Employee</label>
+                            <textarea name="AboutEmployee"
+                                      class="form-control"
+                                      rows="2"></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn"
+                            style="background-color: #F26522; color: white;">
+                        Add Employee
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<!-- Edit Employee Modal -->
+<div class="modal fade"
+     id="editEmployeeModal"
+     tabindex="-1"
+     aria-labelledby="editEmployeeModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="editEmployeeModalLabel">
+                    Edit Employee
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <form asp-controller="EmployeeList"
+                  asp-action="EditEmployee"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="editEmployeeId"
+                           name="Id" />
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">First Name</label>
+                            <input type="text"
+                                   id="editFirstName"
+                                   name="FirstName"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Last Name</label>
+                            <input type="text"
+                                   id="editLastName"
+                                   name="LastName"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Email</label>
+                            <input type="email"
+                                   id="editEmail"
+                                   name="Email"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Password</label>
+                            <input type="password"
+                                   id="editPassword"
+                                   name="Password"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Mobile Number</label>
+                            <input type="text"
+                                   id="editMobileNumber"
+                                   name="MobileNumber"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Role</label>
+                            <select id="editRoleId"
+                                    name="RoleId"
+                                    class="form-select">
+
+                                <option value="">Select Role</option>
+
+                                @foreach (var role in ViewBag.Roles)
+                                {
+                                    <option value="@role.Id">
+                                        @role.RoleName
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Department</label>
+                            <select id="editDepartmentId"
+                                    name="DepartmentId"
+                                    class="form-select">
+
+                                <option value="">Select Department</option>
+
+                                @foreach (var department in ViewBag.Departments)
+                                {
+                                    <option value="@department.Id">
+                                        @department.Name
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Designation</label>
+                            <select id="editDesignationId"
+                                    name="DesignationId"
+                                    class="form-select">
+
+                                <option value="">Select Designation</option>
+
+                                @foreach (var designation in ViewBag.Designations)
+                                {
+                                    <option value="@designation.Id">
+                                        @designation.DesignationName
+                                    </option>
+                                }
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date of Joining</label>
+                            <input type="date"
+                                   id="editDateOfJoining"
+                                   name="DateOfJoining"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Date of Birth</label>
+                            <input type="date"
+                                   id="editDateOfBirth"
+                                   name="DateOfBirth"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Gender</label>
+                            <select id="editGender"
+                                    name="Gender"
+                                    class="form-select">
+
+                                <option value="">Select Gender</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                                <option value="Other">Other</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Status</label>
+                            <select id="editStatus"
+                                    name="Status"
+                                    class="form-select">
+
+                                <option value="">Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Inactive">Inactive</option>
+
+                            </select>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Reporting Manager</label>
+                            <input type="text"
+                                   id="editReportingManager"
+                                   name="ReportingManager"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">Profile Picture URL</label>
+                            <input type="text"
+                                   id="editProfilePicture"
+                                   name="ProfilePicture"
+                                   class="form-control" />
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">Address</label>
+                            <textarea id="editAddress"
+                                      name="Address"
+                                      class="form-control"
+                                      rows="2"></textarea>
+                        </div>
+
+                        <div class="col-md-12 mb-3">
+                            <label class="form-label">About Employee</label>
+                            <textarea id="editAboutEmployee"
+                                      name="AboutEmployee"
+                                      class="form-control"
+                                      rows="2"></textarea>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn"
+                            style="background-color: #F26522; color: white;">
+                        Update Employee
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+
+            var table = $('#employeeTable').DataTable({
+                pageLength: 5,
+                order: [[1, 'asc']],
+                dom:
+                    '<"row mb-3"<"col-md-6"l><"col-md-6"f>>' +
+                    'rt' +
+                    '<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Employee List',
+                        className: 'export-excel'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Employee List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'export-pdf'
+                    }
+                ]
+            });
+
+            $('.dt-buttons').hide();
+
+            // Status filter
+            $('#statusFilter').on('change', function() {
+
+                var status = $(this).val();
+
+                if (status === '') {
+                    table.column(7).search('').draw();
+                }
+                else {
+                    var exactStatus = '^\\s*[●•]?\\s*' + status + '\\s*$';
+
+                    table.column(7)
+                        .search(exactStatus, true, false)
+                        .draw();
+                }
+            });
+
+            // Name sorting
+            $('#sortFilter').on('change', function() {
+
+                var sortValue = $(this).val();
+
+                if (sortValue !== '') {
+                    table.order([1, sortValue]).draw();
+                }
+            });
+
+            // Export Excel
+            $('#exportExcel').on('click', function() {
+                table.button('.export-excel').trigger();
+            });
+
+            // Export PDF
+            $('#exportPdf').on('click', function() {
+                table.button('.export-pdf').trigger();
+            });
+
+            // Edit employee modal
+            $(document).on('click', '.editEmployeeButton', function() {
+
+                $('#editEmployeeId').val($(this).attr('data-id'));
+                $('#editProfilePicture').val($(this).attr('data-profilepicture'));
+                $('#editFirstName').val($(this).attr('data-firstname'));
+                $('#editLastName').val($(this).attr('data-lastname'));
+                $('#editEmail').val($(this).attr('data-email'));
+                $('#editPassword').val($(this).attr('data-password'));
+                $('#editMobileNumber').val($(this).attr('data-mobilenumber'));
+                $('#editRoleId').val($(this).attr('data-roleid'));
+                $('#editDepartmentId').val($(this).attr('data-departmentid'));
+                $('#editDesignationId').val($(this).attr('data-designationid'));
+                $('#editDateOfJoining').val($(this).attr('data-dateofjoining'));
+                $('#editDateOfBirth').val($(this).attr('data-dateofbirth'));
+                $('#editGender').val($(this).attr('data-gender'));
+                $('#editAddress').val($(this).attr('data-address'));
+                $('#editAboutEmployee').val($(this).attr('data-aboutemployee'));
+                $('#editReportingManager').val($(this).attr('data-reportingmanager'));
+                $('#editStatus').val($(this).attr('data-status'));
+
+            });
+
+        });
+    </script>
+}
