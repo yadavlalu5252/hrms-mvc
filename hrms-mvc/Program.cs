@@ -26,21 +26,30 @@ builder.Services.AddSession(options =>
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<ILeaveService, LeaveService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<ITimesheetService, TimesheetService>();
+
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IEmployeeListService, EmployeeListService>();
 builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
 
 
 
 
+
+
+
+
+
 var app = builder.Build();
 
-
-
-// Global exception handling
-app.UseExceptionHandler("/Error/Index");
+//// Global exception handling
+//app.UseExceptionHandler("/Error/Index");
 
 if (!app.Environment.IsDevelopment())
 {

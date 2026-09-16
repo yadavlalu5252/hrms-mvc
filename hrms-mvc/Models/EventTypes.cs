@@ -7,7 +7,7 @@ namespace hrms_mvc.Models
 
         [Key]
         public int EventTypesId { get; set; }
-        
+
         public string Name { get; set; }
         public string Colour { get; set; }
     }
