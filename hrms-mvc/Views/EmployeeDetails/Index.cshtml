@@ -1,0 +1,220 @@
+﻿@using hrms_mvc.Models
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Employee Details";
+
+    var employee = ViewBag.Employee as User;
+    var bankDetails = ViewBag.BankDetails as EmployeeBankDetails;
+    var familyDetails = ViewBag.FamilyDetails as List<EmployeeFamilyDetail>;
+}
+
+<div class="row">
+
+    <!-- Left Side: Employee Profile -->
+    <div class="col-md-5 mb-4">
+
+        <div class="card shadow-sm border-0">
+
+            <!-- Orange Profile Header -->
+            <div class="position-relative"
+                 style="height: 150px; background: linear-gradient(135deg, #ff6a00, #ffb300);">
+
+                <!-- Circular Profile Image -->
+                <img src="@employee?.ProfilePicture"
+                     alt="Profile Picture"
+                     class="rounded-circle position-absolute top-100 start-50 translate-middle border border-3 border-white"
+                     style="width: 85px; height: 85px; object-fit: cover;" />
+
+            </div>
+
+            <!-- Employee Details -->
+            <div class="card-body text-center pt-5">
+
+                <h5 class="mb-1">@employee.FirstName @employee.LastName</h5>
+
+                <span class="badge bg-secondary mb-3">
+                    @employee.Designation.DesignationName
+                </span>
+
+                <div class="text-start">
+
+                    <p class="mb-2">
+                        <strong>Client ID:</strong>
+                        <span class="float-end">@employee.Id</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Department:</strong>
+                        <span class="float-end">@employee.Department.Name</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Date of Join:</strong>
+                        <span class="float-end">@employee.DateOfJoining.ToString("dd-MM-yyyy")</span>
+                    </p>
+
+                    <p class="mb-3">
+                        <strong>Report Office:</strong>
+                        <span class="float-end">@employee.Address</span>
+                    </p>
+
+                </div>
+
+                <button class="btn btn-dark w-100 mb-3">
+                    <i class="bi bi-pencil-square"></i>
+                    Edit Info
+                </button>
+
+                <hr />
+
+                <h6 class="text-start text-primary mb-3">
+                    Basic Information
+                </h6>
+
+                <div class="text-start">
+
+                    <p class="mb-2">
+                        <strong>Phone:</strong>
+                        <span class="float-end">@employee.MobileNumber</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Email:</strong>
+                        <span class="float-end">@employee.Email</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Gender:</strong>
+                        <span class="float-end">@employee.Gender</span>
+                    </p>
+
+                    <p class="mb-2">
+                        <strong>Birthday:</strong>
+                        <span class="float-end">@employee.DateOfBirth.ToString("dd-MM-yyyy")</span>
+                    </p>
+
+                    <p class="mb-0">
+                        <strong>Address:</strong>
+                        <span class="float-end">@employee.Address</span>
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- Right Side: Other Information -->
+    <div class="col-md-7">
+
+        <!-- About Employee -->
+        <div class="card mb-4">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">About Employee</h5>
+
+                <button class="btn btn-sm btn-light">
+                    ✎
+                </button>
+            </div>
+
+            <div class="card-body">
+                <p>
+                    This section contains basic information about the employee.
+                </p>
+            </div>
+
+        </div>
+
+        <!-- Bank Information -->
+        <div class="card mb-4">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Bank Information</h5>
+
+                <div>
+                    <button class="btn btn-sm btn-light">✎</button>
+                    <button class="btn btn-sm btn-light">+</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-6">
+                        <p><strong>Bank Name:</strong> HDFC Bank</p>
+                        <p><strong>Account Number:</strong> 123456789012</p>
+                    </div>
+
+                    <div class="col-md-6">
+                        <p><strong>IFSC Code:</strong> HDFC0001234</p>
+                        <p><strong>Branch Name:</strong> Mumbai</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Family Information -->
+        <div class="card mb-4">
+
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5 class="mb-0">Family Information</h5>
+
+                <div>
+                    <button class="btn btn-sm btn-light">+</button>
+                    <button class="btn btn-sm btn-light">✎</button>
+                </div>
+            </div>
+
+            <div class="card-body">
+
+                <div class="row">
+
+                    <div class="col-md-3">
+                        <small>Family Id</small>
+                        <p>1</p>
+
+                        <small>Phone</small>
+                        <p>2345632901</p>
+                    </div>
+
+                    <div class="col-md-3">
+                        <small>Name</small>
+                        <p>Admin Executive</p>
+
+                        <small>Date of Birth</small>
+                        <p>05-02-2025</p>
+                    </div>
+
+                    <div class="col-md-3">
+                        <small>Relationship</small>
+                        <p>Brother</p>
+
+                        <small>Family Id</small>
+                        <p>3</p>
+                    </div>
+
+                    <div class="col-md-3">
+                        <small>Name</small>
+                        <p>abc</p>
+
+                        <small>Relationship</small>
+                        <p>xyz</p>
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

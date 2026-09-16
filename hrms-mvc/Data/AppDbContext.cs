@@ -97,6 +97,11 @@ namespace hrms_mvc.Data
                 .HasForeignKey(dl => dl.LeaveTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<User>()
+            .HasOne(x => x.EmployeeBankDetails)
+            .WithOne(x => x.User)
+            .HasForeignKey<EmployeeBankDetails>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Promotion>()
                .HasOne(p => p.User)
                .WithMany()
