@@ -38,6 +38,19 @@ namespace hrms_mvc.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<MasterLeaveType> MasterLeaveTypes { get; set; }
 
+
+        public DbSet<Promotion> Promotions { get; set; } 
+        public DbSet<Resign> Resigns { get; set; }
+        public DbSet<Resignation> Resignations { get; set; }
+        public DbSet<Termination> Terminations { get; set; }
+        public DbSet<Tickets> Tickets { get; set; }
+        public DbSet<TicketComment> TicketComments { get; set; }
+        public DbSet<TicketResolution> TicketResolutions { get; set; }
+        public DbSet<TicketAttachment> TicketAttachments { get; set; }
+
+
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -83,6 +96,84 @@ namespace hrms_mvc.Data
                 .WithMany(mlt => mlt.DepartmentLeaves)
                 .HasForeignKey(dl => dl.LeaveTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Promotion>()
+               .HasOne(p => p.User)
+               .WithMany()
+               .HasForeignKey(p => p.UserId)
+               .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Resignation>()
+                .HasOne(r => r.User)
+                .WithMany()
+                .HasForeignKey(r => r.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Resignation>()
+                .HasOne(r => r.Department)
+                .WithMany()
+                .HasForeignKey(r => r.DepartmentId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Termination>()
+                .HasOne(t => t.User)
+                .WithMany()
+                .HasForeignKey(t => t.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Tickets>()
+                .HasOne(t => t.RaisedByUser)
+                .WithMany()
+                .HasForeignKey(t => t.RaisedBy)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Tickets>()
+                .HasOne(t => t.AssignedToUser)
+                .WithMany()
+                .HasForeignKey(t => t.AssignedTo)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Tickets>()
+                .HasOne(t => t.AssignedByUser)
+                .WithMany()
+                .HasForeignKey(t => t.AssignedBy)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<TicketComment>()
+                .HasOne(c => c.Ticket)
+                .WithMany(t => t.Comments)
+                .HasForeignKey(c => c.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TicketComment>()
+                .HasOne(c => c.CommentByUser)
+                .WithMany()
+                .HasForeignKey(c => c.CommentBy)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<TicketResolution>()
+                .HasOne(r => r.Ticket)
+                .WithOne(t => t.Resolution)
+                .HasForeignKey<TicketResolution>(r => r.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TicketResolution>()
+                .HasOne(r => r.ResolvedByUser)
+                .WithMany()
+                .HasForeignKey(r => r.ResolvedBy)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<TicketAttachment>()
+                .HasOne(a => a.Ticket)
+                .WithMany(t => t.Attachments)
+                .HasForeignKey(a => a.TicketId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<TicketAttachment>()
+                .HasOne(a => a.UploadedByUser)
+                .WithMany()
+                .HasForeignKey(a => a.UploadedBy)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }
