@@ -322,8 +322,7 @@ namespace hrms_mvc.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
                     b.ToTable("EmployeeBankDetails");
                 });
@@ -1228,7 +1227,6 @@ namespace hrms_mvc.Migrations
                     b.Property<string>("ModifiedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
                     b.Property<string>("RoleName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -1747,9 +1745,9 @@ namespace hrms_mvc.Migrations
             modelBuilder.Entity("hrms_mvc.Models.EmployeeBankDetails", b =>
                 {
                     b.HasOne("hrms_mvc.Models.User", "User")
-                        .WithOne("EmployeeBankDetails")
-                        .HasForeignKey("hrms_mvc.Models.EmployeeBankDetails", "UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -1796,7 +1794,7 @@ namespace hrms_mvc.Migrations
             modelBuilder.Entity("hrms_mvc.Models.EmployeeFamilyDetail", b =>
                 {
                     b.HasOne("hrms_mvc.Models.User", "User")
-                        .WithMany("EmployeeFamilyDetails")
+                        .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -2140,10 +2138,6 @@ namespace hrms_mvc.Migrations
 
             modelBuilder.Entity("hrms_mvc.Models.User", b =>
                 {
-                    b.Navigation("EmployeeBankDetails");
-
-                    b.Navigation("EmployeeFamilyDetails");
-
                     b.Navigation("LeaveBalances");
 
                     b.Navigation("LeaveRequests");
