@@ -72,19 +72,15 @@ namespace hrms_mvc.Services
             }
             else if (SortBy == "Last 7 Days")
             {
-                query = query
-                    .OrderByDescending(x => x.StartDate);
+                query = query.OrderByDescending(x => x.StartDate);
             }
             else if (SortBy == "Last Month")
             {
-                query = query
-                    .OrderBy(x => x.StartDate);
+                query = query.OrderBy(x => x.StartDate);
             }
             else
             {
-                
-                query = query
-                    .OrderByDescending(x => x.StartDate);
+                query = query.OrderByDescending(x => x.StartDate);
             }
 
             return await query.ToListAsync();
