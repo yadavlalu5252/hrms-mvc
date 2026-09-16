@@ -20,7 +20,7 @@ namespace hrms_mvc.Controllers.Events
         {
             var data = await eventService.GetEvents();
 
-            return View("~/Views/Event/index11.cshtml", data);
+            return View("~/Views/EventController/index11.cshtml", data);
         }
 
         [HttpPost]
