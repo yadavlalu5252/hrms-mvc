@@ -28,8 +28,7 @@ namespace hrms_mvc.Services
 
         public async Task<int> GetActiveEmployees()
         {
-            return await db.Users
-                .CountAsync(x => x.Status == "Active");
+            return await db.Users.CountAsync(x => x.Status == "Active");
         }
 
         public async Task<int> GetTotalRoles()
@@ -39,37 +38,28 @@ namespace hrms_mvc.Services
 
         public async Task<List<User>> GetEmployees(string? status,string? dateFilter)
         {
-            var query = db.Users
-                .Include(x => x.Department)
-                .Include(x => x.Role)
-                .Include(x => x.Designation)
-                .AsQueryable();
+            var query = db.Users.Include(x => x.Department).Include(x => x.Role).Include(x => x.Designation).AsQueryable();
 
-            // Status
             if (!string.IsNullOrEmpty(status))
             {
                 query = query.Where(x => x.Status == status);
             }
 
-            // Recently Added
             if (dateFilter == "recent")
             {
                 query = query.OrderByDescending(x => x.DateOfJoining);
             }
 
-            // Oldest first
             else if (dateFilter == "asc")
             {
                 query = query.OrderBy(x => x.DateOfJoining);
             }
 
-            // Newest first
             else if (dateFilter == "desc")
             {
                 query = query.OrderByDescending(x => x.DateOfJoining);
             }
-
-            // Last Month
+            
             else if (dateFilter == "month")
             {
                 var firstDayOfThisMonth =
@@ -86,7 +76,6 @@ namespace hrms_mvc.Services
                     x.DateOfJoining < firstDayOfThisMonth);
             }
 
-            // Last 7 Days
             else if (dateFilter == "7days")
             {
                 var today = DateTime.Today;
