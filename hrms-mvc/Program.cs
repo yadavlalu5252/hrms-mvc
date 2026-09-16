@@ -30,7 +30,7 @@ builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IEmployeeListService, EmployeeListService>();
-
+builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
 
 
 

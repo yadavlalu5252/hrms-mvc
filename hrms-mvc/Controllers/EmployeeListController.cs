@@ -113,5 +113,12 @@ namespace hrms_mvc.Controllers
 
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Grid()
+        {
+            var allEmployeeList = await els.GetAllEmployees();
+
+            return View(allEmployeeList);
+        }
     }
 }

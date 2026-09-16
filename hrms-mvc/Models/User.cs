@@ -84,5 +84,12 @@ namespace hrms_mvc.Models
 
         public List<LeaveRequest> LeaveRequests { get; set; }
             = new List<LeaveRequest>();
+
+        // One-to-one relationship with EmployeeBankDetails
+        public EmployeeBankDetails? EmployeeBankDetails { get; set; }
+
+        // One-to-many relationship with EmployeeFamilyDetail
+        public List<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; }
+          
     }
 }

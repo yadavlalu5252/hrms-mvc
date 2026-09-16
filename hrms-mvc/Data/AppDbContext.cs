@@ -79,6 +79,12 @@ namespace hrms_mvc.Data
                 .WithMany(mlt => mlt.DepartmentLeaves)
                 .HasForeignKey(dl => dl.LeaveTypeId)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<User>()
+            .HasOne(x => x.EmployeeBankDetails)
+            .WithOne(x => x.User)
+            .HasForeignKey<EmployeeBankDetails>(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
