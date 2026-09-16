@@ -17,9 +17,9 @@ namespace hrms_mvc.Models
         public DateTime? ModifiedAt { get; set; }
         public List<Designation>? Designations { get; set; }
 
-        //public List<DepartmentLeaves> DepartmentLeaves { get; set; }
+        public List<DepartmentLeaves> DepartmentLeaves { get; set; }
 
-        //public List<Earning> Earnings { get; set; }
-        //public List<Deduction> Deductions { get; set; }
+        public List<Earning> Earnings { get; set; }
+        public List<Deduction> Deductions { get; set; }
     }
 }

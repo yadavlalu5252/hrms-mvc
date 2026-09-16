@@ -9,11 +9,11 @@ namespace hrms_mvc.Models
         public int Id { get; set; } 
 
         [ForeignKey("DeductionType")]
-        public int DeductionTypeId { get; set; } 
+        public int DeductionTypeId { get; set; }
 
-        //public int DepartmentId { get; set; } 
+        public int DepartmentId { get; set; }
 
-        //public int DesignationId { get; set; } 
+        public int DesignationId { get; set; }
 
         [Required]
         [Column(TypeName = "decimal(5,2)")]
@@ -28,7 +28,7 @@ namespace hrms_mvc.Models
 
         public string? ModifiedBy { get; set; } 
         public virtual DeductionType DeductionType { get; set; }
-        //public virtual Department Department { get; set; }
-        //public virtual Designation Designation { get; set; }
+        public virtual Department Department { get; set; }
+        public virtual Designation Designation { get; set; }
     }
 }
