@@ -12,8 +12,8 @@ using hrms_mvc.Data;
 namespace hrms_mvc.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260915081604_dbinit")]
-    partial class dbinit
+    [Migration("20260915190757_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -642,6 +642,99 @@ namespace hrms_mvc.Migrations
                     b.ToTable("AllProjects");
                 });
 
+            modelBuilder.Entity("hrms_mvc.Models.Promotion", b =>
+                {
+                    b.Property<int>("PromotionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PromotionId"));
+
+                    b.Property<DateTime>("Date")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("DesignationFrom")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("DesignationTo")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("PromotionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Promotions");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Resign", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("DepartmentHead")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("EmployeeName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LastDay")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ResignationDate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Resigns");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Resignation", b =>
+                {
+                    b.Property<int>("ResignationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResignationId"));
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("NoticeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("ResignDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResignationId");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Resignations");
+                });
+
             modelBuilder.Entity("hrms_mvc.Models.Role", b =>
                 {
                     b.Property<int>("Id")
@@ -767,6 +860,207 @@ namespace hrms_mvc.Migrations
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("hrms_mvc.Models.Termination", b =>
+                {
+                    b.Property<int>("TerminationId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TerminationId"));
+
+                    b.Property<DateTime>("NoticeDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Reason")
+                        .IsRequired()
+                        .HasMaxLength(300)
+                        .HasColumnType("nvarchar(300)");
+
+                    b.Property<DateTime>("ResignDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("TerminationType")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("TerminationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Terminations");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketAttachment", b =>
+                {
+                    b.Property<int>("AttachmentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AttachmentId"));
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UploadedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UploadedDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AttachmentId");
+
+                    b.HasIndex("TicketId");
+
+                    b.HasIndex("UploadedBy");
+
+                    b.ToTable("TicketAttachments");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketComment", b =>
+                {
+                    b.Property<int>("CommentId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CommentId"));
+
+                    b.Property<int>("CommentBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CommentDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CommentText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CommentId");
+
+                    b.HasIndex("CommentBy");
+
+                    b.HasIndex("TicketId");
+
+                    b.ToTable("TicketComments");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketResolution", b =>
+                {
+                    b.Property<int>("ResolutionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ResolutionId"));
+
+                    b.Property<string>("ResolutionNotes")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ResolvedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ResolvedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Solution")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TicketId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ResolutionId");
+
+                    b.HasIndex("ResolvedBy");
+
+                    b.HasIndex("TicketId")
+                        .IsUnique();
+
+                    b.ToTable("TicketResolutions");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tickets", b =>
+                {
+                    b.Property<int>("TicketId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TicketId"));
+
+                    b.Property<int?>("AssignedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("AssignedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("AssignedTo")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ClosedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("RaisedBy")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("ResolvedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("StartedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("nvarchar(30)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("TicketNo")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.HasKey("TicketId");
+
+                    b.HasIndex("AssignedBy");
+
+                    b.HasIndex("AssignedTo");
+
+                    b.HasIndex("RaisedBy");
+
+                    b.ToTable("Tickets");
+                });
+
             modelBuilder.Entity("hrms_mvc.Models.Timesheet", b =>
                 {
                     b.Property<int>("Id")
@@ -864,6 +1158,9 @@ namespace hrms_mvc.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("ModifiedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
@@ -1061,6 +1358,36 @@ namespace hrms_mvc.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("hrms_mvc.Models.Promotion", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Resignation", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("hrms_mvc.Models.TaskBoards", b =>
                 {
                     b.HasOne("hrms_mvc.Models.Projects", "Project")
@@ -1102,6 +1429,99 @@ namespace hrms_mvc.Migrations
                         .IsRequired();
 
                     b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Termination", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketAttachment", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Tickets", "Ticket")
+                        .WithMany("Attachments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "UploadedByUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("UploadedByUser");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketComment", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "CommentByUser")
+                        .WithMany()
+                        .HasForeignKey("CommentBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tickets", "Ticket")
+                        .WithMany("Comments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CommentByUser");
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketResolution", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "ResolvedByUser")
+                        .WithMany()
+                        .HasForeignKey("ResolvedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tickets", "Ticket")
+                        .WithOne("Resolution")
+                        .HasForeignKey("hrms_mvc.Models.TicketResolution", "TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ResolvedByUser");
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tickets", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "AssignedByUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedBy")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("hrms_mvc.Models.User", "AssignedToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedTo")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("hrms_mvc.Models.User", "RaisedByUser")
+                        .WithMany()
+                        .HasForeignKey("RaisedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AssignedByUser");
+
+                    b.Navigation("AssignedToUser");
+
+                    b.Navigation("RaisedByUser");
                 });
 
             modelBuilder.Entity("hrms_mvc.Models.Timesheet", b =>
@@ -1191,6 +1611,15 @@ namespace hrms_mvc.Migrations
                     b.Navigation("TaskBoards");
 
                     b.Navigation("Taskmember");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tickets", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("Comments");
+
+                    b.Navigation("Resolution");
                 });
 
             modelBuilder.Entity("hrms_mvc.Models.User", b =>
