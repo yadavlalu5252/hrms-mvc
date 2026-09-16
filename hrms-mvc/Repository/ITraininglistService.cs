@@ -1,6 +1,6 @@
 ﻿namespace hrms_mvc.Repository
 {
-    public class ILeave
+    public interface ITraininglistService
     {
     }
 }

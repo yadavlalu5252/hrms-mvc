@@ -2,6 +2,8 @@ using hrms_mvc.Data;
 using hrms_mvc.Repository;
 using hrms_mvc.Services;
 using Microsoft.EntityFrameworkCore;
+using hrms_mvc.Repository.EventsRepo;
+using hrms_mvc.Services.EventsService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,13 +28,25 @@ builder.Services.AddSession(options =>
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+builder.Services.AddScoped<ILeaveService, LeaveService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
+builder.Services.AddScoped<ITimesheetService, TimesheetService>();
+
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
+builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IEmployeeListService, EmployeeListService>();
 builder.Services.AddScoped<IEmployeeReportService, EmployeeReportService>();
 builder.Services.AddScoped<IAttendanceReportService, AttendanceReportService>();
 builder.Services.AddScoped<ILeaveReportService, LeaveReportService>();
+builder.Services.AddScoped<IEvents, EventsService>();
+builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
+
+
+
+
 
 
 
@@ -40,10 +54,8 @@ builder.Services.AddScoped<ILeaveReportService, LeaveReportService>();
 
 var app = builder.Build();
 
-
-
-// Global exception handling
-app.UseExceptionHandler("/Error/Index");
+//// Global exception handling
+//app.UseExceptionHandler("/Error/Index");
 
 if (!app.Environment.IsDevelopment())
 {
@@ -64,7 +76,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Auth}/{action=Login}/{id?}"
+    pattern: "{controller=Event}/{action=index11}/{id?}"
 )
 .WithStaticAssets();
 

@@ -1,0 +1,142 @@
+﻿@model hrms_mvc.Models.DepartmentLeaves
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Allocate Leave";
+}
+
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2>Allocate Leave</h2>
+
+            <p class="text-muted mb-0">
+                Allocate leave department wise
+            </p>
+
+        </div>
+
+    </div>
+
+    @if (TempData["error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["error"]
+        </div>
+    }
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["success"]
+        </div>
+    }
+
+    <div class="card shadow-sm">
+
+        <div class="card-header bg-white">
+
+            <h5 class="mb-0">
+                Allocate Leave Deptwise
+            </h5>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <form asp-action="AddLeaveDeptwise"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Select Department
+                    </label>
+
+                    <select name="DepartmentId"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Select Department
+                        </option>
+
+                        @foreach (var department
+                            in ViewBag.Departments)
+                        {
+                            <option value="@department.Id">
+                                @department.Name
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Select Leave Type
+                    </label>
+
+                    <select name="LeaveTypeId"
+                            class="form-select"
+                            required>
+
+                        <option value="">
+                            Select Leave Type
+                        </option>
+
+                        @foreach (var leave
+                            in ViewBag.LeaveTypes)
+                        {
+                            <option value="@leave.Id">
+                                @leave.Leave
+                            </option>
+                        }
+
+                    </select>
+
+                </div>
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Number of Leaves Allocated
+                    </label>
+
+                    <input type="number"
+                           name="LeavesCount"
+                           class="form-control"
+                           min="0"
+                           required />
+
+                </div>
+
+
+                <button type="submit"
+                        class="btn btn-success">
+
+                    <i class="bi bi-check-circle"></i>
+
+                    Allocate Leave
+
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>

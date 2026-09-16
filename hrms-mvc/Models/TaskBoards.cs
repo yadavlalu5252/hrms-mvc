@@ -19,10 +19,10 @@ namespace hrms_mvc.Models
 
         public Tasks Task { get; set; }
 
-        
+
         public int Percentage { get; set; }
 
-        
+
         public DateTime DueDate { get; set; }
     }
 }
