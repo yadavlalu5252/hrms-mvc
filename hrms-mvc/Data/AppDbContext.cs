@@ -37,6 +37,13 @@ namespace hrms_mvc.Data
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<MasterLeaveType> MasterLeaveTypes { get; set; }
+        public DbSet<TrainingType> TrainingType { get; set; }
+        public DbSet<Traininglist> Traininglist { get; set; }
+
+        public DbSet<Trainers> Trainers { get; set; }
+        public DbSet<MasterDocAdmin> MasterDocAdmin { get; set; }
+        public DbSet<MasterDocEmp> MasterDocEmp { get; set; }
+        public DbSet<Documents> Documents { get; set; }
 
 
         public DbSet<Promotion> Promotions { get; set; } 
