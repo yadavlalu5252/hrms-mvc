@@ -96,8 +96,10 @@
                     </summary>
 
                     <div class="submenu">
-                        <a href="#">Event List</a>
-                        <a href="#">Add Event</a>
+                        <a asp-controller="Event"
+                           asp-action="index11">
+                            Add event
+                        </a>
                     </div>
                 </details>
 
@@ -126,6 +128,34 @@
                     <div class="submenu">
                         <a href="#">Performance List</a>
                         <a href="#">Add Goal</a>
+                    </div>
+                </details>
+
+                <!-- Reports -->
+                <details>
+                    <summary class="sidebar-link">
+                        <span>▱</span>
+                        Reports
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+
+                        <a asp-controller="Reports"
+                           asp-action="Index">
+                            Employee Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="Attendance">
+                            Attendance Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="LeaveReport">
+                            Leave Report
+                        </a>
+
                     </div>
                 </details>
 

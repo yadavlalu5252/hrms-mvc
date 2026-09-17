@@ -1,0 +1,533 @@
+﻿@model List<hrms_mvc.Models.User>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Employee Report";
+}
+
+<div class="container-fluid mt-4">
+
+    <!-- ================================= -->
+    <!-- HEADER -->
+    <!-- ================================= -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2>Employee Report</h2>
+
+            <p class="text-muted mb-0">
+                Overview of employee information
+            </p>
+        </div>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- SUMMARY CARDS -->
+    <!-- ================================= -->
+
+    <div class="row mb-4">
+
+        <!-- Total Employees -->
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Employees
+                    </h6>
+
+                    <h2 class="mb-0">
+                        @ViewBag.TotalEmployees
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Total Departments -->
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Total Departments
+                    </h6>
+
+                    <h2 class="mb-0">
+                        @ViewBag.TotalDepartments
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Active Employees -->
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Active Employees
+                    </h6>
+
+                    <h2 class="mb-0">
+                        @ViewBag.ActiveEmployees
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Roles -->
+        <div class="col-md-3 mb-3">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+                    <h6 class="text-muted">
+                        Roles
+                    </h6>
+
+                    <h2 class="mb-0">
+                        @ViewBag.TotalRoles
+                    </h2>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- FILTER SECTION -->
+    <!-- ================================= -->
+
+    <div class="card shadow-sm border-0 mb-3">
+
+        <div class="card-body">
+
+            <div class="row align-items-center">
+
+                <!-- Title -->
+                <div class="col-md-6">
+
+                    <h5 class="mb-0">
+                        Employees List
+                    </h5>
+
+                </div>
+
+
+                <!-- STATUS FILTER -->
+                <div class="col-md-3 mt-2 mt-md-0">
+
+                    <form method="get"
+                          asp-controller="Reports"
+                          asp-action="Index">
+
+                        <select name="status"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            @if (string.IsNullOrEmpty(
+                                ViewBag.SelectedStatus))
+                            {
+                                <option value="" selected>
+                                    All Status
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="">
+                                    All Status
+                                </option>
+                            }
+
+
+                            @if (ViewBag.SelectedStatus == "Active")
+                            {
+                                <option value="Active"
+                                        selected>
+                                    Active
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Active">
+                                    Active
+                                </option>
+                            }
+
+
+                            @if (ViewBag.SelectedStatus == "Inactive")
+                            {
+                                <option value="Inactive"
+                                        selected>
+                                    Inactive
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Inactive">
+                                    Inactive
+                                </option>
+                            }
+
+                        </select>
+
+
+                        <!-- Keep date filter -->
+                        <input type="hidden"
+                               name="dateFilter"
+                               value="@ViewBag.SelectedDateFilter" />
+
+                    </form>
+
+                </div>
+
+
+                <!-- DATE FILTER -->
+                <div class="col-md-3 mt-2 mt-md-0">
+
+                    <form method="get"
+                          asp-controller="Reports"
+                          asp-action="Index">
+
+                        <select name="dateFilter"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+
+                            @if (string.IsNullOrEmpty(
+                                ViewBag.SelectedDateFilter) ||
+                                ViewBag.SelectedDateFilter == "recent")
+                            {
+                                <option value="recent"
+                                        selected>
+                                    Recently Added
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="recent">
+                                    Recently Added
+                                </option>
+                            }
+
+
+                            @if (ViewBag.SelectedDateFilter == "asc")
+                            {
+                                <option value="asc"
+                                        selected>
+                                    Ascending
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="asc">
+                                    Ascending
+                                </option>
+                            }
+
+
+                            @if (ViewBag.SelectedDateFilter == "desc")
+                            {
+                                <option value="desc"
+                                        selected>
+                                    Descending
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="desc">
+                                    Descending
+                                </option>
+                            }
+
+
+                            @if (ViewBag.SelectedDateFilter == "month")
+                            {
+                                <option value="month"
+                                        selected>
+                                    Last Month
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="month">
+                                    Last Month
+                                </option>
+                            }
+
+
+                            @if (ViewBag.SelectedDateFilter == "7days")
+                            {
+                                <option value="7days"
+                                        selected>
+                                    Last 7 Days
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="7days">
+                                    Last 7 Days
+                                </option>
+                            }
+
+                        </select>
+
+
+                        <!-- Keep status filter -->
+                        <input type="hidden"
+                               name="status"
+                               value="@ViewBag.SelectedStatus" />
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ================================= -->
+    <!-- EMPLOYEE TABLE -->
+    <!-- ================================= -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="employeeTable"
+                       class="table table-hover align-middle">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>UserId</th>
+
+                            <th>Name</th>
+
+                            <th>Email</th>
+
+                            <th>Department</th>
+
+                            <th>PhoneNumber</th>
+
+                            <th>Date of Joining</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            foreach (var employee in Model)
+                            {
+                                <tr>
+
+                                    <!-- User ID -->
+                                    <td>
+                                        @employee.Id
+                                    </td>
+
+
+                                    <!-- Name -->
+                                    <td>
+                                        <strong>
+                                            @employee.FirstName
+                                            @employee.LastName
+                                        </strong>
+                                    </td>
+
+
+                                    <!-- Email -->
+                                    <td>
+                                        @employee.Email
+                                    </td>
+
+
+                                    <!-- Department -->
+                                    <td>
+                                        @(employee.Department?.Name ?? "-")
+                                    </td>
+
+
+                                    <!-- Phone -->
+                                    <td>
+                                        @employee.MobileNumber
+                                    </td>
+
+
+                                    <!-- Date -->
+                                    <td>
+                                        @employee.DateOfJoining
+                                        .ToString("dd-MM-yyyy")
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        @if (employee.Status == "Active")
+                                        {
+                                            <span class="badge bg-success">
+                                                ● Active
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                ● Inactive
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="7"
+                                    class="text-center">
+
+                                    No employees found.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- ================================= -->
+<!-- DATATABLES -->
+<!-- ================================= -->
+@section Scripts
+{
+    <script>
+
+        $(document).ready(function() {
+
+            $('#employeeTable').DataTable({
+
+                // Number of rows
+                pageLength: 10,
+
+                // Page length options
+                lengthMenu: [
+                    [10, 25, 50, 100, -1],
+                    [10, 25, 50, 100, "All"]
+                ],
+
+                // Default sorting
+                // Column 5 = Date of Joining
+                order: [
+                    [5, 'desc']
+                ],
+
+                // Buttons
+                dom:
+                    '<"row mb-3"' +
+                    '<"col-md-6"B>' +
+                    '<"col-md-6"f>' +
+                    '>' +
+
+                    '<"row mb-2"' +
+                    '<"col-md-6"l>' +
+                    '<"col-md-6"i>' +
+                    '>' +
+
+                    'rt' +
+
+                    '<"row mt-3"' +
+                    '<"col-md-6"i>' +
+                    '<"col-md-6"p>' +
+                    '>',
+
+                buttons:
+                    [
+                        {
+                            extend: 'copy',
+                            text: 'Copy',
+                            className: 'btn btn-secondary'
+                        },
+
+                        {
+                            extend: 'excel',
+                            text: 'Excel',
+                            className: 'btn btn-success'
+                        },
+
+                        {
+                            extend: 'pdf',
+                            text: 'PDF',
+                            className: 'btn btn-danger'
+                        },
+
+                        {
+                            extend: 'print',
+                            text: 'Print',
+                            className: 'btn btn-primary'
+                        },
+
+                        {
+                            extend: 'colvis',
+                            text: 'Columns',
+                            className: 'btn btn-dark'
+                        }
+                    ]
+
+            });
+
+        });
+
+    </script>
+}
