@@ -24,10 +24,14 @@ namespace hrms_mvc.Controllers
             var employee = await eds.GetEmployeeProfile(userId.Value);
             var bankDetails = await eds.GetBankDetails(userId.Value);
             var familyDetails = await eds.GetFamilyDetails(userId.Value);
+            var educationDetails = await eds.GetEducationDetails(userId.Value);
+            var experienceDetails = await eds.GetExperienceDetails(userId.Value);
 
             ViewBag.Employee = employee;
             ViewBag.BankDetails = bankDetails;
             ViewBag.FamilyDetails = familyDetails;
+            ViewBag.EducationDetails = educationDetails;
+            ViewBag.ExperienceDetails = experienceDetails;
 
             return View();
         }
@@ -36,24 +40,36 @@ namespace hrms_mvc.Controllers
         public async Task<IActionResult> AddBankDetails(EmployeeBankDetails bankDetails)
         {
             var userId = HttpContext.Session.GetInt32("UserId");
+
             if (userId == null)
             {
                 return RedirectToAction("Login", "Auth");
             }
+
             bankDetails.UserId = userId.Value;
+
             if (!ModelState.IsValid)
             {
-                var employee = await eds.GetEmployeeProfile(userId.Value);
-                var bankDetailss = await eds.GetBankDetails(userId.Value);
-                var familyDetails = await eds.GetFamilyDetails(userId.Value);
-
-                ViewBag.Employee = employee;
-                ViewBag.BankDetails = bankDetailss;
-                ViewBag.FamilyDetails = familyDetails;
-
+                await LoadEmployeeDetails(userId.Value);
                 return View("Index");
             }
-            await eds.AddBankDetails(bankDetails);
+
+            var existingBankDetails = await eds.GetBankDetails(userId.Value);
+
+            if (existingBankDetails != null)
+            {
+                existingBankDetails.BankName = bankDetails.BankName;
+                existingBankDetails.AccountNumber = bankDetails.AccountNumber;
+                existingBankDetails.IFSCCode = bankDetails.IFSCCode;
+                existingBankDetails.BranchName = bankDetails.BranchName;
+
+                await eds.UpdateBankDetails(existingBankDetails);
+            }
+            else
+            {
+                await eds.AddBankDetails(bankDetails);
+            }
+
             return RedirectToAction("Index");
         }
 
@@ -97,12 +113,16 @@ namespace hrms_mvc.Controllers
             if (!ModelState.IsValid)
             {
                 var employee = await eds.GetEmployeeProfile(userId.Value);
-                var bankDetailss = await eds.GetBankDetails(userId.Value);
+                var bankDetails = await eds.GetBankDetails(userId.Value);
                 var familyDetails = await eds.GetFamilyDetails(userId.Value);
+                var educationDetails = await eds.GetEducationDetails(userId.Value);
+                var experienceDetails = await eds.GetExperienceDetails(userId.Value);
 
                 ViewBag.Employee = employee;
-                ViewBag.BankDetails = bankDetailss;
+                ViewBag.BankDetails = bankDetails;
                 ViewBag.FamilyDetails = familyDetails;
+                ViewBag.EducationDetails = educationDetails;
+                ViewBag.ExperienceDetails = experienceDetails;
 
                 return View("Index");
             }
@@ -138,6 +158,142 @@ namespace hrms_mvc.Controllers
             await eds.UpdateFamilyDetails(oldFamilyDetail);
 
             return RedirectToAction("Index");
+        }
+        [HttpPost]
+        public async Task<IActionResult> AddEducationDetails(
+            EducationDetails educationDetails)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            educationDetails.UserId = userId.Value;
+
+            if (!ModelState.IsValid)
+            {
+                await LoadEmployeeDetails(userId.Value);
+                return View("Index");
+            }
+
+            await eds.AddEducationDetails(educationDetails);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditEducationDetails(
+            EducationDetails educationDetails)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var educationDetailsList =
+                await eds.GetEducationDetails(userId.Value);
+
+            var oldEducationDetails = educationDetailsList
+                .FirstOrDefault(x =>
+                    x.EducationDetailsId ==
+                    educationDetails.EducationDetailsId);
+
+            if (oldEducationDetails == null)
+            {
+                return NotFound();
+            }
+
+            oldEducationDetails.EducationType =
+                educationDetails.EducationType;
+
+            oldEducationDetails.UniversityName =
+                educationDetails.UniversityName;
+
+            oldEducationDetails.startdate =
+                educationDetails.startdate;
+
+            oldEducationDetails.enddate =
+                educationDetails.enddate;
+
+            await eds.UpdateEducationDetails(oldEducationDetails);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AddExperienceDetails(
+            Experience experience)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            experience.UserId = userId.Value;
+
+            if (!ModelState.IsValid)
+            {
+                await LoadEmployeeDetails(userId.Value);
+                return View("Index");
+            }
+
+            await eds.AddExperienceDetails(experience);
+
+            return RedirectToAction("Index");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> EditExperienceDetails(
+            Experience experience)
+        {
+            var userId = HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction("Login", "Auth");
+            }
+
+            var experienceDetails =
+                await eds.GetExperienceDetails(userId.Value);
+
+            var oldExperience = experienceDetails
+                .FirstOrDefault(x =>
+                    x.ExperienceId == experience.ExperienceId);
+
+            if (oldExperience == null)
+            {
+                return NotFound();
+            }
+
+            oldExperience.CompanyName = experience.CompanyName;
+            oldExperience.DesignationName = experience.DesignationName;
+            oldExperience.FromDate = experience.FromDate;
+            oldExperience.ToDate = experience.ToDate;
+
+            await eds.UpdateExperienceDetails(oldExperience);
+
+            return RedirectToAction("Index");
+        }
+
+        private async Task LoadEmployeeDetails(int userId)
+        {
+            var employee = await eds.GetEmployeeProfile(userId);
+            var bankDetails = await eds.GetBankDetails(userId);
+            var familyDetails = await eds.GetFamilyDetails(userId);
+            var educationDetails = await eds.GetEducationDetails(userId);
+            var experienceDetails = await eds.GetExperienceDetails(userId);
+
+            ViewBag.Employee = employee;
+            ViewBag.BankDetails = bankDetails;
+            ViewBag.FamilyDetails = familyDetails;
+            ViewBag.EducationDetails = educationDetails;
+            ViewBag.ExperienceDetails = experienceDetails;
         }
     }
 }

@@ -89,7 +89,11 @@ namespace hrms_mvc.Models
         public EmployeeBankDetails? EmployeeBankDetails { get; set; }
 
         // One-to-many relationship with EmployeeFamilyDetail
-        public List<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; }
-          
+        public List<EmployeeFamilyDetail> EmployeeFamilyDetails { get; set; } = new List<EmployeeFamilyDetail>();
+        public List<EducationDetails> EducationDetails { get; set; }
+           = new List<EducationDetails>();
+        public List<Experience> Experiences { get; set; }
+    = new List<Experience>();
+
     }
 }

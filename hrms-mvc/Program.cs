@@ -46,6 +46,7 @@ builder.Services.AddScoped<IAttendanceReportService, AttendanceReportService>();
 builder.Services.AddScoped<ILeaveReportService, LeaveReportService>();
 builder.Services.AddScoped<IEvents, EventsService>();
 builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 
 

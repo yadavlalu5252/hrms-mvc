@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace hrms_mvc.Migrations
 {
     /// <inheritdoc />
-    public partial class upd : Migration
+    public partial class newmg : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -140,6 +140,23 @@ namespace hrms_mvc.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Organizations", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Resigns",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EmployeeName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmployeeEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DepartmentHead = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResignationDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastDay = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Resigns", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -438,6 +455,29 @@ namespace hrms_mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "EducationDetails",
+                columns: table => new
+                {
+                    EducationDetailsId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    EducationType = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    UniversityName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    startdate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    enddate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    UserId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EducationDetails", x => x.EducationDetailsId);
+                    table.ForeignKey(
+                        name: "FK_EducationDetails_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "EmployeeBankDetails",
                 columns: table => new
                 {
@@ -457,7 +497,7 @@ namespace hrms_mvc.Migrations
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -597,7 +637,121 @@ namespace hrms_mvc.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Timesheet",
+                name: "Promotions",
+                columns: table => new
+                {
+                    PromotionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DesignationFrom = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    DesignationTo = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Date = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Promotions", x => x.PromotionId);
+                    table.ForeignKey(
+                        name: "FK_Promotions_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Resignations",
+                columns: table => new
+                {
+                    ResignationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    DepartmentId = table.Column<int>(type: "int", nullable: false),
+                    NoticeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ResignDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Resignations", x => x.ResignationId);
+                    table.ForeignKey(
+                        name: "FK_Resignations_Departments_DepartmentId",
+                        column: x => x.DepartmentId,
+                        principalTable: "Departments",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Resignations_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Terminations",
+                columns: table => new
+                {
+                    TerminationId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    UserId = table.Column<int>(type: "int", nullable: false),
+                    TerminationType = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    NoticeDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ResignDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Reason = table.Column<string>(type: "nvarchar(300)", maxLength: 300, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Terminations", x => x.TerminationId);
+                    table.ForeignKey(
+                        name: "FK_Terminations_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tickets",
+                columns: table => new
+                {
+                    TicketId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TicketNo = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    Subject = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Priority = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
+                    RaisedBy = table.Column<int>(type: "int", nullable: false),
+                    AssignedTo = table.Column<int>(type: "int", nullable: true),
+                    AssignedBy = table.Column<int>(type: "int", nullable: true),
+                    Status = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
+                    CreatedDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    AssignedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    StartedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ResolvedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ClosedDate = table.Column<DateTime>(type: "datetime2", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tickets", x => x.TicketId);
+                    table.ForeignKey(
+                        name: "FK_Tickets_Users_AssignedBy",
+                        column: x => x.AssignedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tickets_Users_AssignedTo",
+                        column: x => x.AssignedTo,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Tickets_Users_RaisedBy",
+                        column: x => x.RaisedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Timesheets",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -609,13 +763,19 @@ namespace hrms_mvc.Migrations
                     CreatedBy = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
                     ApprovedBy = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true)
+                    ApprovedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    ProjectId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Timesheet", x => x.Id);
+                    table.PrimaryKey("PK_Timesheets", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Timesheet_Users_UserId",
+                        name: "FK_Timesheets_AllProjects_ProjectId",
+                        column: x => x.ProjectId,
+                        principalTable: "AllProjects",
+                        principalColumn: "ProjectsId");
+                    table.ForeignKey(
+                        name: "FK_Timesheets_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -677,6 +837,89 @@ namespace hrms_mvc.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "TicketAttachments",
+                columns: table => new
+                {
+                    AttachmentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TicketId = table.Column<int>(type: "int", nullable: false),
+                    FileName = table.Column<string>(type: "nvarchar(150)", maxLength: 150, nullable: false),
+                    FilePath = table.Column<string>(type: "nvarchar(500)", maxLength: 500, nullable: false),
+                    UploadedBy = table.Column<int>(type: "int", nullable: false),
+                    UploadedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketAttachments", x => x.AttachmentId);
+                    table.ForeignKey(
+                        name: "FK_TicketAttachments_Tickets_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Tickets",
+                        principalColumn: "TicketId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TicketAttachments_Users_UploadedBy",
+                        column: x => x.UploadedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketComments",
+                columns: table => new
+                {
+                    CommentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TicketId = table.Column<int>(type: "int", nullable: false),
+                    CommentBy = table.Column<int>(type: "int", nullable: false),
+                    CommentText = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CommentDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketComments", x => x.CommentId);
+                    table.ForeignKey(
+                        name: "FK_TicketComments_Tickets_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Tickets",
+                        principalColumn: "TicketId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TicketComments_Users_CommentBy",
+                        column: x => x.CommentBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TicketResolutions",
+                columns: table => new
+                {
+                    ResolutionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    TicketId = table.Column<int>(type: "int", nullable: false),
+                    ResolvedBy = table.Column<int>(type: "int", nullable: false),
+                    Solution = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ResolutionNotes = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResolvedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TicketResolutions", x => x.ResolutionId);
+                    table.ForeignKey(
+                        name: "FK_TicketResolutions_Tickets_TicketId",
+                        column: x => x.TicketId,
+                        principalTable: "Tickets",
+                        principalColumn: "TicketId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_TicketResolutions_Users_ResolvedBy",
+                        column: x => x.ResolvedBy,
+                        principalTable: "Users",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Attendances_UserId",
                 table: "Attendances",
@@ -723,9 +966,15 @@ namespace hrms_mvc.Migrations
                 column: "EarntypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_EducationDetails_UserId",
+                table: "EducationDetails",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EmployeeBankDetails_UserId",
                 table: "EmployeeBankDetails",
-                column: "UserId");
+                column: "UserId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_EmployeeDeductions_DeductionId",
@@ -788,6 +1037,21 @@ namespace hrms_mvc.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Promotions_UserId",
+                table: "Promotions",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resignations_DepartmentId",
+                table: "Resignations",
+                column: "DepartmentId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Resignations_UserId",
+                table: "Resignations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_TaskBoards_ProjectId",
                 table: "TaskBoards",
                 column: "ProjectId");
@@ -813,8 +1077,64 @@ namespace hrms_mvc.Migrations
                 column: "ProjectId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Timesheet_UserId",
-                table: "Timesheet",
+                name: "IX_Terminations_UserId",
+                table: "Terminations",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketAttachments_TicketId",
+                table: "TicketAttachments",
+                column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketAttachments_UploadedBy",
+                table: "TicketAttachments",
+                column: "UploadedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketComments_CommentBy",
+                table: "TicketComments",
+                column: "CommentBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketComments_TicketId",
+                table: "TicketComments",
+                column: "TicketId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketResolutions_ResolvedBy",
+                table: "TicketResolutions",
+                column: "ResolvedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TicketResolutions_TicketId",
+                table: "TicketResolutions",
+                column: "TicketId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_AssignedBy",
+                table: "Tickets",
+                column: "AssignedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_AssignedTo",
+                table: "Tickets",
+                column: "AssignedTo");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tickets_RaisedBy",
+                table: "Tickets",
+                column: "RaisedBy");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Timesheets_ProjectId",
+                table: "Timesheets",
+                column: "ProjectId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Timesheets_UserId",
+                table: "Timesheets",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -838,6 +1158,9 @@ namespace hrms_mvc.Migrations
         {
             migrationBuilder.DropTable(
                 name: "Attendances");
+
+            migrationBuilder.DropTable(
+                name: "EducationDetails");
 
             migrationBuilder.DropTable(
                 name: "EmployeeBankDetails");
@@ -870,13 +1193,34 @@ namespace hrms_mvc.Migrations
                 name: "Payslips");
 
             migrationBuilder.DropTable(
+                name: "Promotions");
+
+            migrationBuilder.DropTable(
+                name: "Resignations");
+
+            migrationBuilder.DropTable(
+                name: "Resigns");
+
+            migrationBuilder.DropTable(
                 name: "TaskBoards");
 
             migrationBuilder.DropTable(
                 name: "Taskmembers");
 
             migrationBuilder.DropTable(
-                name: "Timesheet");
+                name: "Terminations");
+
+            migrationBuilder.DropTable(
+                name: "TicketAttachments");
+
+            migrationBuilder.DropTable(
+                name: "TicketComments");
+
+            migrationBuilder.DropTable(
+                name: "TicketResolutions");
+
+            migrationBuilder.DropTable(
+                name: "Timesheets");
 
             migrationBuilder.DropTable(
                 name: "Deductions");
@@ -894,19 +1238,22 @@ namespace hrms_mvc.Migrations
                 name: "Tasks");
 
             migrationBuilder.DropTable(
+                name: "Tickets");
+
+            migrationBuilder.DropTable(
                 name: "DeductionTypes");
 
             migrationBuilder.DropTable(
                 name: "EarningTypes");
 
             migrationBuilder.DropTable(
-                name: "Users");
-
-            migrationBuilder.DropTable(
                 name: "MasterLeaveTypes");
 
             migrationBuilder.DropTable(
                 name: "AllProjects");
+
+            migrationBuilder.DropTable(
+                name: "Users");
 
             migrationBuilder.DropTable(
                 name: "Designations");
