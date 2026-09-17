@@ -13,5 +13,13 @@ namespace hrms_mvc.Repository
         Task<List<EmployeeFamilyDetail>> GetFamilyDetails(int userId);
         Task<int> AddFamilyDetails(EmployeeFamilyDetail familyDetail);
         Task<int> UpdateFamilyDetails(EmployeeFamilyDetail familyDetail);
+
+        Task<List<EducationDetails>> GetEducationDetails(int userId);
+        Task<int> AddEducationDetails(EducationDetails educationDetails);
+        Task<int> UpdateEducationDetails(EducationDetails educationDetails);
+
+        Task<List<Experience>> GetExperienceDetails(int userId);
+        Task<int> AddExperienceDetails(Experience experience);
+        Task<int> UpdateExperienceDetails(Experience experience);
     }
 }

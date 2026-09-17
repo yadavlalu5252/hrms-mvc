@@ -37,6 +37,7 @@ builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
 builder.Services.AddScoped<IEmployeeListService, EmployeeListService>();
 builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 
 

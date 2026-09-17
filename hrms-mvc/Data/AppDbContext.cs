@@ -47,7 +47,8 @@ namespace hrms_mvc.Data
         public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<TicketResolution> TicketResolutions { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
-
+        public DbSet<EducationDetails> EducationDetails { get; set; }
+        public DbSet<Experience> Experiences { get; set; }
 
 
 
@@ -179,6 +180,24 @@ namespace hrms_mvc.Data
                 .WithMany()
                 .HasForeignKey(a => a.UploadedBy)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<EducationDetails>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.EducationDetails)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Timesheet>()
+            .HasOne(t => t.Projects)
+            .WithMany()
+            .HasForeignKey(t => t.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Experience>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Experiences)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }
