@@ -16,6 +16,17 @@ namespace hrms_mvc.Repository.EventsRepo
 
         Task AddEvent(EventModel model);
 
+        Task AddMasterEvent(EventTypes master);
+
+        Task DeleteMasterEvent(int id);
+
+        Task<List<EventTypes>> GetMasterEvent();
+
+        Task<List<EventModel>> GetEvent();
+        Task DeleteEvent(int id);
+
+        Task UpdateEvent(EventModel model);
+
         //Task EditEvent(EventModel model);
 
         //Task DeleteEvent(int id);

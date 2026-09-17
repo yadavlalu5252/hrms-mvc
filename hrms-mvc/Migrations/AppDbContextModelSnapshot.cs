@@ -854,7 +854,7 @@ namespace hrms_mvc.Migrations
                     b.Property<DateTime?>("ApprovedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ApprovedBy")
+                    b.Property<string>("ApprovedBy");
                     b.Property<string>("PriceType")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -963,7 +963,7 @@ namespace hrms_mvc.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Password")
+                    b.Property<string>("Password");
                     b.Property<string>("LogoPath")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -979,6 +979,7 @@ namespace hrms_mvc.Migrations
                     b.Property<string>("Priority")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+                });
 
             modelBuilder.Entity("hrms_mvc.Models.TaskBoards", b =>
                 {
@@ -1002,6 +1003,7 @@ namespace hrms_mvc.Migrations
 
                     b.Property<int?>("TasksId")
                         .HasColumnType("int");
+                });
 
             modelBuilder.Entity("hrms_mvc.Models.Attendance", b =>
                 {
