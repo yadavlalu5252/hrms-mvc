@@ -1,158 +1,765 @@
-﻿@{
+﻿@using System.Text.Json
+@model hrms_mvc.Models.AdminDashboardViewModel
+
+@{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
     ViewData["Title"] = "Admin Dashboard";
+
+    var employeesByDepartmentLabels =
+        Model.EmployeesByDepartment
+            .Select(x => x.DepartmentName)
+            .ToList();
+
+    var employeesByDepartmentValues =
+        Model.EmployeesByDepartment
+            .Select(x => x.EmployeeCount)
+            .ToList();
+
+    var taskStatisticsLabels =
+        Model.TaskStatistics
+            .Select(x => x.Status)
+            .ToList();
+
+    var taskStatisticsValues =
+        Model.TaskStatistics
+            .Select(x => x.Count)
+            .ToList();
+
+    var attendanceLabels = new[]
+    {
+        "Present",
+        "Half Day",
+        "Absent"
+    };
+
+    var attendanceValues = new[]
+    {
+        (int)(ViewBag.PresentEmployees ?? 0),
+        (int)(ViewBag.HalfDayEmployees ?? 0),
+        (int)(ViewBag.AbsentEmployees ?? 0)
+    };
+
+ decimal productionHours = Convert.ToDecimal(ViewBag.ProductionHours ?? 0);
+    decimal workingHours = Convert.ToDecimal(ViewBag.WorkingHours ?? 0);
+    decimal breakHours = Convert.ToDecimal(ViewBag.BreakHours ?? 0);
+
+    decimal totalHours =
+        productionHours +
+        workingHours +
+        breakHours;
+
+    decimal productionPercentage = totalHours > 0
+        ? productionHours / totalHours * 100
+        : 0;
+
+    decimal workingPercentage = totalHours > 0
+        ? workingHours / totalHours * 100
+        : 0;
+
+    decimal breakPercentage = totalHours > 0
+        ? breakHours / totalHours * 100
+        : 0;
 }
 
+<div class="container-fluid admin-dashboard">
 
+    <!-- Page Heading -->
+    <div class="dashboard-heading d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
+        <div>
+            <h2 class="mb-1">Admin Dashboard</h2>
+            <p class="text-muted mb-0">
+                Overview of your HRMS activities
+            </p>
+        </div>
 
-<div class="container-fluid">
-    <h2 class="mb-4">Admin Dashboard</h2>
+        <form method="get"
+              asp-controller="Admin"
+              asp-action="Index"
+              class="d-flex align-items-center gap-2">
 
-    <div class="row">
+            <label for="date" class="fw-semibold">
+                Date:
+            </label>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-primary">
-                <div class="card-body">
-                    <h5>Total Employees</h5>
+            <input type="date"
+                   id="date"
+                   name="date"
+                   value="@Model.SelectedDate.ToString("yyyy-MM-dd")"
+                   class="form-control" />
+
+            <button type="submit" class="btn btn-primary">
+                Apply
+            </button>
+        </form>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Total Employees</p>
                     <h3>@ViewBag.TotalEmployees</h3>
                 </div>
+                <div class="summary-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-people"></i>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-success">
-                <div class="card-body">
-                    <h5>Present Employees</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Present</p>
                     <h3>@ViewBag.PresentEmployees</h3>
                 </div>
+                <div class="summary-icon bg-success-subtle text-success">
+                    <i class="bi bi-person-check"></i>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-warning">
-                <div class="card-body">
-                    <h5>Half Day Employees</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Half Day</p>
                     <h3>@ViewBag.HalfDayEmployees</h3>
                 </div>
+                <div class="summary-icon bg-warning-subtle text-warning">
+                    <i class="bi bi-clock"></i>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-danger">
-                <div class="card-body">
-                    <h5>Absent Employees</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Absent</p>
                     <h3>@ViewBag.AbsentEmployees</h3>
                 </div>
+                <div class="summary-icon bg-danger-subtle text-danger">
+                    <i class="bi bi-person-x"></i>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-info">
-                <div class="card-body">
-                    <h5>Total Projects</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Total Projects</p>
                     <h3>@ViewBag.TotalProjects</h3>
                 </div>
+                <div class="summary-icon bg-info-subtle text-info">
+                    <i class="bi bi-kanban"></i>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-secondary">
-                <div class="card-body">
-                    <h5>Total Clients</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Total Clients</p>
                     <h3>@ViewBag.TotalClients</h3>
                 </div>
+                <div class="summary-icon bg-secondary-subtle text-secondary">
+                    <i class="bi bi-person-badge"></i>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-dark">
-                <div class="card-body">
-                    <h5>Total Tasks</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">Total Tasks</p>
                     <h3>@ViewBag.TotalTasks</h3>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-success">
-                <div class="card-body">
-                    <h5>Total Earnings</h5>
-                    <h3>@ViewBag.TotalEarnings</h3>
+                <div class="summary-icon bg-primary-subtle text-primary">
+                    <i class="bi bi-list-task"></i>
                 </div>
             </div>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-primary">
-                <div class="card-body">
-                    <h5>New Hires</h5>
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card summary-card">
+                <div>
+                    <p class="summary-title">New Hires</p>
                     <h3>@ViewBag.NewHires</h3>
                 </div>
-            </div>
-        </div>
-
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-info">
-                <div class="card-body">
-                    <h5>Production Hours</h5>
-                    <h3>@ViewBag.ProductionHours</h3>
+                <div class="summary-icon bg-success-subtle text-success">
+                    <i class="bi bi-person-plus"></i>
                 </div>
             </div>
         </div>
+    </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-warning">
-                <div class="card-body">
-                    <h5>Working Hours</h5>
-                    <h3>@ViewBag.WorkingHours</h3>
-                </div>
-            </div>
+    <!-- Charts -->
+    <div class="row g-4 mb-4">
+        <div class="col-lg-4">
+    <div class="dashboard-card employee-status-card">
+
+        <div class="card-heading">
+            <h5>Employee Status</h5>
+
+            <span class="status-period">
+                This Week
+            </span>
         </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-secondary">
-                <div class="card-body">
-                    <h5>Break Hours</h5>
-                    <h3>@ViewBag.BreakHours</h3>
-                </div>
-            </div>
-        </div>
+        <div class="employee-status-content">
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-success">
-                <div class="card-body">
-                    <h5>Completed Tasks</h5>
-                    <h3>@ViewBag.CompletedTasks</h3>
-                </div>
-            </div>
-        </div>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">
+                    Total Employee
+                </span>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-warning">
-                <div class="card-body">
-                    <h5>On Hold Tasks</h5>
-                    <h3>@ViewBag.OnHoldTasks</h3>
-                </div>
+                <strong class="total-employee-count">
+                    @ViewBag.TotalEmployees
+                </strong>
             </div>
-        </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-info">
-                <div class="card-body">
-                    <h5>In Progress Tasks</h5>
-                    <h3>@ViewBag.InProgressTasks</h3>
+            <!-- Dynamic Status Bar -->
+            <div class="employee-status-bar">
+
+                <div class="status-production"
+                     style="width: @productionPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">
                 </div>
-            </div>
-        </div>
 
-        <div class="col-md-3 mb-3">
-            <div class="card text-bg-danger">
-                <div class="card-body">
-                    <h5>Pending Tasks</h5>
-                    <h3>@ViewBag.PendingTasks</h3>
+                <div class="status-working"
+                     style="width: @workingPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">
                 </div>
-            </div>
-        </div>
 
+                <div class="status-break"
+                     style="width: @breakPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">
+                </div>
+
+            </div>
+
+            <!-- Hours Details -->
+            <div class="row g-0 employee-hours-grid">
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot production-dot"></span>
+                        Production Hours
+                    </div>
+
+                    <small>
+                        (@productionPercentage.ToString("0.##")%)
+                    </small>
+
+                    <h3>
+                        @productionHours.ToString("0.##")
+                    </h3>
+                </div>
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot working-dot"></span>
+                        Working Hours
+                    </div>
+
+                    <small>
+                        (@workingPercentage.ToString("0.##")%)
+                    </small>
+
+                    <h3>
+                        @workingHours.ToString("0.##")
+                    </h3>
+                </div>
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot break-dot"></span>
+                        Break Hours
+                    </div>
+
+                    <small>
+                        (@breakPercentage.ToString("0.##")%)
+                    </small>
+
+                    <h3>
+                        @breakHours.ToString("0.##")
+                    </h3>
+                </div>
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot total-dot"></span>
+                        Total Hours
+                    </div>
+
+                    <small>
+                        All Hours
+                    </small>
+
+                    <h3>
+                        @totalHours.ToString("0.##")
+                    </h3>
+                </div>
+
+            </div>
+
+            <a asp-controller="EmployeeList"
+               asp-action="Index"
+               class="btn btn-light w-100 mt-3">
+                View All Employees
+            </a>
+
+        </div>
     </div>
 </div>
+
+        <div class="col-lg-7">
+            <div class="dashboard-card chart-card">
+                <div class="card-heading">
+                    <h5>Employees by Department</h5>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="departmentChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="dashboard-card chart-card">
+                <div class="card-heading">
+                    <h5>Attendance Summary</h5>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="attendanceChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="dashboard-card chart-card">
+                <div class="card-heading">
+                    <h5>Task Statistics</h5>
+                </div>
+
+                <div class="chart-wrapper">
+                    <canvas id="taskChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="dashboard-card chart-card">
+                <div class="card-heading">
+                    <h5>Working Hours</h5>
+                </div>
+
+                <div class="hours-container">
+                    <div class="hour-row">
+                        <span>Production Hours</span>
+                        <strong>@ViewBag.ProductionHours</strong>
+                    </div>
+
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-success"
+                             style="width: 75%;">
+                        </div>
+                    </div>
+
+                    <div class="hour-row">
+                        <span>Working Hours</span>
+                        <strong>@ViewBag.WorkingHours</strong>
+                    </div>
+
+                    <div class="progress mb-3">
+                        <div class="progress-bar bg-primary"
+                             style="width: 60%;">
+                        </div>
+                    </div>
+
+                    <div class="hour-row">
+                        <span>Break Hours</span>
+                        <strong>@ViewBag.BreakHours</strong>
+                    </div>
+
+                    <div class="progress">
+                        <div class="progress-bar bg-warning"
+                             style="width: 35%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div class="col-lg-4">
+    <div class="dashboard-card employee-status-card">
+
+        <div class="card-heading">
+            <h5>Employee Status</h5>
+
+            <span class="status-period">
+                This Week
+            </span>
+        </div>
+
+        <div class="employee-status-content">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-muted">
+                    Total Employee
+                </span>
+
+                <strong class="total-employee-count">
+                    @ViewBag.TotalEmployees
+                </strong>
+            </div>
+
+            <!-- Dynamic Status Bar -->
+            <div class="employee-status-bar">
+
+                <div class="status-production"
+                     style="width: @productionPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">
+                </div>
+
+                <div class="status-working"
+                     style="width: @workingPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">
+                </div>
+
+                <div class="status-break"
+                     style="width: @breakPercentage.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%;">
+                </div>
+
+            </div>
+
+            <!-- Hours Details -->
+            <div class="row g-0 employee-hours-grid">
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot production-dot"></span>
+                        Production Hours
+                    </div>
+
+                    <small>
+                        (@productionPercentage.ToString("0.##")%)
+                    </small>
+
+                    <h3>
+                        @productionHours.ToString("0.##")
+                    </h3>
+                </div>
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot working-dot"></span>
+                        Working Hours
+                    </div>
+
+                    <small>
+                        (@workingPercentage.ToString("0.##")%)
+                    </small>
+
+                    <h3>
+                        @workingHours.ToString("0.##")
+                    </h3>
+                </div>
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot break-dot"></span>
+                        Break Hours
+                    </div>
+
+                    <small>
+                        (@breakPercentage.ToString("0.##")%)
+                    </small>
+
+                    <h3>
+                        @breakHours.ToString("0.##")
+                    </h3>
+                </div>
+
+                <div class="col-6 employee-hour-box">
+                    <div class="hour-label">
+                        <span class="hour-dot total-dot"></span>
+                        Total Hours
+                    </div>
+
+                    <small>
+                        All Hours
+                    </small>
+
+                    <h3>
+                        @totalHours.ToString("0.##")
+                    </h3>
+                </div>
+
+            </div>
+
+            <a asp-controller="EmployeeList"
+               asp-action="Index"
+               class="btn btn-light w-100 mt-3">
+                View All Employees
+            </a>
+
+        </div>
+    </div>
+</div>
+    <!-- Clock In / Clock Out Table -->
+    <div class="dashboard-card table-card mb-4">
+        <div class="card-heading">
+            <h5>
+                Clock In / Clock Out
+                <span class="text-muted">
+                    (@Model.SelectedDate.ToString("dd MMM yyyy"))
+                </span>
+            </h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Employee</th>
+                        <th>Date</th>
+                        <th>Check In</th>
+                        <th>Check Out</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.ClockInOutRecords.Any())
+                    {
+                        foreach (var item in Model.ClockInOutRecords)
+                        {
+                            <tr>
+                                <td>@item.EmployeeName</td>
+                                <td>@item.Date.ToString("dd MMM yyyy")</td>
+                                <td>
+                                    @(item.Checkin?.ToString("hh:mm tt") ?? "-")
+                                </td>
+                                <td>
+                                    @(item.Checkout?.ToString("hh:mm tt") ?? "-")
+                                </td>
+                                <td>
+    <span class="status-badge
+        @(item.Status == "Present"
+            ? "status-present"
+            : item.Status == "Half Day"
+                ? "status-halfday"
+                : item.Status == "Absent"
+                    ? "status-absent"
+                    : "")">
+
+        @item.Status
+
+    </span>
+</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                No attendance records found for this date.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Employees Table -->
+    <div class="dashboard-card table-card mb-4">
+        <div class="card-heading">
+            <h5>Employees</h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Department</th>
+                        <th>Date of Joining</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Employees.Any())
+                    {
+                        foreach (var employee in Model.Employees)
+                        {
+                            <tr>
+                                <td>@employee.EmployeeName</td>
+                                <td>@employee.Email</td>
+                                <td>@employee.DepartmentName</td>
+                                <td>
+                                    @employee.DateOfJoining.ToString("dd MMM yyyy")
+                                </td>
+                                <td>
+    <span class="status-badge
+        @(employee.Status == "Active"
+            ? "status-active"
+            : employee.Status == "Inactive"
+                ? "status-inactive"
+                : "")">
+
+        @employee.Status
+
+    </span>
+</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                No employees found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Projects Table -->
+    <div class="dashboard-card table-card mb-4">
+        <div class="card-heading">
+            <h5>Projects</h5>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>Project</th>
+                        <th>Client</th>
+                        <th>Manager</th>
+                        <th>Tasks</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Projects.Any())
+                    {
+                        foreach (var project in Model.Projects)
+                        {
+                            <tr>
+                                <td>@project.ProjectName</td>
+                                <td>@project.ClientName</td>
+                                <td>@project.ManagerName</td>
+                                <td>@project.TaskCount</td>
+                                <td>
+    <span class="status-badge
+        @(project.Status == "In Progress"
+            ? "status-in-progress"
+            : project.Status == "Pending"
+                ? "status-pending"
+                : project.Status == "Completed"
+                    ? "status-completed"
+                    : "")">
+
+        @project.Status
+
+    </span>
+</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="5" class="text-center text-muted">
+                                No projects found.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const departmentLabels =
+            @Html.Raw(JsonSerializer.Serialize(employeesByDepartmentLabels));
+
+        const departmentValues =
+            @Html.Raw(JsonSerializer.Serialize(employeesByDepartmentValues));
+
+        const attendanceLabels =
+            @Html.Raw(JsonSerializer.Serialize(attendanceLabels));
+
+        const attendanceValues =
+            @Html.Raw(JsonSerializer.Serialize(attendanceValues));
+
+        const taskLabels =
+            @Html.Raw(JsonSerializer.Serialize(taskStatisticsLabels));
+
+        const taskValues =
+            @Html.Raw(JsonSerializer.Serialize(taskStatisticsValues));
+
+        new Chart(document.getElementById("departmentChart"), {
+            type: "bar",
+            data: {
+                labels: departmentLabels,
+                datasets: [{
+                    label: "Employees",
+                    data: departmentValues,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+
+        new Chart(document.getElementById("attendanceChart"), {
+            type: "doughnut",
+            data: {
+                labels: attendanceLabels,
+                datasets: [{
+                    data: attendanceValues,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+
+        new Chart(document.getElementById("taskChart"), {
+            type: "doughnut",
+            data: {
+                labels: taskLabels,
+                datasets: [{
+                    data: taskValues,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false
+            }
+        });
+    </script>
+}
