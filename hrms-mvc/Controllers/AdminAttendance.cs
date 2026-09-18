@@ -27,23 +27,23 @@ namespace hrms_mvc.Controllers
         }
 
         public async Task<IActionResult> FilterAttendance(
-            DateTime? startDate,DateTime? endDate)
+            DateTime? startDate, DateTime? endDate)
         {
             var attendanceList =
-                await attendanceService.GetAttendanceByDate( startDate,endDate);
+                await attendanceService.GetAttendanceByDate(startDate, endDate);
 
-            ViewBag.Employees =await attendanceService.GetEmployees();
+            ViewBag.Employees = await attendanceService.GetEmployees();
 
             return View("AdminAttendanceList", attendanceList);
         }
 
 
-   
+
         public async Task<IActionResult> AttendanceByUser(int userId)
         {
-            var attendanceList =await attendanceService.GetAttendanceByUserId(userId);
+            var attendanceList = await attendanceService.GetAttendanceByUserId(userId);
 
-            ViewBag.Employees =await attendanceService.GetEmployees();
+            ViewBag.Employees = await attendanceService.GetEmployees();
 
             return View("AdminAttendanceList", attendanceList);
         }
@@ -70,7 +70,7 @@ namespace hrms_mvc.Controllers
                 await attendanceService.GetEmployees();
 
             return View("AdminAttendanceList", attendanceList);
-    
+
         }
 
 
@@ -112,7 +112,7 @@ namespace hrms_mvc.Controllers
         {
             await attendanceService.DeleteAttendance(id);
 
-            TempData["success"] ="Attendance deleted successfully!";
+            TempData["success"] = "Attendance deleted successfully!";
 
             return RedirectToAction("AdminAttendanceList");
         }

@@ -36,8 +36,8 @@
             <nav class="sidebar-menu">
 
                 <!-- Dashboard -->
-                <a asp-controller="Auth"
-                   asp-action="Admin"
+                <a asp-controller="Admin"
+                   asp-action="Index"
                    class="sidebar-link active">
                     <span>⌂</span>
                     Dashboard
@@ -186,6 +186,27 @@
                         <a href="#">Upload Document</a>
                     </div>
                 </details>
+                <!-- Promotion -->
+                <a asp-controller="Promotion"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Promotion
+                </a>
+                <!-- Resignation -->
+                <a asp-controller="Resignation"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Resignation
+                </a>
+                <!-- Termination -->
+                <a asp-controller="Termination"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Termination
+                </a>
 
                 <!-- Logout -->
                 <a asp-controller="Auth"
@@ -210,7 +231,7 @@
             </main>
 
             <footer>
-                <p>Designed and developed by Team2. All rights reserved @2026</p>
+                <p>Designed and developed by Team2</p>
             </footer>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
