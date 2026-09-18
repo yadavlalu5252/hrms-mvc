@@ -189,11 +189,11 @@ namespace hrms_mvc.Services
                 .OrderBy(x => x.EmployeeName)
                 .ToListAsync();
         }
-        public async Task<List<EmployeeDashboardViewModel>> GetEmployees()
+        public async Task<List<AdminEmployeeDashboardViewModel>> GetEmployees()
         {
             return await db.Users
                 .AsNoTracking()
-                .Select(x => new EmployeeDashboardViewModel
+                .Select(x => new AdminEmployeeDashboardViewModel
                 {
                     Id = x.Id,
 

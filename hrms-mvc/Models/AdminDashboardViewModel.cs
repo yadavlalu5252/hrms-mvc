@@ -8,7 +8,7 @@
 
         public List<AttendanceDashboardViewModel> ClockInOutRecords { get; set; } = new();
 
-        public List<EmployeeDashboardViewModel> Employees { get; set; } = new();
+        public List<AdminEmployeeDashboardViewModel> Employees { get; set; } = new();
 
         public List<ProjectDashboardViewModel> Projects { get; set; } = new();
 
@@ -37,7 +37,7 @@
         public string Status { get; set; } = string.Empty;
     }
 
-    public class EmployeeDashboardViewModel
+    public class AdminEmployeeDashboardViewModel
     {
         public int Id { get; set; }
 

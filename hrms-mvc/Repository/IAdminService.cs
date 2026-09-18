@@ -39,7 +39,7 @@ namespace hrms_mvc.Repository
 
         Task<List<AttendanceDashboardViewModel>> GetClockInOutRecords(DateTime date);
 
-        Task<List<EmployeeDashboardViewModel>> GetEmployees();
+        Task<List<AdminEmployeeDashboardViewModel>> GetEmployees();
 
         Task<List<ProjectDashboardViewModel>> GetProjects();
 
