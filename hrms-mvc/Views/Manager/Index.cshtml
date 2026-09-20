@@ -259,78 +259,150 @@
 
     </form>
 </div>
-</div>
+
 
     <!-- Top Section -->
     <div class="row g-4 mb-4">
 
         <!-- Manager Profile -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="dashboard-card">
+<div class="col-xl-4 col-lg-5">
 
-                <div class="profile-header">
-                    <div class="d-flex align-items-center gap-3">
+    <div class="dashboard-card">
 
-                        <div class="profile-avatar">
-                            @if (Model.Manager != null)
-                            {
-                                @Model.Manager.FirstName?.Substring(0, 1).ToUpper()
-                            }
-                            else
-                            {
-                                <span>M</span>
-                            }
-                        </div>
+        <div class="profile-header">
 
-                        <div>
-                            <div class="profile-name">
-                                @if (Model.Manager != null)
-                                {
-                                    @Model.Manager.FirstName @Model.Manager.LastName
-                                }
-                                else
-                                {
-                                    <span>Manager</span>
-                                }
-                            </div>
+            <div class="d-flex align-items-center gap-3">
 
-                            <div class="profile-role">
-                                Manager
-                            </div>
-                        </div>
+                <div class="profile-avatar">
 
-                    </div>
+                    @if (Model.Manager != null &&
+                         !string.IsNullOrEmpty(Model.Manager.FirstName))
+                    {
+                        @Model.Manager.FirstName.Substring(0, 1).ToUpper()
+                    }
+                    else
+                    {
+                        <span>M</span>
+                    }
+
                 </div>
 
-                <div class="profile-body">
+                <div>
 
-                    <div class="info-label">Email Address</div>
+                    <div class="profile-name">
 
-                    <div class="info-value">
-                        @(Model.Manager?.Email ?? "Not available")
+                        @if (Model.Manager != null)
+                        {
+                            @Model.Manager.FirstName @Model.Manager.LastName
+                        }
+                        else
+                        {
+                            <span>Manager</span>
+                        }
+
                     </div>
 
-                    <div class="info-label">Department</div>
-
-                    <div class="info-value">
-                        @(Model.Manager?.Department?.Name ?? "Not available")
-                    </div>
-
-                    <div class="info-label">Username</div>
-
-                    <div class="info-value">
-                        @(Model.Manager?.FirstName ?? "Not available")
-                    </div>
-
-                    <div class="info-label">Role</div>
-
-                    <div class="info-value mb-0">
-                        @(Model.Manager?.Role?.RoleName ?? "Manager")
+                    <div class="profile-role">
+                        Manager
                     </div>
 
                 </div>
+
             </div>
+
         </div>
+
+
+        <div class="profile-body">
+
+            <div class="info-label">
+                Email Address
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.Email ?? "Not available")
+            </div>
+
+
+            <div class="info-label">
+                Department
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.Department?.Name ?? "Not available")
+            </div>
+
+
+            <div class="info-label">
+                Username
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.FirstName ?? "Not available")
+            </div>
+
+
+            <div class="info-label">
+                Role
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.Role?.RoleName ?? "Manager")
+            </div>
+
+
+            <!-- Production -->
+
+            <div class="text-center mt-3">
+
+                <div class="bg-warning text-dark rounded px-3 py-2 d-inline-block">
+
+                    <strong>Production :</strong>
+
+                    <br />
+
+                    <span>
+                        @Model.ProductiveHours.ToString("0.##")h
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Check In -->
+
+            <div class="text-center mt-3">
+
+                <div class="mb-2">
+
+                    <span class="text-danger">
+                        <i class="bi bi-fingerprint"></i>
+                        Punch In at
+                    </span>
+
+                    <strong>
+                        Not Checked In
+                    </strong>
+
+                </div>
+
+
+                <a asp-controller="Attendance"
+                   asp-action="Index"
+                   class="btn btn-primary px-4">
+
+                    Check-In
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
         <!-- Leave Details -->
         <div class="col-xl-4 col-lg-7">
