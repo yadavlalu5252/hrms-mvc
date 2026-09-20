@@ -20,6 +20,9 @@ namespace hrms_mvc.Controllers
             var attendanceList =
                 await attendanceService.GetAttendanceList();
 
+            ViewBag.Employees =
+                await attendanceService.GetEmployees();
+
             return View(attendanceList);
         }
 
@@ -28,6 +31,9 @@ namespace hrms_mvc.Controllers
         {
             var attendanceList =
                 await attendanceService.GetAttendanceByUserId(userId);
+
+            ViewBag.Employees =
+                await attendanceService.GetEmployees();
 
             return View("AdminAttendanceList", attendanceList);
         }
@@ -41,6 +47,9 @@ namespace hrms_mvc.Controllers
                 await attendanceService.GetAttendanceByDate(
                     startDate,
                     endDate);
+
+            ViewBag.Employees =
+                await attendanceService.GetEmployees();
 
             return View("AdminAttendanceList", attendanceList);
         }
@@ -89,7 +98,8 @@ namespace hrms_mvc.Controllers
 
             if (ModelState.IsValid)
             {
-                await attendanceService.UpdateAttendance(attendance);
+                await attendanceService.UpdateAttendance(
+                    attendance);
 
                 TempData["success"] =
                     "Attendance updated successfully!";

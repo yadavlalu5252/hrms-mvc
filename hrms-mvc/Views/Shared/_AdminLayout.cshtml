@@ -36,8 +36,8 @@
             <nav class="sidebar-menu">
 
                 <!-- Dashboard -->
-                <a asp-controller="Auth"
-                   asp-action="Admin"
+                <a asp-controller="Admin"
+                   asp-action="Index"
                    class="sidebar-link active">
                     <span>⌂</span>
                     Dashboard
@@ -74,11 +74,13 @@
                             Employee List
                         </a>
 
-                        <a href="#">
+                        <a asp-controller="EmployeeList"
+                           asp-action="Grid">
                             Employee Grid
                         </a>
 
-                        <a href="#">
+                        <a asp-controller="EmployeeDetails"
+                           asp-action="Index">
                             Employee Details
                         </a>
 
@@ -94,8 +96,22 @@
                     </summary>
 
                     <div class="submenu">
-                        <a href="#">Event List</a>
-                        <a href="#">Add Event</a>
+                        <a asp-controller="Event"
+                           asp-action="index11">
+                            Add event
+                        </a>
+                    </div>
+                    <div class="submenu">
+                        <a asp-controller="Event"
+                           asp-action="MasterEvent">
+                            Add Master Event
+                        </a>
+                    </div>
+                    <div class="submenu">
+                        <a asp-controller="Event"
+                           asp-action="GetData">
+                            Event List
+                        </a>
                     </div>
                 </details>
 
@@ -177,6 +193,34 @@
                     </div>
                 </details>
 
+                <!-- Reports -->
+                <details>
+                    <summary class="sidebar-link">
+                        <span>▱</span>
+                        Reports
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+
+                        <a asp-controller="Reports"
+                           asp-action="Index">
+                            Employee Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="Attendance">
+                            Attendance Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="LeaveReport">
+                            Leave Report
+                        </a>
+
+                    </div>
+                </details>
+
                 <!-- Master Documents -->
                 <details>
                     <summary class="sidebar-link">
@@ -204,6 +248,27 @@
                         <a href="#">Upload Document</a>
                     </div>
                 </details>
+                <!-- Promotion -->
+                <a asp-controller="Promotion"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Promotion
+                </a>
+                <!-- Resignation -->
+                <a asp-controller="Resignation"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Resignation
+                </a>
+                <!-- Termination -->
+                <a asp-controller="Termination"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Termination
+                </a>
 
                 <!-- Logout -->
                 <a asp-controller="Auth"
@@ -228,7 +293,7 @@
             </main>
 
             <footer>
-                <p>Admin Layout</p>
+                <p>Designed and developed by Team2</p>
             </footer>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
