@@ -53,7 +53,10 @@ namespace hrms_mvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApplyLeave(
-            LeaveRequest leaveRequest)
+      int LeaveTypeId,
+      DateTime StartDate,
+      DateTime EndDate,
+      string Reason)
         {
             var userId =
                 HttpContext.Session.GetInt32("UserId");
@@ -65,77 +68,67 @@ namespace hrms_mvc.Controllers
                     "Auth");
             }
 
-            leaveRequest.UserId =
-                userId.Value;
-
-            ModelState.Remove("User");
-            ModelState.Remove("MasterLeaveType");
-            ModelState.Remove("ApprovedBy");
-            ModelState.Remove("StatusHistory");
-
-            leaveRequest.Status =
-                "Pending";
-
-            leaveRequest.NumberOfDays =
-                (leaveRequest.EndDate -
-                 leaveRequest.StartDate).Days + 1;
-
-            if (ModelState.IsValid)
+            if (LeaveTypeId <= 0)
             {
-                await service.AddLeaveRequest(
-                    leaveRequest);
-
-                TempData["success"] =
-                    "Leave applied successfully!";
+                TempData["error"] =
+                    "Please select a leave type.";
 
                 return RedirectToAction(
                     "ViewMyLeaveRequests");
             }
 
-            var leaveRequests =
-                await service.GetMyLeaveRequests(
-                    userId.Value);
-
-            var leaveBalances =
-                await service.GetMyLeaveBalances(
-                    userId.Value);
-
-            var leaveTypes =
-                await service.GetAvailableLeaveTypes(
-                    userId.Value);
-
-            ViewBag.UserId =
-                userId.Value;
-
-            ViewBag.LeaveBalances =
-                leaveBalances;
-
-            ViewBag.LeaveTypes =
-                leaveTypes;
-
-            return View(
-                "ViewMyLeaveRequests",
-                leaveRequests);
-        }
-
-        [HttpGet]
-        public async Task<IActionResult> DepartmentLeaveDetails()
-        {
-            var userId =
-                HttpContext.Session.GetInt32("UserId");
-
-            if (userId == null)
+            if (StartDate == default ||
+                EndDate == default)
             {
+                TempData["error"] =
+                    "Please select start date and end date.";
+
                 return RedirectToAction(
-                    "Login",
-                    "Auth");
+                    "ViewMyLeaveRequests");
             }
 
-            var departmentLeaves =
-                await service.GetMyDepartmentLeaves(
-                    userId.Value);
+            if (EndDate < StartDate)
+            {
+                TempData["error"] =
+                    "End date cannot be before start date.";
 
-            return View(departmentLeaves);
+                return RedirectToAction(
+                    "ViewMyLeaveRequests");
+            }
+
+            if (string.IsNullOrWhiteSpace(Reason))
+            {
+                TempData["error"] =
+                    "Please enter a reason for leave.";
+
+                return RedirectToAction(
+                    "ViewMyLeaveRequests");
+            }
+
+            var leaveRequest = new LeaveRequest
+            {
+                UserId = userId.Value,
+                LeaveTypeId = LeaveTypeId,
+                StartDate = StartDate,
+                EndDate = EndDate,
+                NumberOfDays =
+                    (EndDate - StartDate).Days + 1,
+                Reason = Reason,
+                Status = "Pending",
+                ApprovedBy = "",
+                StatusHistory = ""
+            };
+
+            await service.AddLeaveRequest(
+                leaveRequest);
+
+            TempData["success"] =
+                "Leave applied successfully!";
+
+            return RedirectToAction(
+                "ViewMyLeaveRequests");
         }
+
+      
     }
 }

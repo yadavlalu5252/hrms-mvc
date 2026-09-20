@@ -50,20 +50,22 @@
                     </div>
                 </details>
 
+                <!-- Leave-->
+                <details>
+                    <summary class="sidebar-link">
+                        <span>♧</span>
+                        Leave
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
 
+                    <div class="submenu">
+                        <a asp-controller="EmployeeLeave" asp-action="ViewMyLeaveRequests">Leave</a>
+                    </div>
+                </details>
 
          
            
 
-                <a asp-controller="Employee" asp-action="Attendance">
-                    <i class="bi bi-calendar-check"></i>
-                    Attendance
-                </a>
-
-                <a asp-controller="Employee" asp-action="Leave">
-                    <i class="bi bi-calendar-x"></i>
-                    Leave
-                </a>
 
 
                 <a asp-controller="Auth" asp-action="Logout">

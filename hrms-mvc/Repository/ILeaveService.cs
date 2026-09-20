@@ -34,5 +34,10 @@ namespace hrms_mvc.Repository
 
         Task AddLeaveRequest(LeaveRequest leaveRequest);
         Task<List<DepartmentLeaves>> GetMyDepartmentLeaves(int userId);
+        Task<List<LeaveRequest>> GetManagerLeaveRequests(int managerId);
+
+        Task ApproveLeave(int id, string approvedBy);
+
+        Task RejectLeave(int id, string approvedBy);
     }
 }

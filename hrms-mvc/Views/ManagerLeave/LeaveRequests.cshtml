@@ -1,0 +1,356 @@
+﻿@model List<hrms_mvc.Models.LeaveRequest>
+
+@{
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Leave Requests";
+}
+
+<div class="container-fluid bg-light min-vh-100 py-4">
+
+    <div class="container-fluid">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+
+            <div>
+                <h2 class="fw-bold text-primary mb-1">
+                    <i class="bi bi-calendar-check me-2"></i>
+                    Leave Requests
+                </h2>
+
+                <p class="text-muted mb-0">
+                    Review employee leave requests
+                </p>
+            </div>
+
+        </div>
+
+        @if (TempData["success"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show">
+
+                @TempData["success"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+        }
+
+        @if (TempData["error"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show">
+
+                @TempData["error"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+        }
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white py-3">
+
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+
+                        <h5 class="mb-1 fw-bold text-primary">
+                            <i class="bi bi-table me-2"></i>
+                            Employee Leave Requests
+                        </h5>
+
+                        <small class="text-muted">
+                            Leave requests from your department employees
+                        </small>
+
+                    </div>
+
+                    <select id="statusFilter"
+                            class="form-select"
+                            style="width:180px;">
+
+                        <option value="">
+                            All Status
+                        </option>
+
+                        <option value="Pending">
+                            Pending
+                        </option>
+
+                        <option value="Approved">
+                            Approved
+                        </option>
+
+                        <option value="Rejected">
+                            Rejected
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table id="leaveTable"
+                           class="table table-hover align-middle w-100">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Leave ID
+                                </th>
+
+                                <th>
+                                    Employee
+                                </th>
+
+                                <th>
+                                    Leave Type
+                                </th>
+
+                                <th>
+                                    Start Date
+                                </th>
+
+                                <th>
+                                    End Date
+                                </th>
+
+                                <th>
+                                    Days
+                                </th>
+
+                                <th>
+                                    Reason
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                <th>
+                                    Action
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @if (Model != null && Model.Count > 0)
+                            {
+                                foreach (var leave in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @leave.Id
+                                        </td>
+
+                                        <td>
+
+                                            @if (leave.User != null)
+                                            {
+                                                <span>
+                                                    @leave.User.FirstName
+                                                    @leave.User.LastName
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    Employee not found
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+                                            @(leave.MasterLeaveType?.Leave ?? "-")
+                                        </td>
+
+                                        <td>
+                                            @leave.StartDate.ToString("dd-MM-yyyy")
+                                        </td>
+
+                                        <td>
+                                            @leave.EndDate.ToString("dd-MM-yyyy")
+                                        </td>
+
+                                        <td>
+                                            @leave.NumberOfDays
+                                        </td>
+
+                                        <td>
+                                            @leave.Reason
+                                        </td>
+
+                                        <td>
+
+                                            @if (leave.Status == "Pending")
+                                            {
+                                                <span class="badge bg-warning text-dark">
+                                                    Pending
+                                                </span>
+                                            }
+                                            else if (leave.Status == "Approved")
+                                            {
+                                                <span class="badge bg-success">
+                                                    Approved
+                                                </span>
+                                            }
+                                            else if (leave.Status == "Rejected")
+                                            {
+                                                <span class="badge bg-danger">
+                                                    Rejected
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    @leave.Status
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            @if (leave.Status == "Pending")
+                                            {
+                                                <div class="d-flex gap-1">
+
+                                                    <form asp-controller="ManagerLeave"
+                                                          asp-action="Approve"
+                                                          method="post"
+                                                          class="d-inline">
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <input type="hidden"
+                                                               name="id"
+                                                               value="@leave.Id" />
+
+                                                        <button type="submit"
+                                                                class="btn btn-success btn-sm">
+
+                                                            <i class="bi bi-check-lg"></i>
+                                                            Approve
+
+                                                        </button>
+
+                                                    </form>
+
+                                                    <form asp-controller="ManagerLeave"
+                                                          asp-action="Reject"
+                                                          method="post"
+                                                          class="d-inline">
+
+                                                        @Html.AntiForgeryToken()
+
+                                                        <input type="hidden"
+                                                               name="id"
+                                                               value="@leave.Id" />
+
+                                                        <button type="submit"
+                                                                class="btn btn-danger btn-sm">
+
+                                                            <i class="bi bi-x-lg"></i>
+                                                            Reject
+
+                                                        </button>
+
+                                                    </form>
+
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span class="text-muted">
+                                                    Completed
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts
+{
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+
+            var table =
+                $('#leaveTable').DataTable({
+
+                    pageLength: 10,
+
+                    ordering: true,
+
+                    searching: true,
+
+                    autoWidth: false,
+
+                    order: [[0, 'desc']],
+
+                    columnDefs: [
+                        {
+                            orderable: false,
+                            targets: [8]
+                        }
+                    ]
+
+                });
+
+            $('#statusFilter').on('change', function() {
+
+                var status = $(this).val();
+
+                table
+                    .column(7)
+                    .search(status)
+                    .draw();
+
+            });
+
+        });
+
+    </script>
+}
