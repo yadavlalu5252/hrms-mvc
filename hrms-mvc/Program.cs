@@ -91,9 +91,13 @@ builder.Services.AddScoped<IProjects, ProjectsService>();
 builder.Services.AddScoped<ITask, TaskService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 
-
+builder.Services.AddScoped<ILeaveService, LeaveService>();
+builder.Services.AddScoped<ITimesheetService, TimesheetService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+builder.Services.AddScoped<ITraininglistService, TraininglistService>();
 
 
 

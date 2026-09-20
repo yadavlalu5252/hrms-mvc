@@ -1,8 +1,20 @@
 ﻿@model List<hrms_mvc.Models.Termination>
 
 @{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Termination";
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Employee")
+    {
+        Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
 }
 
 <div class="container-fluid">
