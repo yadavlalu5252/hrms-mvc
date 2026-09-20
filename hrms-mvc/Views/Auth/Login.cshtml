@@ -30,11 +30,19 @@
                         </h3>
 
                         @if (ViewBag.ErrorMessage != null)
-                        {
-                            <div class="alert alert-danger">
-                                @ViewBag.ErrorMessage
-                            </div>
-                        }
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
 
                         <form method="post">
 
@@ -69,10 +77,11 @@
                         </div>
 
                         <a asp-controller="Auth"
-                           asp-action="GoogleLogin"
-                           class="btn btn-danger w-100">
-                            Sign in with Google
-                        </a>
+   asp-action="GoogleLogin"
+   class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+    <span>G</span>
+    <span>Sign in with Google</span>
+</a>
 
                     </div>
                 </div>

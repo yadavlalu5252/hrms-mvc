@@ -14,11 +14,20 @@ namespace hrms_mvc.Repository
             DateTime? startDate,
             DateTime? endDate);
 
-        Task AddAttendance(Attendance attendance);
-
         Task UpdateAttendance(Attendance attendance);
 
         Task DeleteAttendance(int id);
+
         Task<List<User>> GetEmployees();
+
+        Task<Attendance?> GetTodayAttendance(int userId);
+
+        Task CheckIn(int userId);
+
+        Task LunchOut(int userId);
+
+        Task LunchIn(int userId);
+
+        Task CheckOut(int userId);
     }
 }

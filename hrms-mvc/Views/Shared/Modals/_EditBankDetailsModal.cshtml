@@ -1,0 +1,142 @@
+﻿@using hrms_mvc.Models
+
+@model EmployeeBankDetails
+
+<div class="modal fade"
+     id="editBankDetailsModal"
+     tabindex="-1"
+     aria-labelledby="editBankDetailsModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold"
+                    id="editBankDetailsModalLabel">
+
+                    Bank Details
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form asp-controller="EmployeeDetails"
+                  asp-action="EditBankDetails"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           asp-for="Id" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Bank Details <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               asp-for="BankName"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Bank Id <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="number"
+                               asp-for="Id"
+                               class="form-control"
+                               readonly />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Bank account No
+                        </label>
+
+                        <input type="text"
+                               asp-for="AccountNumber"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            IFSC Code
+                        </label>
+
+                        <input type="text"
+                               asp-for="IFSCCode"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Branch Address
+                        </label>
+
+                        <input type="text"
+                               asp-for="BranchName"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-light border"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn text-white"
+                            style="background-color: #ff6a00;">
+
+                        Save
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .form-control {
+        min-height: 42px;
+        border-radius: 6px;
+    }
+
+    .form-control:focus {
+        border-color: #ff6a00;
+        box-shadow: 0 0 0 0.15rem rgba(255, 106, 0, 0.15);
+    }
+</style>

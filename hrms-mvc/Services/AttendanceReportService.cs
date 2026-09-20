@@ -15,17 +15,13 @@ namespace hrms_mvc.Services
 
         public async Task<List<Attendance>> GetAttendanceRecords( string? dateFilter,string? status,string? sortBy)
         {
-            var query = db.Attendances 
-                .Include(x => x.User)
-                .AsQueryable();
+            var query = db.Attendances.Include(x => x.User).AsQueryable();
 
-            // Status filter
             if (!string.IsNullOrEmpty(status))
             {
                 query = query.Where(x => x.Status == status);
             }
 
-            // Date filter
             if (dateFilter == "Yesterday")
             {
                 var yesterday = DateTime.Today.AddDays(-1);
@@ -48,7 +44,6 @@ namespace hrms_mvc.Services
                 query = query.Where(x => x.Date.Year == DateTime.Today.Year);
             }
 
-            // Sorting
             if (sortBy == "Ascending")
             {
                 query = query.OrderBy(x => x.Date);
@@ -71,12 +66,14 @@ namespace hrms_mvc.Services
 
         public async Task<int> TotalHalfDays()
         {
-            return await db.Attendances.CountAsync(x => x.Status == "Half Day");
+            return 0;
+           // return await db.Events.CountAsync(x => x.EventType == "Half Day");
         }
 
         public async Task<int> TotalHolidays()
         {
             return 0;
+           // return await db.Events.CountAsync(x => x.EventType == "Holiday");
         }
 
         public async Task<int> TotalLeaveTaken()

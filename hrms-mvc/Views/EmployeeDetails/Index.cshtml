@@ -7,6 +7,8 @@
     var employee = ViewBag.Employee as User;
     var bankDetails = ViewBag.BankDetails as EmployeeBankDetails;
     var familyDetails = ViewBag.FamilyDetails as List<EmployeeFamilyDetail>;
+    var educationDetails = ViewBag.EducationDetails as List<EducationDetails>;
+    var experienceDetails = ViewBag.ExperienceDetails as List<Experience>;
 }
 
 <div class="row">
@@ -31,39 +33,53 @@
             <!-- Employee Details -->
             <div class="card-body text-center pt-5">
 
-                <h5 class="mb-1">@employee.FirstName @employee.LastName</h5>
+                <h5 class="mb-1">
+                    @employee?.FirstName @employee?.LastName
+                </h5>
 
                 <span class="badge bg-secondary mb-3">
-                    @employee.Designation.DesignationName
+                    @employee?.Designation?.DesignationName
                 </span>
 
                 <div class="text-start">
 
                     <p class="mb-2">
                         <strong>Client ID:</strong>
-                        <span class="float-end">@employee.Id</span>
+                        <span class="float-end">
+                            @employee?.Id
+                        </span>
                     </p>
 
                     <p class="mb-2">
                         <strong>Department:</strong>
-                        <span class="float-end">@employee.Department.Name</span>
+                        <span class="float-end">
+                            @employee?.Department?.Name
+                        </span>
                     </p>
 
                     <p class="mb-2">
                         <strong>Date of Join:</strong>
-                        <span class="float-end">@employee.DateOfJoining.ToString("dd-MM-yyyy")</span>
+                        <span class="float-end">
+                            @employee?.DateOfJoining.ToString("dd-MM-yyyy")
+                        </span>
                     </p>
 
                     <p class="mb-3">
                         <strong>Report Office:</strong>
-                        <span class="float-end">@employee.Address</span>
+                        <span class="float-end">
+                            @employee?.Address
+                        </span>
                     </p>
 
                 </div>
 
-                <button class="btn btn-dark w-100 mb-3">
+                <button class="btn btn-dark w-100 mb-3"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editEmployeeModal">
+
                     <i class="bi bi-pencil-square"></i>
                     Edit Info
+
                 </button>
 
                 <hr />
@@ -76,27 +92,37 @@
 
                     <p class="mb-2">
                         <strong>Phone:</strong>
-                        <span class="float-end">@employee.MobileNumber</span>
+                        <span class="float-end">
+                            @employee?.MobileNumber
+                        </span>
                     </p>
 
                     <p class="mb-2">
                         <strong>Email:</strong>
-                        <span class="float-end">@employee.Email</span>
+                        <span class="float-end">
+                            @employee?.Email
+                        </span>
                     </p>
 
                     <p class="mb-2">
                         <strong>Gender:</strong>
-                        <span class="float-end">@employee.Gender</span>
+                        <span class="float-end">
+                            @employee?.Gender
+                        </span>
                     </p>
 
                     <p class="mb-2">
                         <strong>Birthday:</strong>
-                        <span class="float-end">@employee.DateOfBirth.ToString("dd-MM-yyyy")</span>
+                        <span class="float-end">
+                            @employee?.DateOfBirth.ToString("dd-MM-yyyy")
+                        </span>
                     </p>
 
                     <p class="mb-0">
                         <strong>Address:</strong>
-                        <span class="float-end">@employee.Address</span>
+                        <span class="float-end">
+                            @employee?.Address
+                        </span>
                     </p>
 
                 </div>
@@ -114,17 +140,27 @@
         <div class="card mb-4">
 
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">About Employee</h5>
 
-                <button class="btn btn-sm btn-light">
+                <h5 class="mb-0">
+                    About Employee
+                </h5>
+
+                <button class="btn btn-sm btn-light"
+                        data-bs-toggle="modal"
+                        data-bs-target="#editEmployeeModal">
+
                     ✎
+
                 </button>
+
             </div>
 
             <div class="card-body">
+
                 <p>
-                    This section contains basic information about the employee.
+                    @employee?.AboutEmployee
                 </p>
+
             </div>
 
         </div>
@@ -133,29 +169,78 @@
         <div class="card mb-4">
 
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Bank Information</h5>
+
+                <h5 class="mb-0">
+                    Bank Information
+                </h5>
 
                 <div>
-                    <button class="btn btn-sm btn-light">✎</button>
-                    <button class="btn btn-sm btn-light">+</button>
+
+                    @if (bankDetails != null)
+                    {
+                        <button class="btn btn-sm btn-light"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editBankDetailsModal">
+
+                            ✎
+
+                        </button>
+                    }
+
+                    <button class="btn btn-sm btn-light"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addBankDetailsModal">
+
+                        +
+
+                    </button>
+
                 </div>
+
             </div>
 
             <div class="card-body">
 
-                <div class="row">
+                @if (bankDetails != null)
+                {
+                    <div class="row">
 
-                    <div class="col-md-6">
-                        <p><strong>Bank Name:</strong> HDFC Bank</p>
-                        <p><strong>Account Number:</strong> 123456789012</p>
+                        <div class="col-md-6">
+
+                            <p>
+                                <strong>Bank Name:</strong>
+                                @bankDetails.BankName
+                            </p>
+
+                            <p>
+                                <strong>Account Number:</strong>
+                                @bankDetails.AccountNumber
+                            </p>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <p>
+                                <strong>IFSC Code:</strong>
+                                @bankDetails.IFSCCode
+                            </p>
+
+                            <p>
+                                <strong>Branch Name:</strong>
+                                @bankDetails.BranchName
+                            </p>
+
+                        </div>
+
                     </div>
-
-                    <div class="col-md-6">
-                        <p><strong>IFSC Code:</strong> HDFC0001234</p>
-                        <p><strong>Branch Name:</strong> Mumbai</p>
-                    </div>
-
-                </div>
+                }
+                else
+                {
+                    <p>
+                        No bank details available.
+                    </p>
+                }
 
             </div>
 
@@ -165,49 +250,97 @@
         <div class="card mb-4">
 
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Family Information</h5>
+
+                <h5 class="mb-0">
+                    Family Information
+                </h5>
 
                 <div>
-                    <button class="btn btn-sm btn-light">+</button>
-                    <button class="btn btn-sm btn-light">✎</button>
+
+                    <button class="btn btn-sm btn-light"
+                            data-bs-toggle="modal"
+                            data-bs-target="#addFamilyDetailsModal">
+
+                        +
+
+                    </button>
+
+                    @if (familyDetails != null && familyDetails.Any())
+                    {
+                        <button class="btn btn-sm btn-light"
+                                data-bs-toggle="modal"
+                                data-bs-target="#editFamilyDetailsModal">
+
+                            ✎
+
+                        </button>
+                    }
+
                 </div>
+
             </div>
 
             <div class="card-body">
 
                 <div class="row">
 
-                    <div class="col-md-3">
-                        <small>Family Id</small>
-                        <p>1</p>
+                    @if (familyDetails != null && familyDetails.Any())
+                    {
+                        foreach (var family in familyDetails)
+                        {
+                            <div class="col-md-4">
 
-                        <small>Phone</small>
-                        <p>2345632901</p>
-                    </div>
+                                <small>Family Id</small>
+                                <p>
+                                    @family.Id
+                                </p>
 
-                    <div class="col-md-3">
-                        <small>Name</small>
-                        <p>Admin Executive</p>
+                                <small>Phone</small>
+                                <p>
+                                    @family.MobileNumber
+                                </p>
 
-                        <small>Date of Birth</small>
-                        <p>05-02-2025</p>
-                    </div>
+                            </div>
 
-                    <div class="col-md-3">
-                        <small>Relationship</small>
-                        <p>Brother</p>
+                            <div class="col-md-4">
 
-                        <small>Family Id</small>
-                        <p>3</p>
-                    </div>
+                                <small>Name</small>
+                                <p>
+                                    @family.Name
+                                </p>
 
-                    <div class="col-md-3">
-                        <small>Name</small>
-                        <p>abc</p>
+                                <small>Date of Birth</small>
+                                <p>
+                                    @family.DateOfBirth.ToString("dd-MM-yyyy")
+                                </p>
 
-                        <small>Relationship</small>
-                        <p>xyz</p>
-                    </div>
+                            </div>
+
+                            <div class="col-md-4">
+
+                                <small>Relationship</small>
+                                <p>
+                                    @family.Relation
+                                </p>
+
+                                <small>User Id</small>
+                                <p>
+                                    @family.UserId
+                                </p>
+
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="col-12">
+
+                            <p>
+                                No family details available.
+                            </p>
+
+                        </div>
+                    }
 
                 </div>
 
@@ -215,6 +348,254 @@
 
         </div>
 
+        <!-- Education and Experience -->
+        <div class="row">
+
+            <!-- Education Details -->
+<div class="col-md-6">
+
+    <div class="card mb-4">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+
+            <h5 class="mb-0">
+                Education Details
+            </h5>
+
+            <div>
+
+                <button type="button"
+                        class="btn btn-sm btn-light"
+                        data-bs-toggle="modal"
+                        data-bs-target="#addEducationModal">
+
+                    +
+
+                </button>
+
+                @if (educationDetails != null && educationDetails.Any())
+                {
+                    <button type="button"
+                            class="btn btn-sm btn-light"
+                            data-bs-toggle="modal"
+                            data-bs-target="#editEducationModal-@educationDetails.First().EducationDetailsId">
+
+                        ✎
+
+                    </button>
+                }
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            @if (educationDetails != null && educationDetails.Any())
+            {
+                foreach (var education in educationDetails)
+                {
+                    <p>
+                        <strong>Education:</strong>
+                        @education.EducationType
+                    </p>
+
+                    <p>
+                        <strong>University:</strong>
+                        @education.UniversityName
+                    </p>
+
+                    <p>
+                        <strong>Start Date:</strong>
+                        @(education.startdate.HasValue
+                            ? education.startdate.Value.ToString("dd-MM-yyyy")
+                            : "")
+                    </p>
+
+                    <p>
+                        <strong>End Date:</strong>
+                        @(education.enddate.HasValue
+                            ? education.enddate.Value.ToString("dd-MM-yyyy")
+                            : "")
+
+                    </p>
+
+                    <hr />
+
+                    @await Html.PartialAsync(
+                        "Modals/_EditEducationDetailsModal",
+                        education
+                    )
+                }
+            }
+            else
+            {
+                <p>
+                    No education details available.
+                </p>
+            }
+
+            @await Html.PartialAsync(
+                "Modals/_AddEducationDetailsModal",
+                new hrms_mvc.Models.EducationDetails()
+            )
+
+        </div>
+
     </div>
 
 </div>
+
+            <!-- Experience -->
+            <div class="col-md-6">
+
+                <div class="card mb-4">
+
+                    <div class="card-header d-flex justify-content-between align-items-center">
+
+                        <h5 class="mb-0">
+                            Experience
+                        </h5>
+
+                        <div>
+
+                            <button class="btn btn-sm btn-light"
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#addExperienceModal">
+
+                                +
+
+                            </button>
+
+                            @if (experienceDetails != null && experienceDetails.Any())
+                            {
+                                var firstExperience = experienceDetails.First();
+
+                                <button class="btn btn-sm btn-light"
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#editExperienceModal-@firstExperience.ExperienceId">
+
+                                    ✎
+
+                                </button>
+                            }
+
+                        </div>
+
+                    </div>
+
+                    <div class="card-body">
+
+                        @if (experienceDetails != null && experienceDetails.Any())
+                        {
+                            foreach (var experience in experienceDetails)
+                            {
+                                <p>
+                                    <strong>Company:</strong>
+                                    @experience.CompanyName
+                                </p>
+
+                                <p>
+                                    <strong>Designation:</strong>
+                                    @experience.DesignationName
+                                </p>
+
+                                <p>
+                                    <strong>Start Date:</strong>
+                                    @experience.FromDate.ToString("dd-MM-yyyy")
+                                </p>
+
+                                <p>
+                                    <strong>End Date:</strong>
+                                    @experience.ToDate.ToString("dd-MM-yyyy")
+                                </p>
+
+                                @await Html.PartialAsync(
+                                    "Modals/_EditExperienceDetailsModal",
+                                    experience
+                                )
+
+                                <hr />
+                            }
+                        }
+                        else
+                        {
+                            <p>
+                                No experience details available.
+                            </p>
+                        }
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            @await Html.PartialAsync(
+                "Modals/_AddExperienceDetailsModal",
+                new hrms_mvc.Models.Experience()
+            )
+        </div>
+
+    </div>
+
+</div>
+
+<!-- Employee Edit Modal -->
+@await Html.PartialAsync(
+    "Modals/_EditEmployeeModal",
+    employee
+)
+
+<!-- Bank Modals -->
+@await Html.PartialAsync(
+    "Modals/_AddBankDetailsModal",
+    new EmployeeBankDetails()
+)
+
+@await Html.PartialAsync(
+    "Modals/_EditBankDetailsModal",
+    bankDetails
+)
+
+<!-- Family Modals -->
+@await Html.PartialAsync(
+    "Modals/_AddFamilyDetailsModal",
+    new EmployeeFamilyDetail()
+)
+
+@foreach (var familyDetail in familyDetails)
+{
+    @await Html.PartialAsync(
+        "Modals/_EditFamilyDetailsModal",
+        familyDetail
+    )
+}
+
+<!-- Education Modals -->
+@await Html.PartialAsync(
+    "Modals/_AddEducationDetailsModal",
+    new EducationDetails()
+)
+
+@foreach (var education in educationDetails)
+{
+    @await Html.PartialAsync(
+        "Modals/_EditEducationDetailsModal",
+        education
+    )
+}
+
+<!-- Experience Modals -->
+@await Html.PartialAsync(
+    "Modals/_AddExperienceDetailsModal",
+    new Experience()
+)
+
+@foreach (var experience in experienceDetails)
+{
+    @await Html.PartialAsync(
+        "Modals/_EditExperienceDetailsModal",
+        experience
+    )
+}

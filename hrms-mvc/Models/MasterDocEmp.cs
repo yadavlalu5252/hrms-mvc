@@ -6,6 +6,7 @@ namespace hrms_mvc.Models
     {
         [Key]
         public int EmpId { get; set; }
+
         [Required(ErrorMessage = "DocumentName is required.")]
         public string EmpDocName { get; set; }
 

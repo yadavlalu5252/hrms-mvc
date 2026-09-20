@@ -4,33 +4,42 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace hrms_mvc.Controllers
 {
-    public class LeaveController : Controller
+    public class EmployeeLeaveController : Controller
     {
         private readonly ILeaveService service;
 
-        public LeaveController(
-            ILeaveService service)
+        public EmployeeLeaveController(ILeaveService service)
         {
             this.service = service;
         }
 
-
-
         [HttpGet]
-        public async Task<IActionResult> ViewMyLeaveRequests(
-            int userId)
+        public async Task<IActionResult> ViewMyLeaveRequests()
         {
+            var userId =
+                HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Auth");
+            }
+
             var leaveRequests =
-                await service.GetMyLeaveRequests(userId);
+                await service.GetMyLeaveRequests(
+                    userId.Value);
 
             var leaveBalances =
-                await service.GetMyLeaveBalances(userId);
+                await service.GetMyLeaveBalances(
+                    userId.Value);
 
             var leaveTypes =
-                await service.GetAvailableLeaveTypes();
+                await service.GetAvailableLeaveTypes(
+                    userId.Value);
 
             ViewBag.UserId =
-                userId;
+                userId.Value;
 
             ViewBag.LeaveBalances =
                 leaveBalances;
@@ -41,67 +50,85 @@ namespace hrms_mvc.Controllers
             return View(leaveRequests);
         }
 
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApplyLeave(
-            LeaveRequest leaveRequest)
+      int LeaveTypeId,
+      DateTime StartDate,
+      DateTime EndDate,
+      string Reason)
         {
-            ModelState.Remove("User");
-            ModelState.Remove("MasterLeaveType");
-            ModelState.Remove("ApprovedBy");
-            ModelState.Remove("StatusHistory");
+            var userId =
+                HttpContext.Session.GetInt32("UserId");
 
-            leaveRequest.Status =
-                "Pending";
-
-            leaveRequest.NumberOfDays =
-                (leaveRequest.EndDate -
-                 leaveRequest.StartDate).Days + 1;
-
-
-            if (ModelState.IsValid)
+            if (userId == null)
             {
-                await service.AddLeaveRequest(
-                    leaveRequest);
-
-                TempData["success"] =
-                    "Leave applied successfully!";
-
                 return RedirectToAction(
-                    "ViewMyLeaveRequests",
-                    new
-                    {
-                        userId =
-                            leaveRequest.UserId
-                    });
+                    "Login",
+                    "Auth");
             }
 
+            if (LeaveTypeId <= 0)
+            {
+                TempData["error"] =
+                    "Please select a leave type.";
 
-            var leaveRequests =
-                await service.GetMyLeaveRequests(
-                    leaveRequest.UserId);
+                return RedirectToAction(
+                    "ViewMyLeaveRequests");
+            }
 
-            var leaveBalances =
-                await service.GetMyLeaveBalances(
-                    leaveRequest.UserId);
+            if (StartDate == default ||
+                EndDate == default)
+            {
+                TempData["error"] =
+                    "Please select start date and end date.";
 
-            var leaveTypes =
-                await service.GetAvailableLeaveTypes();
+                return RedirectToAction(
+                    "ViewMyLeaveRequests");
+            }
 
+            if (EndDate < StartDate)
+            {
+                TempData["error"] =
+                    "End date cannot be before start date.";
 
-            ViewBag.UserId =
-                leaveRequest.UserId;
+                return RedirectToAction(
+                    "ViewMyLeaveRequests");
+            }
 
-            ViewBag.LeaveBalances =leaveBalances;
+            if (string.IsNullOrWhiteSpace(Reason))
+            {
+                TempData["error"] =
+                    "Please enter a reason for leave.";
 
-            ViewBag.LeaveTypes = leaveTypes;
+                return RedirectToAction(
+                    "ViewMyLeaveRequests");
+            }
 
+            var leaveRequest = new LeaveRequest
+            {
+                UserId = userId.Value,
+                LeaveTypeId = LeaveTypeId,
+                StartDate = StartDate,
+                EndDate = EndDate,
+                NumberOfDays =
+                    (EndDate - StartDate).Days + 1,
+                Reason = Reason,
+                Status = "Pending",
+                ApprovedBy = "",
+                StatusHistory = ""
+            };
 
-            return View(
-                "ViewMyLeaveRequests",
-                leaveRequests);
+            await service.AddLeaveRequest(
+                leaveRequest);
+
+            TempData["success"] =
+                "Leave applied successfully!";
+
+            return RedirectToAction(
+                "ViewMyLeaveRequests");
         }
+
+      
     }
 }

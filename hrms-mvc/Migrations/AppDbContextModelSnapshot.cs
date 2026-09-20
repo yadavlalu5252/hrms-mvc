@@ -247,6 +247,37 @@
 //                    b.Property<int>("Id")
 //                        .ValueGeneratedOnAdd()
 //                        .HasColumnType("int");
+            modelBuilder.Entity("hrms_mvc.Models.Documents", b =>
+                {
+                    b.Property<int>("DocId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("DocId"));
+
+                    b.Property<string>("DocFile")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DocName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("DocId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Documents");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Earning", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
 //                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -302,6 +333,43 @@
 //                    b.Property<int>("Id")
 //                        .ValueGeneratedOnAdd()
 //                        .HasColumnType("int");
+            modelBuilder.Entity("hrms_mvc.Models.EducationDetails", b =>
+                {
+                    b.Property<int>("EducationDetailsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EducationDetailsId"));
+
+                    b.Property<string>("EducationType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("UniversityName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("enddate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("startdate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("EducationDetailsId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("EducationDetails");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EmployeeBankDetails", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
 //                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -497,6 +565,46 @@
 //                    b.Property<int>("LeaveBalanceId")
 //                        .ValueGeneratedOnAdd()
 //                        .HasColumnType("int");
+            modelBuilder.Entity("hrms_mvc.Models.Experience", b =>
+                {
+                    b.Property<int>("ExperienceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ExperienceId"));
+
+                    b.Property<string>("CompanyName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("DesignationName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("FromDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsCurrentlyWorking")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("ToDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("ExperienceId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Experiences");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.LeaveBalance", b =>
+                {
+                    b.Property<int>("LeaveBalanceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
 //                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("LeaveBalanceId"));
 
@@ -631,6 +739,45 @@
 //                    b.Property<int>("Id")
 //                        .ValueGeneratedOnAdd()
 //                        .HasColumnType("int");
+            modelBuilder.Entity("hrms_mvc.Models.MasterDocAdmin", b =>
+                {
+                    b.Property<int>("AdminId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AdminId"));
+
+                    b.Property<string>("AdminDocName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("AdminId");
+
+                    b.ToTable("MasterDocAdmin");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.MasterDocEmp", b =>
+                {
+                    b.Property<int>("EmpId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmpId"));
+
+                    b.Property<string>("EmpDocName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("EmpId");
+
+                    b.ToTable("MasterDocEmp");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.MasterLeaveType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
 //                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -849,6 +996,24 @@
 //                    b.Property<int>("Id")
 //                        .ValueGeneratedOnAdd()
 //                        .HasColumnType("int");
+                    b.Property<string>("Leave")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("MasterLeaveTypes");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Organization", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
 //                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -1061,6 +1226,72 @@
 
 //                            b.Property<DateTime>("Deadline")
 //                                .HasColumnType("datetime2");
+                    b.Property<string>("OrganizationAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationEmail")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationLogo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OrganizationPhone")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Organizations");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Payslips", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("GeneratedOn")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Month")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PayslipPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Payslips");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Projects", b =>
+                {
+                    b.Property<int>("ProjectsId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectsId"));
+
+                    b.Property<string>("ClientName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
 //                            b.Property<string>("Description")
 //                                .IsRequired()
@@ -1099,6 +1330,32 @@
 //                            b.Property<string>("ProjectName")
 //                                .IsRequired()
 //                                .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("LogoPath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ManagerName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("PriceType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Priority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
 //                            b.Property<double>("ProjectValue")
 //                                .HasColumnType("float");
@@ -1233,6 +1490,9 @@
 //                            b.Property<string>("RoleName")
 //                                .IsRequired()
 //                                .HasColumnType("nvarchar(max)");
+                    b.Property<string>("RoleName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
 //                            b.Property<string>("Status")
 //                                .IsRequired()
@@ -1563,6 +1823,12 @@
 //                            b.Property<string>("Status")
 //                                .IsRequired()
 //                                .HasColumnType("nvarchar(max)");
+                    b.Property<int>("ProjectId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
 //                            b.Property<int>("UserId")
 //                                .HasColumnType("int");
@@ -1573,6 +1839,9 @@
 //                            b.HasKey("Id");
 
 //                            b.HasIndex("UserId");
+                    b.HasIndex("ProjectId");
+
+                    b.HasIndex("UserId");
 
 //                            b.ToTable("Timesheets");
 //                        });
@@ -1582,6 +1851,147 @@
 //                            b.Property<int>("Id")
 //                                .ValueGeneratedOnAdd()
 //                                .HasColumnType("int");
+            modelBuilder.Entity("hrms_mvc.Models.Trainers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Fname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Lname")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicture")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Trainers");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TrainingType", b =>
+                {
+                    b.Property<int>("TrainingTypeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainingTypeId"));
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrainingTypeName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TrainingTypeId");
+
+                    b.ToTable("TrainingType");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Traininglist", b =>
+                {
+                    b.Property<int>("TrainingId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("TrainingId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("EndDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("ModifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ModifiedBy")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ProfilePicture")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TrainersId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TrainingCost")
+                        .HasColumnType("decimal(14, 4)");
+
+                    b.Property<int>("TrainingTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.PrimitiveCollection<string>("images")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TrainingId");
+
+                    b.HasIndex("TrainersId");
+
+                    b.HasIndex("TrainingTypeId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Traininglist");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.User", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
 //                            SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
@@ -2052,6 +2462,459 @@
 //                                .WithMany()
 //                                .HasForeignKey("DepartmentId")
 //                                .OnDelete(DeleteBehavior.NoAction);
+                    b.Navigation("DeductionType");
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Designation");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.DepartmentLeaves", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany("DepartmentLeaves")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.MasterLeaveType", "MasterLeaveType")
+                        .WithMany("DepartmentLeaves")
+                        .HasForeignKey("LeaveTypeId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("MasterLeaveType");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Designation", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany("Designations")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Documents", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Earning", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Department", null)
+                        .WithMany("Earnings")
+                        .HasForeignKey("DepartmentId");
+
+                    b.HasOne("hrms_mvc.Models.EarningType", "EarningType")
+                        .WithMany("Earnings")
+                        .HasForeignKey("EarntypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("EarningType");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EducationDetails", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany("EducationDetails")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EmployeeBankDetails", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithOne("EmployeeBankDetails")
+                        .HasForeignKey("hrms_mvc.Models.EmployeeBankDetails", "UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EmployeeDeductions", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Deduction", "Deduction")
+                        .WithMany()
+                        .HasForeignKey("DeductionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.EmployeeSalaries", "EmployeeSalaries")
+                        .WithMany("EmployeeDeductions")
+                        .HasForeignKey("SalaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Deduction");
+
+                    b.Navigation("EmployeeSalaries");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EmployeeEarnings", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Earning", "Earning")
+                        .WithMany()
+                        .HasForeignKey("EarningId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.EmployeeSalaries", "EmployeeSalaries")
+                        .WithMany("EmployeeEarnings")
+                        .HasForeignKey("SalaryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Earning");
+
+                    b.Navigation("EmployeeSalaries");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EmployeeFamilyDetail", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany("EmployeeFamilyDetails")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.EmployeeSalaries", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Experience", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany("Experiences")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.LeaveBalance", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.DepartmentLeaves", "DepartmentLeaves")
+                        .WithMany("LeaveBalances")
+                        .HasForeignKey("DepartmentLeavesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.MasterLeaveType", null)
+                        .WithMany("LeaveBalances")
+                        .HasForeignKey("MasterLeaveTypeId");
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany("LeaveBalances")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("DepartmentLeaves");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.LeaveRequest", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.MasterLeaveType", "MasterLeaveType")
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("LeaveTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany("LeaveRequests")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("MasterLeaveType");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Payslips", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Promotion", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Resignation", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TaskBoards", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Projects", "Project")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tasks", "Task")
+                        .WithMany()
+                        .HasForeignKey("TaskId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tasks", null)
+                        .WithMany("TaskBoards")
+                        .HasForeignKey("TasksId");
+
+                    b.Navigation("Project");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TaskMembers", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Tasks", "Task")
+                        .WithMany("Taskmember")
+                        .HasForeignKey("TaskId");
+
+                    b.Navigation("Task");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tasks", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Projects", "Project")
+                        .WithMany("Tasks")
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Project");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Termination", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketAttachment", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Tickets", "Ticket")
+                        .WithMany("Attachments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "UploadedByUser")
+                        .WithMany()
+                        .HasForeignKey("UploadedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("Ticket");
+
+                    b.Navigation("UploadedByUser");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketComment", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "CommentByUser")
+                        .WithMany()
+                        .HasForeignKey("CommentBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tickets", "Ticket")
+                        .WithMany("Comments")
+                        .HasForeignKey("TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CommentByUser");
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.TicketResolution", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "ResolvedByUser")
+                        .WithMany()
+                        .HasForeignKey("ResolvedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.Tickets", "Ticket")
+                        .WithOne("Resolution")
+                        .HasForeignKey("hrms_mvc.Models.TicketResolution", "TicketId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ResolvedByUser");
+
+                    b.Navigation("Ticket");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Tickets", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.User", "AssignedByUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedBy")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("hrms_mvc.Models.User", "AssignedToUser")
+                        .WithMany()
+                        .HasForeignKey("AssignedTo")
+                        .OnDelete(DeleteBehavior.NoAction);
+
+                    b.HasOne("hrms_mvc.Models.User", "RaisedByUser")
+                        .WithMany()
+                        .HasForeignKey("RaisedBy")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.Navigation("AssignedByUser");
+
+                    b.Navigation("AssignedToUser");
+
+                    b.Navigation("RaisedByUser");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Timesheet", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Projects", "Projects")
+                        .WithMany()
+                        .HasForeignKey("ProjectId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany("Timesheets")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Projects");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Traininglist", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Trainers", "Trainers")
+                        .WithMany()
+                        .HasForeignKey("TrainersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.TrainingType", "TrainingType")
+                        .WithMany()
+                        .HasForeignKey("TrainingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trainers");
+
+                    b.Navigation("TrainingType");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.Traininglist", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Trainers", "Trainers")
+                        .WithMany()
+                        .HasForeignKey("TrainersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.TrainingType", "TrainingType")
+                        .WithMany()
+                        .HasForeignKey("TrainingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trainers");
+
+                    b.Navigation("TrainingType");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("hrms_mvc.Models.User", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Department", "Department")
+                        .WithMany()
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.NoAction);
 
 //                            b.HasOne("hrms_mvc.Models.Designation", "Designation")
 //                                .WithMany()
@@ -2142,10 +3005,18 @@
 //                            modelBuilder.Entity("hrms_mvc.Models.User", b =>
 //                        {
 //                            b.Navigation("EmployeeBankDetails");
+            modelBuilder.Entity("hrms_mvc.Models.User", b =>
+                {
+                    b.Navigation("EducationDetails");
+
+                    b.Navigation("EmployeeBankDetails");
 
 //                            b.Navigation("EmployeeFamilyDetails");
 
 //                            b.Navigation("LeaveBalances");
+                    b.Navigation("Experiences");
+
+                    b.Navigation("LeaveBalances");
 
 //                            b.Navigation("LeaveRequests");
 
