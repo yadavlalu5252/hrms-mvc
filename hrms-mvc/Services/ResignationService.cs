@@ -27,6 +27,16 @@ namespace hrms_mvc.Services
 
         public async Task<int> AddResignation(Resignation resignation)
         {
+            var existing = await db.Resignations
+                   .SingleOrDefaultAsync(x =>
+                    x.UserId == resignation.UserId &&
+                    x.NoticeDate == resignation.NoticeDate &&
+                    x.ResignDate == resignation.ResignDate);
+
+            if (existing != null)
+            {
+                return 0;
+            }
             await db.Resignations.AddAsync(resignation);
             return await db.SaveChangesAsync();
         }

@@ -1,5 +1,7 @@
 using hrms_mvc.Data;
 using hrms_mvc.Repository;
+using hrms_mvc.Services;
+using Microsoft.EntityFrameworkCore;
 using hrms_mvc.Repository.EventsRepo;
 using hrms_mvc.Repository.ProjectsRepo;
 using hrms_mvc.Services;
@@ -49,15 +51,28 @@ builder.Services
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+builder.Services.AddScoped<ITrainingTypeService, TrainingTypeService>();
+builder.Services.AddScoped<ITrainingListService, TrainingListService>();
+builder.Services.AddScoped<IMasterDocAdminService, MasterDocAdminService>();
+builder.Services.AddScoped<IMasterDocEmpService, MasterDocEmpService>();
+builder.Services.AddScoped<IAdminFileUpload, AdminFileUploadService>();
 
-builder.Services.AddScoped<ILeaveService, LeaveService>();
-builder.Services.AddScoped<IAttendanceService, AttendanceService>();
-builder.Services.AddScoped<ITimesheetService, TimesheetService>();
+builder.Services.AddScoped<IUploadedDocument, UploadedDocumentListService>();
+builder.Services.AddScoped<IMyDocument, MyDocumentService>();
+builder.Services.AddScoped<ICompanyLetters, CompanyLettersService>();
+builder.Services.AddScoped<IEmployeeUploadDocument, EmployeeUploadDocumentService>();
 
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<IResignationService, ResignationService>();
+builder.Services.AddScoped<ITerminationService, TerminationService>();
+builder.Services.AddScoped<ITicketsService, TicketsService>();
+
+
+
 
 builder.Services.AddScoped<IResignationService, ResignationService>();
 
@@ -76,17 +91,21 @@ builder.Services.AddScoped<IProjects, ProjectsService>();
 builder.Services.AddScoped<ITask, TaskService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 
 
-
-
-
+builder.Services.AddScoped<ILeaveService, LeaveService>();
+builder.Services.AddScoped<ITimesheetService, TimesheetService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+builder.Services.AddScoped<ITraininglistService, TraininglistService>();
 
 
 
 
 
 var app = builder.Build();
+
+
 
 // Global exception handling
 app.UseExceptionHandler("/Error/Index");
@@ -99,6 +118,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseStaticFiles();
 
 app.UseStatusCodePagesWithReExecute("/Error/NotFound");
 

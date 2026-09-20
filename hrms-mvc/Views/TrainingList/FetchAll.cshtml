@@ -1,0 +1,149 @@
+﻿@model IEnumerable<hrms_mvc.Models.Traininglist>
+
+<div class="main-wrapper">
+    <div class="card p-4">
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="mb-0">Training List</h3>
+
+            <a asp-controller="TrainingList"
+               asp-action="AddTrainingList"
+               class="btn btn-primary">
+                Add Training
+            </a>
+        </div>
+
+        <div class="table-responsive">
+
+            <table id="trainingTable"
+                   class="table table-bordered table-hover">
+
+                <thead>
+                    <tr>
+                        <th>Training Id</th>
+                        <th>Trainer</th>
+                        <th>Training Type</th>
+                        <th>User</th>
+                        <th>Training Cost</th>
+                        <th>Description</th>
+                        <th>Status</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Created At</th>
+                        <th>Created By</th>
+                        <th>Modified At</th>
+                        <th>Modified By</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach (var d in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @d.TrainingId
+                            </td>
+
+                            <td>
+                                @d.Trainers.Fname @d.Trainers.Lname
+                            </td>
+
+                            <td>
+                                @d.TrainingType.TrainingTypeName
+                            </td>
+
+                            <td>
+                                @d.User.Name
+                            </td>
+
+                            <td>
+                                @d.TrainingCost
+                            </td>
+
+                            <td>
+                                @d.Description
+                            </td>
+
+                            <td>
+                                @d.Status
+                            </td>
+
+                            <td>
+                                @d.StartDate.ToString("dd-MM-yyyy")
+                            </td>
+
+                            <td>
+                                @d.EndDate.ToString("dd-MM-yyyy")
+                            </td>
+
+                            <td>
+                                @d.CreatedAt.ToString("dd-MM-yyyy")
+                            </td>
+
+                            <td>
+                                @d.CreatedBy
+                            </td>
+
+                            <td>
+                                @d.ModifiedAt.ToString("dd-MM-yyyy")
+                            </td>
+
+                            <td>
+                                @d.ModifiedBy
+                            </td>
+
+                            <td>
+
+                                <a asp-controller="TrainingList"
+                                   asp-action="EditTrainingList"
+                                   asp-route-id="@d.TrainingId"
+                                   class="btn btn-warning btn-sm">
+                                    Edit
+                                </a>
+
+                                <form asp-controller="TrainingList"
+                                      asp-action="DeleteTrainingList"
+                                      asp-route-id="@d.TrainingId"
+                                      method="post"
+                                      style="display:inline;">
+
+                                    <button type="submit"
+                                            class="btn btn-danger btn-sm">
+                                        Delete
+                                    </button>
+
+                                </form>
+
+                            </td>
+
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.13.5/js/jquery.dataTables.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+
+            $('#trainingTable').DataTable({
+                pageLength: 10
+            });
+
+        });
+
+    </script>
+}

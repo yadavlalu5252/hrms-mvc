@@ -74,7 +74,7 @@
                 <!-- Leave-->
                 <details>
                     <summary class="sidebar-link">
-                        <span>♧</span>
+                        <i class="bi bi-calendar-x"></i>
                         Leave
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -85,21 +85,23 @@
                 </details>
 
          
-           
+            <!-- Calender-->
+                <details>
+                    <summary class="sidebar-link">
+                        <i class="bi bi-calendar"></i>
+                        Calender
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+                        <a asp-controller="Event" asp-action="index11">Events</a>
+                    </div>
+                </details>
 
 
                
 
-                <a asp-controller="Employee"
-                   asp-action="Leave">
 
-                    <i class="bi bi-calendar-x"></i>
-
-                    <span>
-                        Leave
-                    </span>
-
-                </a>
                 <a asp-controller="Document"
                    asp-action="Index">
 
@@ -110,7 +112,7 @@
                     </span>
 
                 </a>
-                <a asp-controller="Ticket"
+                <a asp-controller="Tickets"
                    asp-action="Index">
 
                     <i class="bi bi-ticket-perforated"></i>
