@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+
     <title>@ViewData["Title"] - HRMS Employee</title>
 
     <link rel="stylesheet"
@@ -34,6 +35,25 @@
                     <i class="bi bi-person"></i>
                     My Profile
                 </a>
+                <!-- Attendance-->
+                <details>
+                    <summary class="sidebar-link">
+                        <span>♧</span>
+                        Attendance
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+                        <a asp-controller="EmployeeAttendance" asp-action="Index">Attendance</a>
+                       
+
+                    </div>
+                </details>
+
+
+
+         
+           
 
                 <a asp-controller="Employee" asp-action="Attendance">
                     <i class="bi bi-calendar-check"></i>
@@ -44,6 +64,7 @@
                     <i class="bi bi-calendar-x"></i>
                     Leave
                 </a>
+
 
                 <a asp-controller="Auth" asp-action="Logout">
                     <i class="bi bi-box-arrow-right"></i>

@@ -1,7 +1,7 @@
 ﻿@model List<hrms_mvc.Models.DepartmentLeaves>
 
 @{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
     ViewData["Title"] = "Department Leave Details";
 }
 
@@ -19,14 +19,7 @@
 
         </div>
 
-        <a asp-action="AddLeaveDeptwise"
-           class="btn btn-warning">
-
-            <i class="bi bi-plus-circle"></i>
-
-            Add Leave
-
-        </a>
+     
 
     </div>
 
@@ -183,7 +176,7 @@
 
     <script>
 
-        $(document).ready(function () {
+        $(document).ready(function() {
 
             $('#departmentLeaveTable').DataTable({
 

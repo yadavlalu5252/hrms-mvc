@@ -27,9 +27,21 @@
                     My Team
                 </a>
 
-                <a asp-controller="Manager" asp-action="LeaveRequests">
-                    Leave Requests
-                </a>
+                <!-- Timesheet-->
+                <details>
+                    <summary class="sidebar-link">
+                        <span>♧</span>
+                        Leave Requests
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+                        <a asp-controller="ManagerTimesheet" asp-action="ManagerTimesheet">Timesheet </a>
+
+                       
+
+                    </div>
+                </details>
 
                 <a asp-controller="Auth" asp-action="Logout">
                     Logout
