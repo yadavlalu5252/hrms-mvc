@@ -55,20 +55,11 @@
                 </a>
 
 
-                <a asp-controller="Employee"
-                   asp-action="Profile">
 
-                    <i class="bi bi-person"></i>
-
-                    <span>
-                        My Profile
-                    </span>
-
-                </a>
                 <!-- Attendance-->
                 <details>
                     <summary class="sidebar-link">
-                        <span>♧</span>
+                        <i class="bi bi-calendar-check"></i>
                         Attendance
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -86,17 +77,7 @@
            
 
 
-                <a asp-controller="Employee"
-                   asp-action="Attendance">
-
-                    <i class="bi bi-calendar-check"></i>
-
-                    <span>
-                        Attendance
-                    </span>
-
-                </a>
-
+               
 
                 <a asp-controller="Employee"
                    asp-action="Leave">
@@ -105,6 +86,16 @@
 
                     <span>
                         Leave
+                    </span>
+
+                </a>
+                <a asp-controller="Ticket"
+                   asp-action="Index">
+
+                    <i class="bi bi-ticket-perforated"></i>
+
+                    <span>
+                        Tickets
                     </span>
 
                 </a>
