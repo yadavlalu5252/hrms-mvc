@@ -1,8 +1,20 @@
 ﻿@model List<hrms_mvc.Models.EventModel>
 
 @{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Events";
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Employee")
+    {
+        Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
 }
 
 
@@ -91,14 +103,17 @@
 
         <div class="col-md-3">
 
-            <button type="button"
-                    class="btn add-btn text-white w-100 mb-3"
-                    data-bs-toggle="modal"
-                    data-bs-target="#addEventModal">
+            @if (role != "Employee")
+{
+    <button type="button"
+            class="btn add-btn text-white w-100 mb-3"
+            data-bs-toggle="modal"
+            data-bs-target="#addEventModal">
 
-                Add New Event
+        Add New Event
 
-            </button>
+    </button>
+}
 
 
             @foreach (var item in Model)
