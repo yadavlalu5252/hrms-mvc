@@ -1,0 +1,366 @@
+﻿@model List<hrms_mvc.Models.EventModel>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Holidays";
+}
+
+<style>
+
+    .page-title {
+        font-weight: bold;
+        margin-bottom: 5px;
+    }
+
+    .breadcrumb-text {
+        color: #6c757d;
+        margin-bottom: 25px;
+    }
+
+    .holiday-card {
+        background-color: white;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+    }
+
+    .card-heading {
+        padding: 18px;
+        border-bottom: 1px solid #ddd;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .table-area {
+        padding: 20px;
+    }
+
+    .holiday-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .holiday-table th {
+            background-color: #e9ecef;
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #aaa;
+        }
+
+        .holiday-table td {
+            padding: 14px;
+            border-bottom: 1px solid #ddd;
+        }
+
+    .active-status {
+        background-color: #00c853;
+        color: white;
+        padding: 5px 12px;
+        border-radius: 4px;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .top-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .add-button {
+        background-color: #ff641f;
+        color: white;
+        border: none;
+        padding: 11px 18px;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    .action-area {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .edit-button {
+        background-color: #0d6efd;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+    .delete-button {
+        background-color: #dc3545;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+    }
+
+</style>
+
+
+<div class="container-fluid">
+
+    <div class="top-section">
+
+        <div>
+
+            <h2 class="page-title">
+                Holidays
+            </h2>
+
+            <div class="breadcrumb-text">
+                Home / Event / Holidays List
+            </div>
+
+        </div>
+
+
+        <a href="/Event/index11" class="add-button">
+            + Add Holiday
+        </a>
+
+    </div>
+
+
+    <div class="holiday-card">
+
+        <div class="card-heading">
+            Holidays Details
+        </div>
+
+
+        <div class="table-area">
+
+            <table class="holiday-table">
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Title</th>
+                        <th>Status</th>
+                        <th>Date</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+
+                            <td>
+                                @item.EventModelId
+                            </td>
+
+
+                            <td>
+                                @item.Title
+                            </td>
+
+
+                            <td>
+
+                                <span class="active-status">
+                                    @item.Status
+                                </span>
+
+                            </td>
+
+
+                            <td>
+                                @item.Date
+                            </td>
+
+
+                            <td>
+
+                                <div class="action-area">
+
+
+                                 
+
+                                    <button type="button"
+                                            class="edit-button"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editModal-@item.EventModelId">
+
+                                        Edit
+
+                                    </button>
+
+
+
+                                
+
+                                    <form asp-controller="Event"
+                                          asp-action="DeleteEvent"
+                                          method="post">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.EventModelId" />
+
+                                        <button type="submit"
+                                                class="delete-button"
+                                                onclick="return confirm('Are you sure you want to delete this event?')">
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+
+
+                        
+
+                        <div class="modal fade"
+                             id="editModal-@item.EventModelId"
+                             tabindex="-1">
+
+                            <div class="modal-dialog modal-dialog-centered">
+
+                                <div class="modal-content">
+
+
+                                    <div class="modal-header">
+
+                                        <h5 class="modal-title">
+                                            Edit Event
+                                        </h5>
+
+                                        <button type="button"
+                                                class="btn-close"
+                                                data-bs-dismiss="modal">
+                                        </button>
+
+                                    </div>
+
+
+
+                                    <form asp-controller="Event"
+                                          asp-action="EditEvent"
+                                          method="post">
+
+
+                                        <div class="modal-body">
+
+
+                                            
+
+                                            <input type="hidden"
+                                                   name="EventModelId"
+                                                   value="@item.EventModelId" />
+
+
+
+                                           
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Event Title
+                                                </label>
+
+                                                <input type="text"
+                                                       name="Title"
+                                                       value="@item.Title"
+                                                       class="form-control"
+                                                       required />
+
+                                            </div>
+
+
+
+                                            
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Event Date
+                                                </label>
+
+                                                <input type="text"
+                                                       name="Date"
+                                                       value="@item.Date"
+                                                       class="form-control"
+                                                       required />
+
+                                            </div>
+
+
+
+                                            
+
+                                            <div class="mb-3">
+
+                                                <label class="form-label">
+                                                    Event Type ID
+                                                </label>
+
+                                                <input type="number"
+                                                       name="EventTypeId"
+                                                       value="@item.EventTypeId"
+                                                       class="form-control"
+                                                       required />
+
+                                            </div>
+
+
+                                        </div>
+
+
+
+                                        <div class="modal-footer">
+
+                                            <button type="button"
+                                                    class="btn btn-secondary"
+                                                    data-bs-dismiss="modal">
+
+                                                Close
+
+                                            </button>
+
+
+                                            <button type="submit"
+                                                    class="edit-button">
+
+                                                Update
+
+                                            </button>
+
+                                        </div>
+
+
+                                    </form>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
