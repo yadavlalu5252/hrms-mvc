@@ -5,8 +5,21 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <title>@ViewData["Title"] - HRMS Manager</title>
+    <link rel="stylesheet"
+          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="~/css/site.css" />
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
     <link rel="stylesheet" href="~/css/site.css" />
+    
 </head>
 
 <body>
@@ -14,25 +27,64 @@
     <div class="manager-layout">
 
         <aside class="manager-sidebar">
+
             <h2>HRMS</h2>
 
             <nav>
-                <a asp-controller="Auth" asp-action="ManagerD">
+
+                <a asp-controller="Auth"
+                   asp-action="ManagerD">
                     Dashboard
                 </a>
 
-                <a asp-controller="Manager" asp-action="Team">
+                <a asp-controller="Manager"
+                   asp-action="Team">
                     My Team
                 </a>
 
-                <a asp-controller="Manager" asp-action="LeaveRequests">
+                <a asp-controller="Manager"
+                   asp-action="LeaveRequests">
                     Leave Requests
                 </a>
 
-                <a asp-controller="Auth" asp-action="Logout">
+                <details>
+
+                    <summary class="sidebar-link">
+                        <span>♧</span>
+                        Projects
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+                        <a asp-controller="Projects"
+                           asp-action="GetProject">
+                            Projects
+                        </a>
+                    </div>
+
+                    <div class="submenu">
+                        <a asp-controller="Task"
+                           asp-action="Index">
+                            Task
+                        </a>
+                    </div>
+
+                    <div class="submenu">
+                        <a asp-controller="TaskBoard"
+                           asp-action="TaskBoard">
+                            TaskBoard
+                        </a>
+                    </div>
+
+                </details>
+
+                <a asp-controller="Auth"
+                   asp-action="Logout">
                     Logout
                 </a>
+
             </nav>
+
         </aside>
 
         <div class="manager-content">

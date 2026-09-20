@@ -115,6 +115,38 @@
                     </div>
                 </details>
 
+                <!-- Projects-->
+
+                <details>
+                    <summary class="sidebar-link">
+                        <span>♧</span>
+                        Projects
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+                        <a asp-controller="Projects"
+                           asp-action="GetProject">
+                            Projects
+                        </a>
+                    </div>
+                    
+                    <div class="submenu">
+                        <a asp-controller="Task"
+                           asp-action="Index">
+                            Task
+                        </a>
+                    </div>
+
+                    <div class="submenu">
+                        <a asp-controller="TaskBoard"
+                           asp-action="TaskBoard">
+                            TaskBoard
+                        </a>
+                    </div>
+
+                </details>
+
                 <!-- Training -->
                 <details>
                     <summary class="sidebar-link">
@@ -222,7 +254,7 @@
             </main>
 
             <footer>
-                <p>Designed and developed by Team2. All rights reserved @2026</p>
+                <p>Designed and developed by team2</p>
             </footer>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
