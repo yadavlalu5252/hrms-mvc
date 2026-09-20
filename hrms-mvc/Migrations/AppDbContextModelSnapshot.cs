@@ -1981,6 +1981,33 @@ namespace hrms_mvc.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("hrms_mvc.Models.Traininglist", b =>
+                {
+                    b.HasOne("hrms_mvc.Models.Trainers", "Trainers")
+                        .WithMany()
+                        .HasForeignKey("TrainersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.TrainingType", "TrainingType")
+                        .WithMany()
+                        .HasForeignKey("TrainingTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("hrms_mvc.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Trainers");
+
+                    b.Navigation("TrainingType");
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("hrms_mvc.Models.User", b =>
                 {
                     b.HasOne("hrms_mvc.Models.Department", "Department")

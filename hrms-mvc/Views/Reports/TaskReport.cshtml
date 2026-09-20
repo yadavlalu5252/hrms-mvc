@@ -1,0 +1,1075 @@
+﻿@model List<hrms_mvc.Models.Tasks>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Task Report";
+
+    var totalTasks = Model?.Count ?? 0;
+
+    var completedTasks = Model?
+        .Count(x => x.Status == "Completed") ?? 0;
+
+    var pendingTasks = Model?
+        .Count(x => x.Status == "Pending") ?? 0;
+
+    var inProgressTasks = Model?
+        .Count(x => x.Status == "In Progress") ?? 0;
+
+    var onHoldTasks = Model?
+        .Count(x => x.Status == "On Hold") ?? 0;
+}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="mb-1">Task Report</h3>
+
+            <p class="text-muted mb-0">
+                Overview of task information
+            </p>
+        </div>
+
+        <!-- Export -->
+        <div class="dropdown">
+
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download me-1"></i>
+                Export
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i>
+                        Excel
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                        PDF
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+                        Print
+
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Cards + Chart -->
+    <div class="row g-3 mb-4">
+
+        <!-- Left Cards -->
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+                <!-- Total Tasks -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Total Tasks
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.TotalTasks
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Current total
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-list-task fs-4 text-primary"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Completed Tasks -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Completed Tasks
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.CompletedTasks
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Completed
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-check-circle fs-4 text-success"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- On Hold Tasks -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        OnHold Tasks
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.OnHoldTasks
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Currently on hold
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-pause-circle fs-4 text-warning"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Overdue Tasks -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Overdue Tasks
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.OverdueTasks
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Need attention
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-exclamation-circle fs-4 text-danger"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-pie-chart-fill text-danger me-2"></i>
+
+                            Tasks
+
+                        </h5>
+
+                        <span class="text-muted small">
+                            Task Data
+                        </span>
+
+                    </div>
+
+
+                    <div style="height:310px;">
+
+                        <canvas id="taskChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-controller="Reports"
+                  asp-action="TaskReport">
+
+                <div class="row g-3">
+
+                    <!-- Priority -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Select Priority Filter:
+                        </label>
+
+                        <select name="priority"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                --Select Priority--
+                            </option>
+
+                            @if (ViewBag.Priority == "Low")
+                            {
+                                <option value="Low" selected>
+                                    Low
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Low">
+                                    Low
+                                </option>
+                            }
+
+                            @if (ViewBag.Priority == "Medium")
+                            {
+                                <option value="Medium" selected>
+                                    Medium
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Medium">
+                                    Medium
+                                </option>
+                            }
+
+                            @if (ViewBag.Priority == "High")
+                            {
+                                <option value="High" selected>
+                                    High
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="High">
+                                    High
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Select Status Filter:
+                        </label>
+
+                        <select name="status"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                --Select Status--
+                            </option>
+
+                            @if (ViewBag.Status == "Pending")
+                            {
+                                <option value="Pending" selected>
+                                    Pending
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Pending">
+                                    Pending
+                                </option>
+                            }
+
+                            @if (ViewBag.Status == "In Progress")
+                            {
+                                <option value="In Progress" selected>
+                                    In Progress
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="In Progress">
+                                    In Progress
+                                </option>
+                            }
+
+                            @if (ViewBag.Status == "Completed")
+                            {
+                                <option value="Completed" selected>
+                                    Completed
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Completed">
+                                    Completed
+                                </option>
+                            }
+
+                            @if (ViewBag.Status == "On Hold")
+                            {
+                                <option value="On Hold" selected>
+                                    On Hold
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="On Hold">
+                                    On Hold
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Sort -->
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+                            Sort By:
+                        </label>
+
+                        <select name="sortBy"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                --Select--
+                            </option>
+
+                            @if (ViewBag.SortBy == "Ascending")
+                            {
+                                <option value="Ascending" selected>
+                                    Task Name A-Z
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Ascending">
+                                    Task Name A-Z
+                                </option>
+                            }
+
+                            @if (ViewBag.SortBy == "Descending")
+                            {
+                                <option value="Descending" selected>
+                                    Task Name Z-A
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Descending">
+                                    Task Name Z-A
+                                </option>
+                            }
+
+                            @if (ViewBag.SortBy == "Deadline")
+                            {
+                                <option value="Deadline" selected>
+                                    Deadline
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Deadline">
+                                    Deadline
+                                </option>
+                            }
+
+                            @if (ViewBag.SortBy == "Recent")
+                            {
+                                <option value="Recent" selected>
+                                    Recent
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Recent">
+                                    Recent
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Task List -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Tasks List
+                </h5>
+
+                <span class="text-muted">
+                    @Model.Count task(s)
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="taskTable"
+                       class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Task ID</th>
+
+                            <th>Task Name</th>
+
+                            <th>Project Name</th>
+
+                            <th>Due Date</th>
+
+                            <th>Priority</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+
+                            foreach (var task in Model)
+                            {
+
+                                <tr>
+
+                                    <!-- Task ID -->
+                                    <td>
+                                        @task.TasksId
+                                    </td>
+
+
+                                    <!-- Task Name -->
+                                    <td>
+                                        <span class="fw-semibold">
+                                            @task.Title
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Project -->
+                                    <td>
+
+                                        @if (task.Project != null)
+                                        {
+                                            @task.Project.ProjectName
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                -
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Due Date -->
+                                    <td data-order="@task.Deadline.ToString("yyyy-MM-dd")">
+
+                                        @task.Deadline.ToString("dd-MM-yyyy")
+
+                                    </td>
+
+
+                                    <!-- Priority -->
+                                    <td>
+
+                                        @if (task.Priority == "High")
+                                        {
+                                            <span class="badge bg-danger">
+                                                High
+                                            </span>
+                                        }
+                                        else if (task.Priority == "Medium")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Medium
+                                            </span>
+                                        }
+                                        else if (task.Priority == "Low")
+                                        {
+                                            <span class="badge bg-info text-dark">
+                                                Low
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @task.Priority
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        @if (task.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">
+                                                Completed
+                                            </span>
+                                        }
+                                        else if (task.Status == "In Progress")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                In Progress
+                                            </span>
+                                        }
+                                        else if (task.Status == "Pending")
+                                        {
+                                            <span class="badge bg-primary">
+                                                Pending
+                                            </span>
+                                        }
+                                        else if (task.Status == "On Hold")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                On Hold
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-dark">
+                                                @task.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            <tr>
+
+                                <td colspan="6"
+                                    class="text-center text-muted py-4">
+
+                                    No task records found.
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    #taskTable th {
+        white-space: nowrap;
+    }
+
+    #taskTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        margin-left: 8px;
+    }
+
+    .dt-buttons {
+        display: none;
+    }
+
+</style>
+
+
+@section Scripts
+{
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+
+            // DataTable
+
+            const taskTable = $('#taskTable').DataTable({
+
+                pageLength: 10,
+
+                lengthMenu: [
+
+                    [5, 10, 25, 50, 100, -1],
+
+                    [5, 10, 25, 50, 100, "All"]
+
+                ],
+
+                order: [[0, 'asc']],
+
+                dom:
+
+                    '<"row mb-3"' +
+
+                    '<"col-md-6"l>' +
+
+                    '<"col-md-6"f>' +
+
+                    '>' +
+
+                    'rt' +
+
+                    '<"row mt-3"' +
+
+                    '<"col-md-6"i>' +
+
+                    '<"col-md-6"p>' +
+
+                    '>',
+
+                buttons: [
+
+                    {
+
+                        extend: 'excel',
+
+                        title: 'Task Report',
+
+                        filename: 'TaskReport',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    },
+
+                    {
+
+                        extend: 'pdf',
+
+                        title: 'Task Report',
+
+                        filename: 'TaskReport',
+
+                        orientation: 'landscape',
+
+                        pageSize: 'A4',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        },
+
+                        customize: function(doc) {
+
+                            doc.content[0].alignment = 'center';
+
+                            doc.content[0].fontSize = 18;
+
+                            doc.content[0].bold = true;
+
+                            doc.content[0].margin = [0, 0, 0, 15];
+
+                        }
+
+                    },
+
+                    {
+
+                        extend: 'print',
+
+                        title: 'Task Report',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    }
+
+                ]
+
+            });
+
+
+            // Excel
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                taskTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // PDF
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                taskTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                taskTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Task Chart
+
+            const chartCanvas =
+                document.getElementById('taskChart');
+
+
+            if (chartCanvas && typeof Chart !== 'undefined') {
+
+                new Chart(
+
+                    chartCanvas,
+
+                    {
+
+                        type: 'doughnut',
+
+                        data: {
+
+                            labels: [
+
+                                'Completed',
+
+                                'Pending',
+
+                                'In Progress',
+
+                                'On Hold'
+
+                            ],
+
+                            datasets: [
+
+                                {
+
+                                    data: [
+
+                                                @completedTasks,
+
+                                                @pendingTasks,
+
+                                                @inProgressTasks,
+
+                                        @onHoldTasks
+
+                                    ],
+
+                                    backgroundColor: [
+
+                                        '#00C853',
+
+                                        '#03A9F4',
+
+                                        '#FF9800',
+
+                                        '#AB47BC'
+
+                                    ],
+
+                                    borderColor: '#ffffff',
+
+                                    borderWidth: 2
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            cutout: '65%',
+
+                            plugins: {
+
+                                legend: {
+
+                                    position: 'right',
+
+                                    labels: {
+
+                                        usePointStyle: true,
+
+                                        padding: 20
+
+                                    }
+
+                                },
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label: function(context) {
+
+                                            const value =
+                                                context.raw;
+
+                                            const total =
+                                                context.dataset.data.reduce(
+                                                    (a, b) => a + b,
+                                                    0
+                                                );
+
+                                            const percentage =
+                                                total > 0
+                                                    ? ((value / total) * 100).toFixed(0)
+                                                    : 0;
+
+                                            return context.label +
+                                                ': ' +
+                                                value +
+                                                ' (' +
+                                                percentage +
+                                                '%)';
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+            }
+
+        });
+
+    </script>
+
+}

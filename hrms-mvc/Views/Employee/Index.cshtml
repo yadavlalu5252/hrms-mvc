@@ -260,185 +260,318 @@
 </div>
 
     <!-- Top Section -->
-    <div class="row g-4 mb-4">
+<div class="row g-4 mb-4">
 
-        <!-- Employee Profile -->
-        <div class="col-xl-4 col-lg-5">
-            <div class="dashboard-card">
+    <!-- Employee Profile -->
+    <div class="col-xl-4 col-lg-5">
+        <div class="dashboard-card">
 
-                <div class="profile-header">
-                    <div class="d-flex align-items-center gap-3">
+            <div class="profile-header">
+                <div class="d-flex align-items-center gap-3">
 
-                        <div class="profile-avatar">
+                    <div class="profile-avatar">
+                        @if (Model.Employee != null &&
+                             !string.IsNullOrEmpty(Model.Employee.FirstName))
+                        {
+                            @Model.Employee.FirstName.Substring(0, 1).ToUpper()
+                        }
+                        else
+                        {
+                            <span>E</span>
+                        }
+                    </div>
+
+                    <div>
+                        <div class="profile-name">
                             @if (Model.Employee != null)
                             {
-                                @Model.Employee.FirstName?.Substring(0, 1).ToUpper()
+                                @Model.Employee.FirstName @Model.Employee.LastName
                             }
                             else
                             {
-                                <span>M</span>
+                                <span>Employee</span>
                             }
                         </div>
 
-                        <div>
-                            <div class="profile-name">
-                                @if (Model.Employee != null)
-                                {
-                                    @Model.Employee.FirstName @Model.Employee.LastName
-                                }
-                                else
-                                {
-                                    <span>Employee</span>
-                                }
-                            </div>
-
-                            <div class="profile-role">
-                                Employee
-                            </div>
+                        <div class="profile-role">
+                            Employee
                         </div>
-
-                    </div>
-                </div>
-
-                <div class="profile-body">
-
-                    <div class="info-label">Email Address</div>
-
-                    <div class="info-value">
-                        @(Model.Employee?.Email ?? "Not available")
-                    </div>
-
-                    <div class="info-label">Department</div>
-
-                    <div class="info-value">
-                        @(Model.Employee?.Department?.Name ?? "Not available")
-                    </div>
-
-                    <div class="info-label">Username</div>
-
-                    <div class="info-value">
-                        @(Model.Employee?.FirstName ?? "Not available")
-                    </div>
-
-                    <div class="info-label">Role</div>
-
-                    <div class="info-value mb-0">
-                        @(Model.Employee?.Role?.RoleName ?? "Employee")
                     </div>
 
                 </div>
             </div>
-        </div>
 
-        <!-- Leave Details -->
-        <div class="col-xl-4 col-lg-7">
-            <div class="dashboard-card">
+            <div class="profile-body">
 
-                <div class="section-header">
-                    <span class="card-heading">Leave Details</span>
-                    <span class="status-badge">Current Year</span>
+                <div class="info-label">
+                    Email Address
                 </div>
 
-                <div class="section-body">
+                <div class="info-value">
+                    @(Model.Employee?.Email ?? "Not available")
+                </div>
 
-                    <div class="leave-item">
-                        <span class="leave-label">Total Leaves</span>
-                        <span class="leave-value">@Model.TotalLeave</span>
-                    </div>
+                <div class="info-label">
+                    Department
+                </div>
 
-                    <div class="leave-item">
-                        <span class="leave-label">Taken Leaves</span>
-                        <span class="leave-value">@Model.TakenLeave</span>
-                    </div>
+                <div class="info-value">
+                    @(Model.Employee?.Department?.Name ?? "Not available")
+                </div>
 
-                    <div class="leave-item">
-                        <span class="leave-label">Absent</span>
-                        <span class="leave-value">@Model.AbsentLeave</span>
-                    </div>
+                <div class="info-label">
+                    Username
+                </div>
 
-                    <div class="leave-item">
-                        <span class="leave-label">Sick Leave</span>
-                        <span class="leave-value">@Model.SickLeave</span>
-                    </div>
+                <div class="info-value">
+                    @(Model.Employee?.FirstName ?? "Not available")
+                </div>
 
-                    <div class="leave-item">
-                        <span class="leave-label">Worked Days</span>
-                        <span class="leave-value">@Model.WorkedDays</span>
-                    </div>
+                <div class="info-label">
+                    Role
+                </div>
 
-                    <div class="leave-item">
-                        <span class="leave-label">Loss of Pay</span>
-                        <span class="leave-value">@Model.LossOfPay</span>
+                <div class="info-value">
+                    @(Model.Employee?.Role?.RoleName ?? "Employee")
+                </div>
+
+                <!-- Production -->
+                <div class="text-center mt-3">
+
+                    <div class="bg-warning text-dark rounded px-3 py-2 d-inline-block">
+
+                        <strong>Production :</strong>
+
+                        <br />
+
+                        <span>
+                            @Model.ProductiveHours.ToString("0.##")h
+                        </span>
+
                     </div>
 
                 </div>
-            </div>
-        </div>
 
-<!-- Quick Summary -->
-<div class="col-xl-4">
-    <div class="dashboard-card">
+                <!-- Check In -->
+                <div class="text-center mt-3">
 
-        <div class="section-header">
-            <span class="card-heading">Attendance Summary</span>
-        </div>
+                    <div class="mb-2">
 
-        <div class="section-body">
+                        <span class="text-danger">
+                            <i class="bi bi-fingerprint"></i>
+                            Punch In at
+                        </span>
 
-            <div class="d-flex justify-content-between mb-3">
-                <span class="leave-label">Working Hours</span>
-                <strong>
-                    @Model.TotalWorkingHours.ToString("0.00") hrs
-                </strong>
-            </div>
+                        <strong>
+                            Not Checked In
+                        </strong>
 
-            <div class="progress mb-4" style="height: 8px;">
-                <div class="progress-bar bg-primary"
-                     style="width: @workingHoursWidth;">
+                    </div>
+
+                    <a asp-controller="EmployeeAttendance"
+                       asp-action="Index"
+                       class="btn btn-primary px-4">
+                        Check-In
+                    </a>
+
                 </div>
-            </div>
 
-            <div class="d-flex justify-content-between mb-3">
-                <span class="leave-label">Productive Hours</span>
-                <strong>
-                    @Model.ProductiveHours.ToString("0.00") hrs
-                </strong>
-            </div>
-
-            <div class="progress mb-4" style="height: 8px;">
-                <div class="progress-bar bg-success"
-                     style="width: @productiveHoursWidth;">
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-between mb-3">
-                <span class="leave-label">Break Hours</span>
-                <strong>
-                    @Model.BreakHours.ToString("0.00") hrs
-                </strong>
-            </div>
-
-            <div class="progress mb-4" style="height: 8px;">
-                <div class="progress-bar bg-warning"
-                     style="width: @breakHoursWidth;">
-                </div>
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <span class="leave-label">Overtime Hours</span>
-                <strong>
-                    @Model.OvertimeHours.ToString("0.00") hrs
-                </strong>
-            </div>
-
-            <div class="progress mt-2" style="height: 8px;">
-                <div class="progress-bar bg-info"
-                     style="width: @overtimeHoursWidth;">
-                </div>
             </div>
 
         </div>
     </div>
+
+
+    <!-- Leave Details -->
+    <div class="col-xl-4 col-lg-7">
+
+        <div class="dashboard-card">
+
+            <div class="section-header">
+
+                <span class="card-heading">
+                    Leave Details
+                </span>
+
+                <span class="status-badge">
+                    Current Year
+                </span>
+
+            </div>
+
+            <div class="section-body">
+
+                <div class="leave-item">
+                    <span class="leave-label">
+                        Total Leaves
+                    </span>
+
+                    <span class="leave-value">
+                        @Model.TotalLeave
+                    </span>
+                </div>
+
+                <div class="leave-item">
+                    <span class="leave-label">
+                        Taken Leaves
+                    </span>
+
+                    <span class="leave-value">
+                        @Model.TakenLeave
+                    </span>
+                </div>
+
+                <div class="leave-item">
+                    <span class="leave-label">
+                        Absent
+                    </span>
+
+                    <span class="leave-value">
+                        @Model.AbsentLeave
+                    </span>
+                </div>
+
+                <div class="leave-item">
+                    <span class="leave-label">
+                        Sick Leave
+                    </span>
+
+                    <span class="leave-value">
+                        @Model.SickLeave
+                    </span>
+                </div>
+
+                <div class="leave-item">
+                    <span class="leave-label">
+                        Worked Days
+                    </span>
+
+                    <span class="leave-value">
+                        @Model.WorkedDays
+                    </span>
+                </div>
+
+                <div class="leave-item">
+                    <span class="leave-label">
+                        Loss of Pay
+                    </span>
+
+                    <span class="leave-value">
+                        @Model.LossOfPay
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Attendance Summary -->
+    <div class="col-xl-4">
+
+        <div class="dashboard-card">
+
+            <div class="section-header">
+
+                <span class="card-heading">
+                    Attendance Summary
+                </span>
+
+            </div>
+
+            <div class="section-body">
+
+                <div class="d-flex justify-content-between mb-3">
+
+                    <span class="leave-label">
+                        Working Hours
+                    </span>
+
+                    <strong>
+                        @Model.TotalWorkingHours.ToString("0.00") hrs
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-4" style="height: 8px;">
+
+                    <div class="progress-bar bg-primary"
+                         style="width: @workingHoursWidth;">
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex justify-content-between mb-3">
+
+                    <span class="leave-label">
+                        Productive Hours
+                    </span>
+
+                    <strong>
+                        @Model.ProductiveHours.ToString("0.00") hrs
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-4" style="height: 8px;">
+
+                    <div class="progress-bar bg-success"
+                         style="width: @productiveHoursWidth;">
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex justify-content-between mb-3">
+
+                    <span class="leave-label">
+                        Break Hours
+                    </span>
+
+                    <strong>
+                        @Model.BreakHours.ToString("0.00") hrs
+                    </strong>
+
+                </div>
+
+                <div class="progress mb-4" style="height: 8px;">
+
+                    <div class="progress-bar bg-warning"
+                         style="width: @breakHoursWidth;">
+                    </div>
+
+                </div>
+
+
+                <div class="d-flex justify-content-between">
+
+                    <span class="leave-label">
+                        Overtime Hours
+                    </span>
+
+                    <strong>
+                        @Model.OvertimeHours.ToString("0.00") hrs
+                    </strong>
+
+                </div>
+
+                <div class="progress mt-2" style="height: 8px;">
+
+                    <div class="progress-bar bg-info"
+                         style="width: @overtimeHoursWidth;">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
 
     <!-- Statistics Cards -->

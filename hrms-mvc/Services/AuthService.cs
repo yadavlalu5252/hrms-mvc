@@ -23,5 +23,14 @@ namespace hrms_mvc.Services
 
             return user;
         }
+
+        public async Task<User?> LoginWithGoogle(string email)
+        {
+            return await db.Users
+                .Include(x => x.Role)
+                .Include(x => x.Department)
+                .Include(x => x.Designation)
+                .FirstOrDefaultAsync(x => x.Email == email);
+        }
     }
 }

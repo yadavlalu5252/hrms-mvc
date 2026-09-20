@@ -25,6 +25,7 @@ namespace hrms_mvc.Services
         {
             var query = db.LeaveRequests.Include(x => x.User).Include(x => x.MasterLeaveType).AsQueryable();
 
+
             if (!string.IsNullOrEmpty(Status))
             {
                 query = query.Where(x => x.Status == Status);
@@ -34,7 +35,7 @@ namespace hrms_mvc.Services
             {
                 var yesterday = DateTime.Today.AddDays(-1);
 
-                query = query.Where(x =>x.StartDate.Date == yesterday);
+                query = query.Where(x => x.StartDate.Date == yesterday);
             }
             else if (dateFilter == "Last 7 Days")
             {
@@ -61,7 +62,6 @@ namespace hrms_mvc.Services
                 query = query.Where(x =>x.StartDate.Year == currentYear);
             }
 
-            
             if (SortBy == "Ascending")
             {
                 query = query.OrderBy(x => x.StartDate);

@@ -1,0 +1,738 @@
+﻿@model List<hrms_mvc.Models.Tasks>
+
+@{
+    ViewData["Title"] = "Tasks";
+
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
+
+    var projects = ViewBag.Projects as List<hrms_mvc.Models.Projects>;
+}
+<style>
+
+    .task-page {
+        padding: 20px;
+    }
+
+    .task-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 25px;
+    }
+
+    .task-title {
+        font-size: 25px;
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .breadcrumb-text {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .add-task-btn {
+        background: #ff5b1f;
+        border: none;
+        color: white;
+        padding: 11px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+    }
+
+    .add-task-btn:hover {
+        background: #e94e13;
+        color: white;
+    }
+
+
+
+    .priority-title {
+        font-weight: 600;
+        margin-bottom: 12px;
+    }
+
+    .priority-filter {
+        display: inline-flex;
+        border: 1px solid #dee2e6;
+        border-radius: 5px;
+        padding: 4px;
+        margin-bottom: 18px;
+    }
+
+    .priority-filter button {
+        background: transparent;
+        border: none;
+        padding: 8px 20px;
+        border-radius: 5px;
+    }
+
+    .priority-filter button.active {
+        background: white;
+        box-shadow: 0 2px 6px rgba(0,0,0,.10);
+    }
+
+
+    
+
+    .project-task-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 18px;
+    }
+
+    .project-heading {
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #e5e7eb;
+        padding-bottom: 15px;
+        margin-bottom: 15px;
+    }
+
+    .project-circle {
+        width: 52px;
+        height: 52px;
+        border-radius: 50%;
+        background: #eef5ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 12px;
+        font-size: 22px;
+    }
+
+    .project-name {
+        font-weight: 700;
+        margin-bottom: 3px;
+    }
+
+    .project-information {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .project-label {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .project-value {
+        font-weight: 600;
+        margin-top: 4px;
+    }
+
+    .completion-box {
+        background: #f7f8fa;
+        padding: 12px;
+        margin-top: 15px;
+    }
+
+    .progress {
+        height: 5px;
+    }
+
+
+
+    .project-progress-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    .progress-inner {
+        background: #f7f8fa;
+        padding: 15px;
+        margin-top: 15px;
+        border-radius: 4px;
+    }
+
+
+
+    #addTaskSection {
+        display: none;
+    }
+
+    .task-form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 30px;
+    }
+
+    .form-label {
+        font-weight: 500;
+    }
+
+</style>
+
+
+<div class="task-page">
+
+
+    <div id="taskListSection">
+
+
+        
+        <div class="task-header">
+
+            <div>
+
+                <div class="task-title">
+                    Tasks
+                </div>
+
+                <div class="breadcrumb-text">
+                    ⌂ &nbsp;/&nbsp; Employee &nbsp;/&nbsp; Tasks
+                </div>
+
+            </div>
+
+
+            <button type="button"
+                    class="add-task-btn"
+                    onclick="showAddTask()">
+
+                ⊕ &nbsp; Add Task
+
+            </button>
+
+        </div>
+
+
+
+        
+        <div class="row align-items-end">
+
+            <div class="col-md-6">
+
+                <div class="priority-title">
+                    Priority
+                </div>
+
+                <div class="priority-filter">
+
+                    <button type="button"
+                            class="active"
+                            onclick="filterPriority('All', this)">
+                        All
+                    </button>
+
+                    <button type="button"
+                            onclick="filterPriority('High', this)">
+                        High
+                    </button>
+
+                    <button type="button"
+                            onclick="filterPriority('Medium', this)">
+                        Medium
+                    </button>
+
+                    <button type="button"
+                            onclick="filterPriority('Low', this)">
+                        Low
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6 text-end mb-3">
+
+                <input type="date"
+                       class="form-control d-inline-block"
+                       style="width:170px;" />
+
+            </div>
+
+        </div>
+
+
+
+        
+        <div class="row">
+
+
+            <div class="col-xl-4">
+
+                @if (projects != null)
+                {
+                    @foreach (var project in projects)
+                    {
+                        var projectTasks =
+                            Model.Where(x => x.ProjectId == project.ProjectsId)
+                                 .ToList();
+
+                        var completedTasks =
+                            projectTasks.Count(x => x.Status == "Completed");
+
+                        var totalTasks = projectTasks.Count;
+
+                        var percentage =
+                            totalTasks == 0
+                            ? 0
+                            : (completedTasks * 100 / totalTasks);
+
+
+                        <div class="project-task-card">
+
+                            <div class="project-heading">
+
+                                <div class="project-circle">
+                                    📁
+                                </div>
+
+                                <div>
+
+                                    <div class="project-name">
+                                        @project.ProjectName
+                                    </div>
+
+                                    <div class="text-muted">
+
+                                        @totalTasks tasks
+
+                                        <span class="mx-1 text-warning">
+                                            •
+                                        </span>
+
+                                        @completedTasks Completed
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="project-information">
+
+                                <div>
+
+                                    <div class="project-label">
+                                        Deadline
+                                    </div>
+
+                                    <div class="project-value">
+                                        @project.EndDate.ToString("dd MMM yyyy")
+                                    </div>
+
+                                </div>
+
+
+                                <div>
+
+                                    <div class="project-label">
+                                        Value
+                                    </div>
+
+                                    <div class="project-value">
+                                        @project.ProjectValue
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="completion-box">
+
+                                <div class="d-flex justify-content-between">
+
+                                    <span>
+                                        ⏱ Total Tasks @totalTasks
+                                    </span>
+
+                                    <span>
+                                        @percentage% Completed
+                                    </span>
+
+                                </div>
+
+
+                                <div class="progress mt-2">
+
+                                    <div class="progress-bar"
+                                         style="width:@percentage%">
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+
+
+            
+            <div class="col-xl-8">
+
+                @if (projects != null)
+                {
+                    @foreach (var project in projects)
+                    {
+                        var projectTasks =
+                            Model.Where(x => x.ProjectId == project.ProjectsId)
+                                 .ToList();
+
+                        var totalTasks =
+                            projectTasks.Count;
+
+                        var completedTasks =
+                            projectTasks.Count(x =>
+                                x.Status == "Completed");
+
+                        var percentage =
+                            totalTasks == 0
+                            ? 0
+                            : completedTasks * 100 / totalTasks;
+
+
+                        <div class="project-progress-card">
+
+                            <h5>
+                                @project.ProjectName
+                            </h5>
+
+
+                            <div class="progress-inner">
+
+                                <div class="text-muted">
+                                    Tasks Done
+                                </div>
+
+
+                                <h4 class="mt-1">
+                                    @completedTasks / @totalTasks
+                                </h4>
+
+
+                                <div class="progress mt-3">
+
+                                    <div class="progress-bar"
+                                         style="width:@percentage%">
+                                    </div>
+
+                                </div>
+
+
+                                <div class="mt-2 text-muted">
+                                    @percentage%
+                                </div>
+
+                            </div>
+
+                        </div>
+                    }
+                }
+
+            </div>
+
+
+        </div>
+
+    </div>
+
+
+
+    <div id="addTaskSection">
+
+        <div class="task-form-card">
+
+
+            <div class="d-flex justify-content-between mb-4">
+
+                <h3>
+                    Add New Task
+                </h3>
+
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        onclick="showTaskList()">
+
+                    Back
+
+                </button>
+
+            </div>
+
+
+            <form asp-controller="Task"
+                  asp-action="AddTask"
+                  method="post">
+
+
+                
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Title
+                    </label>
+
+                    <input type="text"
+                           name="Title"
+                           class="form-control"
+                           required />
+
+                </div>
+
+
+
+                
+                <div class="row">
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Due Date
+                        </label>
+
+                        <input type="date"
+                               name="Deadline"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Select Project
+                        </label>
+
+                        <select name="ProjectId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select a Project
+                            </option>
+
+
+                            @if (projects != null)
+                            {
+                                @foreach (var project in projects)
+                                {
+                                    <option value="@project.ProjectsId">
+                                        @project.ProjectName
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                
+                <div class="row">
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Team Members
+                        </label>
+
+                        <br />
+
+                        <button type="button"
+                                class="btn btn-outline-secondary">
+
+                            Select Team Members⌄
+
+                        </button>
+
+                    </div>
+
+
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select name="Status"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            <option value="Pending">
+                                Pending
+                            </option>
+
+                            <option value="In Progress">
+                                In Progress
+                            </option>
+
+                            <option value="Completed">
+                                Completed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Priority
+                        </label>
+
+                        <select name="Priority"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select
+                            </option>
+
+                            <option value="High">
+                                High
+                            </option>
+
+                            <option value="Medium">
+                                Medium
+                            </option>
+
+                            <option value="Low">
+                                Low
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea name="Description"
+                              class="form-control"
+                              rows="3"
+                              required></textarea>
+
+                </div>
+
+
+
+                
+                <div class="mb-4">
+
+                    <label class="form-label">
+                        Upload Attachment
+                    </label>
+
+                    <input type="file"
+                           class="form-control"
+                           disabled />
+
+                </div>
+
+
+
+                
+                <div class="text-end">
+
+                    <button type="submit"
+                            class="add-task-btn">
+
+                        Add New Task
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+</div>
+
+
+
+<script>
+
+    function showAddTask() {
+
+        document.getElementById("taskListSection")
+            .style.display = "none";
+
+        document.getElementById("addTaskSection")
+            .style.display = "block";
+    }
+
+
+    function showTaskList() {
+
+        document.getElementById("addTaskSection")
+            .style.display = "none";
+
+        document.getElementById("taskListSection")
+            .style.display = "block";
+    }
+
+
+    function filterPriority(priority, button) {
+
+        var buttons =
+            document.querySelectorAll(
+                ".priority-filter button"
+            );
+
+        buttons.forEach(function (btn) {
+            btn.classList.remove("active");
+        });
+
+        button.classList.add("active");
+
+
+    }
+
+</script>
