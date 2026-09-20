@@ -1,0 +1,601 @@
+﻿@model List<hrms_mvc.Models.EventModel>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Events";
+}
+
+
+<div class="container-fluid mt-4">
+
+    <div class="row">
+
+        
+
+        <div class="col-md-9">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <div>
+
+                    <button type="button"
+                            class="btn btn-dark"
+                            onclick="previousMonth()">
+                        &lt;
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-dark"
+                            onclick="nextMonth()">
+                        &gt;
+                    </button>
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            onclick="goToday()">
+                        today
+                    </button>
+
+                </div>
+
+
+                <h3 class="fw-bold" id="calendarTitle">
+                </h3>
+
+
+                <div>
+
+                    <button type="button" class="btn btn-dark">
+                        month
+                    </button>
+
+                    <button type="button" class="btn btn-dark">
+                        week
+                    </button>
+
+                    <button type="button" class="btn btn-dark">
+                        day
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <table class="table table-bordered calendar-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Sun</th>
+                        <th>Mon</th>
+                        <th>Tue</th>
+                        <th>Wed</th>
+                        <th>Thu</th>
+                        <th>Fri</th>
+                        <th>Sat</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="calendarBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+       
+
+        <div class="col-md-3">
+
+            <button type="button"
+                    class="btn add-btn text-white w-100 mb-3"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addEventModal">
+
+                Add New Event
+
+            </button>
+
+
+            @foreach (var item in Model)
+            {
+                <div class="card shadow-sm mb-3">
+
+                    <div class="card-body">
+
+                        <h5 class="fw-bold">
+                            @item.Title
+                        </h5>
+
+                        <p class="event-date mb-0">
+                            @item.Date
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+<div class="modal fade"
+     id="addEventModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold">
+                    Add New Event
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <form asp-controller="Event"
+                  asp-action="AddEvent"
+                  method="post">
+
+                <div class="modal-body">
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Event Title
+                        </label>
+
+                        <input type="text"
+                               name="Title"
+                               class="form-control"
+                               placeholder="Enter Event Title"
+                               required />
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Event Date
+                        </label>
+
+                        <input type="date"
+                               name="Date"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Event Type
+                        </label>
+
+
+                        <select name="EventTypeId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Event Type
+                            </option>
+
+
+                            @foreach (var item in ViewBag.EventTypes)
+                            {
+                                <option value="@item.EventTypesId">
+                                    @item.Name
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Close
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="btn add-btn text-white">
+
+                        Add Event
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+<div id="eventData" style="display:none;">
+
+    @foreach (var item in Model)
+    {
+        var eventColor = "#ff641f";
+
+        foreach (var type in ViewBag.EventTypes)
+        {
+            if (type.EventTypesId == item.EventTypeId)
+            {
+                eventColor = type.Colour;
+            }
+        }
+
+        <div class="event-item"
+             data-title="@item.Title"
+             data-date="@item.Date"
+             data-color="@eventColor">
+        </div>
+    }
+
+</div>
+
+
+
+<style>
+
+    .calendar-table {
+        table-layout: fixed;
+        width: 100%;
+    }
+
+
+        .calendar-table th {
+            text-align: center;
+            height: 45px;
+        }
+
+
+        .calendar-table td {
+            height: 120px;
+            vertical-align: top;
+            text-align: right;
+            padding: 8px;
+        }
+
+
+    .today {
+        background-color: #fff8d5 !important;
+    }
+
+
+    .add-btn {
+        background-color: #ff641f;
+        border: none;
+    }
+
+
+    .event-date {
+        color: #18aeb5;
+        font-weight: bold;
+    }
+
+
+    .calendar-event {
+        color: white;
+        padding: 5px;
+        margin-top: 5px;
+        border-radius: 4px;
+        text-align: left;
+        font-size: 12px;
+        font-weight: bold;
+        overflow: hidden;
+    }
+
+</style>
+
+
+
+<script>
+
+    
+    let currentDate = new Date();
+
+
+    function loadCalendar() {
+
+        let year = currentDate.getFullYear();
+
+        let month = currentDate.getMonth();
+
+
+        
+
+        let monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December"
+        ];
+
+
+        
+
+        document.getElementById("calendarTitle").innerText =
+            monthNames[month] + " " + year;
+
+
+        
+
+        let firstDay = new Date(year, month, 1).getDay();
+
+
+        
+
+        let totalDays = new Date(year, month + 1, 0).getDate();
+
+
+        let calendarBody = document.getElementById("calendarBody");
+
+
+        calendarBody.innerHTML = "";
+
+
+        let day = 1;
+
+
+       
+
+        for (let row = 0; row < 6; row++) {
+
+            let tr = document.createElement("tr");
+
+
+            for (let column = 0; column < 7; column++) {
+
+                let td = document.createElement("td");
+
+
+               
+
+                if (row == 0 && column < firstDay) {
+
+                    td.innerHTML = "";
+
+                }
+
+                else if (day <= totalDays) {
+
+                    let currentDay = day;
+
+
+                   
+
+                    let dayNumber = document.createElement("div");
+
+                    dayNumber.innerText = currentDay;
+
+                    td.appendChild(dayNumber);
+
+
+                    
+
+                    let today = new Date();
+
+                    if (
+                        currentDay == today.getDate() &&
+                        month == today.getMonth() &&
+                        year == today.getFullYear()
+                    ) {
+
+                        td.classList.add("today");
+
+                    }
+
+
+                    
+
+                    let events =
+                        document.querySelectorAll(".event-item");
+
+
+                    events.forEach(function (event) {
+
+                        let eventDateText =
+                            event.getAttribute("data-date");
+
+
+                        let eventDate =
+                            parseEventDate(eventDateText);
+
+
+                        if (eventDate != null) {
+
+                            if (
+                                eventDate.getDate() == currentDay &&
+                                eventDate.getMonth() == month &&
+                                eventDate.getFullYear() == year
+                            ) {
+
+                                let eventBox =
+                                    document.createElement("div");
+
+
+                                eventBox.className =
+                                    "calendar-event";
+
+
+                                eventBox.innerText =
+                                    event.getAttribute("data-title");
+
+
+                                eventBox.style.backgroundColor =
+                                    event.getAttribute("data-color");
+
+
+                                td.appendChild(eventBox);
+
+                            }
+
+                        }
+
+                    });
+
+
+                    day++;
+
+                }
+
+
+                tr.appendChild(td);
+
+            }
+
+
+            calendarBody.appendChild(tr);
+
+
+            if (day > totalDays) {
+                break;
+            }
+
+        }
+
+    }
+
+
+
+    
+
+    function parseEventDate(dateText) {
+
+        if (!dateText) {
+            return null;
+        }
+
+
+        dateText = dateText.trim();
+
+
+
+        if (dateText.includes("-")) {
+
+            let parts = dateText.split("-");
+
+
+            if (parts[0].length == 4) {
+
+                return new Date(
+                    parseInt(parts[0]),
+                    parseInt(parts[1]) - 1,
+                    parseInt(parts[2])
+                );
+
+            }
+
+
+
+            if (parts[2].length == 4) {
+
+                return new Date(
+                    parseInt(parts[2]),
+                    parseInt(parts[1]) - 1,
+                    parseInt(parts[0])
+                );
+
+            }
+
+        }
+
+
+        return null;
+
+    }
+
+
+
+    
+
+    function previousMonth() {
+
+        currentDate.setMonth(
+            currentDate.getMonth() - 1
+        );
+
+        loadCalendar();
+
+    }
+
+
+
+    
+
+    function nextMonth() {
+
+        currentDate.setMonth(
+            currentDate.getMonth() + 1
+        );
+
+        loadCalendar();
+
+    }
+
+
+
+   
+
+    function goToday() {
+
+        currentDate = new Date();
+
+        loadCalendar();
+
+    }
+
+
+
+   
+
+    loadCalendar();
+
+</script>
