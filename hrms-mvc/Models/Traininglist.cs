@@ -11,9 +11,11 @@ namespace hrms_mvc.Models
         [ForeignKey("Trainers")]
         public int TrainersId { get; set; }
         public Trainers Trainers { get; set; }
+
         [ForeignKey("TrainingType")]
         public int TrainingTypeId { get; set; }
         public TrainingType TrainingType { get; set; }
+
         [ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
@@ -22,16 +24,16 @@ namespace hrms_mvc.Models
         [Column(TypeName = "decimal(14, 4)")]
         public decimal TrainingCost { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Description is compulsory")]
         public string Description { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "Status is compulsory")]
         public string Status { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "StartDate is compulsory")]
         public DateTime StartDate { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "EndDate is compulsory")]
         public DateTime EndDate { get; set; }
 
         [Required]
@@ -48,8 +50,7 @@ namespace hrms_mvc.Models
 
         public string? ProfilePicture { get; set; }
 
+        [NotMapped]
         public List<string> images { get; set; } = new List<string>();
-
-        
     }
 }

@@ -1,0 +1,73 @@
+﻿@model hrms_mvc.Models.AdminFileUploadViewModel
+
+@{
+    ViewData["Title"] = "Admin File Upload";
+}
+
+<h2>Admin File Upload</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-action="Index"
+      asp-controller="AdminFilesUpload"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label class="form-label">Employee Email</label>
+
+        <input asp-for="Email"
+               class="form-control"
+               placeholder="Enter employee email" />
+
+        <span asp-validation-for="Email"
+              class="text-danger">
+        </span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Document Name</label>
+
+        <input asp-for="DocumentName"
+               class="form-control"
+               placeholder="Enter document name" />
+
+        <span asp-validation-for="DocumentName"
+              class="text-danger">
+        </span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Choose File</label>
+
+        <input asp-for="File"
+               type="file"
+               class="form-control" />
+
+        <span asp-validation-for="File"
+              class="text-danger">
+        </span>
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary">
+        Upload Document
+    </button>
+
+    <a asp-controller="AdminUploadFileList"
+       asp-action="Index"
+       class="btn btn-info">
+        View Documents
+    </a>
+
+</form>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}

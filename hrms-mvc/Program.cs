@@ -18,6 +18,18 @@ builder.Services.AddControllersWithViews();
 
 // scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+builder.Services.AddScoped<ITrainingTypeService, TrainingTypeService>();
+builder.Services.AddScoped<ITrainingListService, TrainingListService>();
+builder.Services.AddScoped<IMasterDocAdminService, MasterDocAdminService>();
+builder.Services.AddScoped<IMasterDocEmpService, MasterDocEmpService>();
+builder.Services.AddScoped<IAdminFileUpload, AdminFileUploadService>();
+
+builder.Services.AddScoped<IUploadedDocument, UploadedDocumentListService>();
+builder.Services.AddScoped<IMyDocument, MyDocumentService>();
+builder.Services.AddScoped<ICompanyLetters, CompanyLettersService>();
+builder.Services.AddScoped<IEmployeeUploadDocument, EmployeeUploadDocumentService>();
+
 
 
 
@@ -39,6 +51,7 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseRouting();
+app.UseStaticFiles();
 
 app.UseAuthorization();
 
