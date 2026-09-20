@@ -1,0 +1,1609 @@
+﻿@model List<hrms_mvc.Models.Tickets>
+
+@using Microsoft.AspNetCore.Http
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Tickets";
+
+    var role = Context.Session.GetString("Role");
+    var currentUserId = Context.Session.GetInt32("UserId");
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <h2>Tickets</h2>
+
+        @if (role == "Employee")
+        {
+            <button type="button"
+                    class="btn"
+                    style="background-color: #F26522; color: white;"
+                    data-bs-toggle="modal"
+                    data-bs-target="#addTicketModal">
+                Add Ticket
+            </button>
+        }
+
+    </div>
+
+
+    @if (role == "Employee")
+    {
+        <div class="card">
+
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <h5 class="mb-0">My Tickets</h5>
+
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                    <select id="statusFilter"
+                            class="form-select"
+                            style="width: 150px;">
+
+                        <option value="">All Status</option>
+                        <option value="Open">Open</option>
+                        <option value="Assigned">Assigned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                        <option value="Reopened">Reopened</option>
+
+                    </select>
+
+                    <select id="sortFilter"
+                            class="form-select"
+                            style="width: 130px;">
+
+                        <option value="">Sort By</option>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+
+                    </select>
+
+                    <div class="dropdown">
+
+                        <button type="button"
+                                class="btn dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            Export
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item"
+                                        id="exportPdf">
+                                    Export as PDF
+                                </button>
+                            </li>
+
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item"
+                                        id="exportExcel">
+                                    Export as Excel
+                                </button>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table id="employeeTicketTable"
+                           class="table table-bordered table-hover align-middle w-100">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Subject</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Assigned To</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @item.TicketNo
+                                    </td>
+
+                                    <td>
+                                        @item.Subject
+                                    </td>
+
+                                    <td>
+                                        @item.Priority
+                                    </td>
+
+                                    <td>
+                                        @item.Status
+                                    </td>
+
+                                    <td>
+                                        @item.CreatedDate.ToString("yyyy-MM-dd HH:mm")
+                                    </td>
+
+                                    <td>
+                                        @if (item.AssignedToUser != null)
+                                        {
+                                            @item.AssignedToUser.FirstName @item.AssignedToUser.LastName
+                                        }
+                                        else
+                                        {
+                                            <span>Not Assigned</span>
+                                        }
+                                    </td>
+
+                                    <td>
+
+                                        <button type="button"
+                                                class="btn btn-sm viewTicketButton"
+                                                data-id="@item.TicketId"
+                                                data-ticketno="@item.TicketNo"
+                                                data-subject="@item.Subject"
+                                                data-description="@item.Description"
+                                                data-priority="@item.Priority"
+                                                data-status="@item.Status"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#viewTicketModal"
+                                                title="View">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </button>
+
+                                        <button type="button"
+                                                class="btn btn-sm resolveTicketButton"
+                                                data-id="@item.TicketId"
+                                                data-ticketno="@item.TicketNo"
+                                                data-raisedby="@(item.RaisedByUser != null ? item.RaisedByUser.FirstName + " " + item.RaisedByUser.LastName : "")"
+                                                data-assignedby="@(item.AssignedByUser != null ? item.AssignedByUser.FirstName + " " + item.AssignedByUser.LastName : "")"
+                                                data-assignedto="@(item.AssignedToUser != null ? item.AssignedToUser.FirstName + " " + item.AssignedToUser.LastName : "")"
+                                                data-assignedtoid="@item.AssignedTo"
+                                                data-subject="@item.Subject"
+                                                data-priority="@item.Priority"
+                                                data-status="@item.Status"
+                                                data-description="@item.Description"
+                                                title="Resolve Ticket">
+
+                                            <i class="bi bi-tools"></i>
+
+                                        </button>
+
+                                        @if (item.Status == "Resolved")
+                                        {
+                                            <button type="button"
+                                                    class="btn btn-sm"
+                                                    data-id="@item.TicketId"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#closeTicketModal"
+                                                    title="Close Ticket">
+
+                                                <i class="bi bi-check-circle"></i>
+
+                                            </button>
+
+                                            <button type="button"
+                                                    class="btn btn-sm"
+                                                    data-id="@item.TicketId"
+                                                    data-bs-toggle="modal"
+                                                    data-bs-target="#reopenTicketModal"
+                                                    title="Reopen Ticket">
+
+                                                <i class="bi bi-arrow-clockwise"></i>
+
+                                            </button>
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                    @foreach (var item in Model)
+                    {
+                        <div id="comments-@item.TicketId" style="display: none;">
+                            @if (item.Comments != null && item.Comments.Count > 0)
+                            {
+                                foreach (var comment in item.Comments)
+                                {
+                                    <div class="border-bottom pb-2 mb-2">
+                                        <strong>
+                                            @(comment.CommentByUser != null ? comment.CommentByUser.FirstName + " " + comment.CommentByUser.LastName : "User")
+                                        </strong>
+                                        <small class="text-muted">
+                                            @comment.CommentDate.ToString("yyyy-MM-dd HH:mm")
+                                        </small>
+                                        <div>
+                                            @comment.CommentText
+                                        </div>
+                                    </div>
+                                }
+                            }
+                        </div>
+                    }
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    @if (role == "Manager")
+    {
+        <div class="card">
+
+            <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+                <h5 class="mb-0">Tickets Raised by Employees</h5>
+
+                <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                    <select id="managerStatusFilter"
+                            class="form-select"
+                            style="width: 150px;">
+
+                        <option value="">All Status</option>
+                        <option value="Open">Open</option>
+                        <option value="Assigned">Assigned</option>
+                        <option value="In Progress">In Progress</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="Closed">Closed</option>
+                        <option value="Reopened">Reopened</option>
+
+                    </select>
+
+                    <select id="managerSortFilter"
+                            class="form-select"
+                            style="width: 130px;">
+
+                        <option value="">Sort By</option>
+                        <option value="asc">Ascending</option>
+                        <option value="desc">Descending</option>
+
+                    </select>
+
+                    <div class="dropdown">
+
+                        <button type="button"
+                                class="btn dropdown-toggle"
+                                data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            Export
+                        </button>
+
+                        <ul class="dropdown-menu dropdown-menu-end">
+
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item"
+                                        id="managerExportPdf">
+                                    Export as PDF
+                                </button>
+                            </li>
+
+                            <li>
+                                <button type="button"
+                                        class="dropdown-item"
+                                        id="managerExportExcel">
+                                    Export as Excel
+                                </button>
+                            </li>
+
+                        </ul>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="card-body">
+
+                <div class="table-responsive">
+
+                    <table id="managerTicketTable"
+                           class="table table-bordered table-hover align-middle w-100">
+
+                        <thead class="table-light">
+
+                            <tr>
+                                <th>Ticket No</th>
+                                <th>Raised By</th>
+                                <th>Subject</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Created Date</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @item.TicketNo
+                                    </td>
+
+                                    <td>
+                                        @if (item.RaisedByUser != null)
+                                        {
+                                            @item.RaisedByUser.FirstName @item.RaisedByUser.LastName
+                                        }
+                                    </td>
+
+                                    <td>
+                                        @item.Subject
+                                    </td>
+
+                                    <td>
+                                        @item.Priority
+                                    </td>
+
+                                    <td>
+                                        @item.Status
+                                    </td>
+
+                                    <td>
+                                        @item.CreatedDate.ToString("yyyy-MM-dd HH:mm")
+                                    </td>
+
+                                    <td>
+
+                                        <button type="button"
+                                                class="btn btn-sm assignTicketButton"
+                                                data-id="@item.TicketId"
+                                                data-ticketno="@item.TicketNo"
+                                                data-raisedby="@item.RaisedByUser?.FirstName @item.RaisedByUser?.LastName"
+                                                data-subject="@item.Subject"
+                                                data-description="@item.Description"
+                                                data-priority="@item.Priority"
+                                                data-createddate="@item.CreatedDate.ToString("yyyy-MM-dd HH:mm")"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#assignTicketModal"
+                                                title="Assign">
+
+                                            <i class="bi bi-person-plus"></i>
+
+                                        </button>
+
+                                        <button type="button"
+                                                class="btn btn-sm viewTicketButton"
+                                                data-id="@item.TicketId"
+                                                data-ticketno="@item.TicketNo"
+                                                data-subject="@item.Subject"
+                                                data-description="@item.Description"
+                                                data-priority="@item.Priority"
+                                                data-status="@item.Status"
+                                                data-bs-toggle="modal"
+                                                data-bs-target="#viewTicketModal"
+                                                title="View">
+
+                                            <i class="bi bi-eye"></i>
+
+                                        </button>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+    }
+
+
+    @if (role != "Manager" && role != "Employee")
+    {
+        <div class="card">
+
+            <div class="card-body text-center">
+
+                <h5>No Ticket Access</h5>
+
+                <p class="mb-0">
+                    Ticket access is available for Employee and Manager users.
+                </p>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+@if (role == "Employee")
+{
+    <div class="modal fade"
+         id="addTicketModal"
+         tabindex="-1"
+         aria-labelledby="addTicketModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title" id="addTicketModalLabel">
+                        Raise Ticket
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+                <form asp-controller="Tickets"
+                      asp-action="AddTicket"
+                      method="post"
+                      enctype="multipart/form-data">
+
+                    <div class="modal-body">
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Ticket No
+                            </label>
+
+                            <input type="text"
+                                   class="form-control"
+                                   value="Auto Generated"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="Subject"
+                                   class="form-label">
+                                Subject
+                            </label>
+
+                            <input type="text"
+                                   id="Subject"
+                                   name="Subject"
+                                   class="form-control"
+                                   maxlength="200"
+                                   required />
+
+                            <span class="text-danger">
+                                @Html.ValidationMessage("Subject")
+                            </span>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="Description"
+                                   class="form-label">
+                                Description
+                            </label>
+
+                            <textarea id="Description"
+                                      name="Description"
+                                      class="form-control"
+                                      rows="5"
+                                      required></textarea>
+
+                            <span class="text-danger">
+                                @Html.ValidationMessage("Description")
+                            </span>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="Priority"
+                                   class="form-label">
+                                Priority
+                            </label>
+
+                            <select id="Priority"
+                                    name="Priority"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Priority
+                                </option>
+
+                                <option value="Low">
+                                    Low
+                                </option>
+
+                                <option value="Medium">
+                                    Medium
+                                </option>
+
+                                <option value="High">
+                                    High
+                                </option>
+
+                            </select>
+
+                            <span class="text-danger">
+                                @Html.ValidationMessage("Priority")
+                            </span>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="attachment"
+                                   class="form-label">
+                                Attachment
+                            </label>
+
+                            <input type="file"
+                                   id="attachment"
+                                   name="attachment"
+                                   class="form-control" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                style="background-color: #F26522; color: white;">
+                            Submit Ticket
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@if (role == "Manager")
+{
+    <div class="modal fade"
+         id="assignTicketModal"
+         tabindex="-1"
+         aria-labelledby="assignTicketModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-lg">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title"
+                        id="assignTicketModalLabel">
+                        Assign Ticket
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+                <form asp-controller="Tickets"
+                      asp-action="AssignTicket"
+                      method="post">
+
+                    <div class="modal-body">
+
+                        <input type="hidden"
+                               id="assignTicketId"
+                               name="TicketId" />
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Ticket No
+                            </label>
+
+                            <input type="text"
+                                   id="assignTicketNo"
+                                   class="form-control"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Raised By
+                            </label>
+
+                            <input type="text"
+                                   id="assignRaisedBy"
+                                   class="form-control"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Subject
+                            </label>
+
+                            <input type="text"
+                                   id="assignSubject"
+                                   class="form-control"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Description
+                            </label>
+
+                            <textarea id="assignDescription"
+                                      class="form-control"
+                                      rows="4"
+                                      readonly></textarea>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Priority
+                            </label>
+
+                            <input type="text"
+                                   id="assignPriority"
+                                   class="form-control"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Created Date
+                            </label>
+
+                            <input type="text"
+                                   id="assignCreatedDate"
+                                   class="form-control"
+                                   readonly />
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="AssignedTo"
+                                   class="form-label">
+                                Assign To
+                            </label>
+
+                            <select id="AssignedTo"
+                                    name="AssignedTo"
+                                    class="form-select"
+                                    required>
+
+                                <option value="">
+                                    Select Employee
+                                </option>
+
+                                @if (ViewBag.Users != null)
+                                {
+                                    foreach (var user in ViewBag.Users)
+                                    {
+                                        <option value="@user.Id">
+                                            @user.FirstName @user.LastName
+                                        </option>
+                                    }
+                                }
+
+                            </select>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="AssignmentComment"
+                                   class="form-label">
+                                Assignment Comment
+                            </label>
+
+                            <textarea id="AssignmentComment"
+                                      name="AssignmentComment"
+                                      class="form-control"
+                                      rows="4"></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                style="background-color: #F26522; color: white;">
+                            Assign Ticket
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+<div class="modal fade"
+     id="viewTicketModal"
+     tabindex="-1"
+     aria-labelledby="viewTicketModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="viewTicketModalLabel">
+                    Ticket Details
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Ticket No
+                        </label>
+
+                        <input type="text"
+                               id="viewTicketNo"
+                               class="form-control"
+                               readonly />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Priority
+                        </label>
+
+                        <input type="text"
+                               id="viewPriority"
+                               class="form-control"
+                               readonly />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Subject
+                        </label>
+
+                        <input type="text"
+                               id="viewSubject"
+                               class="form-control"
+                               readonly />
+
+                    </div>
+
+                    <div class="col-md-6 mb-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <input type="text"
+                               id="viewStatus"
+                               class="form-control"
+                               readonly />
+
+                    </div>
+
+                    <div class="col-12 mb-3">
+
+                        <label class="form-label">
+                            Problem Description
+                        </label>
+
+                        <textarea id="viewDescription"
+                                  class="form-control"
+                                  rows="5"
+                                  readonly></textarea>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    Close
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@if (role == "Employee")
+{
+    <div class="modal fade"
+         id="closeTicketModal"
+         tabindex="-1"
+         aria-labelledby="closeTicketModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title"
+                        id="closeTicketModalLabel">
+                        Close Ticket
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+                <form asp-controller="Tickets"
+                      asp-action="CloseTicket"
+                      method="post">
+
+                    <div class="modal-body">
+
+                        <input type="hidden"
+                               id="closeTicketId"
+                               name="TicketId" />
+
+                        <p>
+                            Are you satisfied with the solution provided for this ticket?
+                        </p>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                style="background-color: #F26522; color: white;">
+                            Close Ticket
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="modal fade"
+         id="reopenTicketModal"
+         tabindex="-1"
+         aria-labelledby="reopenTicketModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title"
+                        id="reopenTicketModalLabel">
+                        Reopen Ticket
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+                <form asp-controller="Tickets"
+                      asp-action="ReopenTicket"
+                      method="post">
+
+                    <div class="modal-body">
+
+                        <input type="hidden"
+                               id="reopenTicketId"
+                               name="TicketId" />
+
+                        <div class="mb-3">
+
+                            <label for="ReopenComment"
+                                   class="form-label">
+                                Reason
+                            </label>
+
+                            <textarea id="ReopenComment"
+                                      name="ReopenComment"
+                                      class="form-control"
+                                      rows="4"></textarea>
+
+                        </div>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <button type="button"
+                                class="btn btn-secondary"
+                                data-bs-dismiss="modal">
+                            Cancel
+                        </button>
+
+                        <button type="submit"
+                                class="btn"
+                                style="background-color: #F26522; color: white;">
+                            Reopen Ticket
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+@if (role == "Employee")
+{
+    <div class="modal fade"
+         id="workTicketModal"
+         tabindex="-1"
+         aria-labelledby="workTicketModalLabel"
+         aria-hidden="true">
+
+        <div class="modal-dialog modal-xl">
+
+            <div class="modal-content">
+
+                <div class="modal-header">
+
+                    <h5 class="modal-title"
+                        id="workTicketModalLabel">
+                        Resolve Ticket
+                    </h5>
+
+                    <button type="button"
+                            class="btn-close"
+                            data-bs-dismiss="modal"
+                            aria-label="Close">
+                    </button>
+
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Ticket No
+                                </label>
+
+                                <input type="text"
+                                       id="workTicketNo"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Raised By
+                                </label>
+
+                                <input type="text"
+                                       id="workRaisedBy"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Assigned By
+                                </label>
+
+                                <input type="text"
+                                       id="workAssignedBy"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Assigned To
+                                </label>
+
+                                <input type="text"
+                                       id="workAssignedTo"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Subject
+                                </label>
+
+                                <input type="text"
+                                       id="workSubject"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Priority
+                                </label>
+
+                                <input type="text"
+                                       id="workPriority"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                        </div>
+
+                        <div class="col-md-6">
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Status
+                                </label>
+
+                                <input type="text"
+                                       id="workStatus"
+                                       class="form-control"
+                                       readonly />
+
+                            </div>
+
+                            <div class="mb-3">
+
+                                <label class="form-label">
+                                    Problem Description
+                                </label>
+
+                                <textarea id="workDescription"
+                                          class="form-control"
+                                          rows="5"
+                                          readonly></textarea>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <hr />
+
+                    <h5 class="mb-3">
+                        Comments / Conversation
+                    </h5>
+
+                    <div id="ticketComments"
+                         class="border rounded p-3 mb-3">
+                    </div>
+
+
+                    <hr />
+
+
+                    <h5 class="mb-3">
+                        Solution / Resolution
+                    </h5>
+
+                    <form asp-controller="Tickets"
+                          asp-action="ResolveTicket"
+                          method="post"
+                          enctype="multipart/form-data">
+
+                        <input type="hidden"
+                               id="resolutionTicketId"
+                               name="TicketId" />
+
+                        <div class="mb-3">
+
+                            <label for="Solution"
+                                   class="form-label">
+                                Solution
+                            </label>
+
+                            <textarea id="Solution"
+                                      name="Solution"
+                                      class="form-control"
+                                      rows="5"
+                                      required></textarea>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="ResolutionNotes"
+                                   class="form-label">
+                                Resolution Notes
+                            </label>
+
+                            <textarea id="ResolutionNotes"
+                                      name="ResolutionNotes"
+                                      class="form-control"
+                                      rows="4"></textarea>
+
+                        </div>
+
+                        <div class="mb-3">
+
+                            <label for="resolutionAttachment"
+                                   class="form-label">
+                                Resolution Attachment
+                            </label>
+
+                            <input type="file"
+                                   id="resolutionAttachment"
+                                   name="resolutionAttachment"
+                                   class="form-control" />
+
+                        </div>
+
+                        <div class="d-flex gap-2">
+
+                            <button type="submit"
+                                    class="btn"
+                                    style="background-color: #F26522; color: white;">
+                                Resolve Ticket
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}
+
+
+<div class="modal fade"
+     id="notAssignedModal"
+     tabindex="-1"
+     aria-labelledby="notAssignedModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title"
+                    id="notAssignedModalLabel">
+                    Resolve Ticket
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <div class="modal-body">
+
+                Ticket was not assign to you.
+
+            </div>
+
+            <div class="modal-footer">
+
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal">
+                    OK
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function () {
+
+            var employeeTable = $('#employeeTicketTable').DataTable({
+
+                pageLength: 5,
+
+                order: [[4, 'desc']],
+
+                dom:
+                    '<"row mb-3"<"col-md-6"l><"col-md-6"f>>' +
+                    'rt' +
+                    '<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+
+                buttons: [
+
+                    {
+                        extend: 'excelHtml5',
+                        title: 'My Ticket List',
+                        className: 'export-excel'
+                    },
+
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'My Ticket List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'export-pdf'
+                    }
+
+                ]
+
+            });
+
+
+            var managerTable = $('#managerTicketTable').DataTable({
+
+                pageLength: 5,
+
+                order: [[5, 'desc']],
+
+                dom:
+                    '<"row mb-3"<"col-md-6"l><"col-md-6"f>>' +
+                    'rt' +
+                    '<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+
+                buttons: [
+
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Employee Tickets',
+                        className: 'manager-export-excel'
+                    },
+
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Employee Tickets',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'manager-export-pdf'
+                    }
+
+                ]
+
+            });
+
+
+            $('.dt-buttons').hide();
+
+
+            $('#statusFilter').on('change', function () {
+
+                var value = $(this).val();
+
+                employeeTable.column(3).search(value).draw();
+
+            });
+
+
+            $('#managerStatusFilter').on('change', function () {
+
+                var value = $(this).val();
+
+                managerTable.column(4).search(value).draw();
+
+            });
+
+
+            $('#sortFilter').on('change', function () {
+
+                var value = $(this).val();
+
+                if (value !== '') {
+                    employeeTable.order([0, value]).draw();
+                }
+
+            });
+
+
+            $('#managerSortFilter').on('change', function () {
+
+                var value = $(this).val();
+
+                if (value !== '') {
+                    managerTable.order([0, value]).draw();
+                }
+
+            });
+
+
+            $('#exportExcel').on('click', function () {
+
+                employeeTable.button('.export-excel').trigger();
+
+            });
+
+
+            $('#exportPdf').on('click', function () {
+
+                employeeTable.button('.export-pdf').trigger();
+
+            });
+
+
+            $('#managerExportExcel').on('click', function () {
+
+                managerTable.button('.manager-export-excel').trigger();
+
+            });
+
+
+            $('#managerExportPdf').on('click', function () {
+
+                managerTable.button('.manager-export-pdf').trigger();
+
+            });
+
+
+            $('.viewTicketButton').on('click', function () {
+
+                var ticketNo = $(this).data('ticketno');
+                var subject = $(this).data('subject');
+                var description = $(this).data('description');
+                var priority = $(this).data('priority');
+                var status = $(this).data('status');
+
+                $('#viewTicketNo').val(ticketNo);
+                $('#viewSubject').val(subject);
+                $('#viewDescription').val(description);
+                $('#viewPriority').val(priority);
+                $('#viewStatus').val(status);
+
+            });
+
+
+            $('.assignTicketButton').on('click', function () {
+
+                var id = $(this).data('id');
+                var ticketNo = $(this).data('ticketno');
+                var raisedBy = $(this).data('raisedby');
+                var subject = $(this).data('subject');
+                var description = $(this).data('description');
+                var priority = $(this).data('priority');
+                var createdDate = $(this).data('createddate');
+
+                $('#assignTicketId').val(id);
+                $('#assignTicketNo').val(ticketNo);
+                $('#assignRaisedBy').val(raisedBy);
+                $('#assignSubject').val(subject);
+                $('#assignDescription').val(description);
+                $('#assignPriority').val(priority);
+                $('#assignCreatedDate').val(createdDate);
+
+            });
+
+
+            $('[data-bs-target="#closeTicketModal"]').on('click', function () {
+
+                var id = $(this).data('id');
+
+                $('#closeTicketId').val(id);
+
+            });
+
+
+            $('[data-bs-target="#reopenTicketModal"]').on('click', function () {
+
+                var id = $(this).data('id');
+
+                $('#reopenTicketId').val(id);
+
+            });
+
+
+            $('.resolveTicketButton').on('click', function () {
+
+                var id = $(this).data('id');
+                var assignedTo = $(this).data('assignedtoid');
+                var currentUserId = @(currentUserId.HasValue ? currentUserId.Value.ToString() : "null");
+
+                if (assignedTo == null || assignedTo == '' || assignedTo != currentUserId) {
+
+                    var notAssignedModal = new bootstrap.Modal(document.getElementById('notAssignedModal'));
+                    notAssignedModal.show();
+
+                    return;
+                }
+
+                $('#workTicketNo').val($(this).data('ticketno'));
+                $('#workRaisedBy').val($(this).data('raisedby'));
+                $('#workAssignedBy').val($(this).data('assignedby'));
+                $('#workAssignedTo').val($(this).data('assignedto'));
+                $('#workSubject').val($(this).data('subject'));
+                $('#workPriority').val($(this).data('priority'));
+                $('#workStatus').val($(this).data('status'));
+                $('#workDescription').val($(this).data('description'));
+
+                var comments = $('#comments-' + id).html();
+
+                if (comments && comments.trim() !== '') {
+                    $('#ticketComments').html(comments);
+                }
+                else {
+                    $('#ticketComments').html('<p class="mb-0">No comments yet.</p>');
+                }
+
+                $('#resolutionTicketId').val(id);
+                $('#Solution').val('');
+                $('#ResolutionNotes').val('');
+                $('#resolutionAttachment').val('');
+
+                var workTicketModal = new bootstrap.Modal(document.getElementById('workTicketModal'));
+                workTicketModal.show();
+
+            });
+
+        });
+
+    </script>
+}

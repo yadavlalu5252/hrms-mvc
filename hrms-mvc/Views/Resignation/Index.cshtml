@@ -1,0 +1,653 @@
+﻿@model List<hrms_mvc.Models.Resignation>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Resignation";
+}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Resignation</h2>
+
+        <button type="button"
+                class="btn"
+                style="background-color: #F26522; color: white;"
+                data-bs-toggle="modal"
+                data-bs-target="#addResignationModal">
+            Add Resignation
+        </button>
+    </div>
+
+    <div class="card">
+
+        <div class="card-header d-flex justify-content-between align-items-center flex-wrap gap-2">
+
+            <h5 class="mb-0">Resignation List</h5>
+
+            <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                <select id="dateFilter"
+                        class="form-select"
+                        style="width: 150px;">
+
+                    <option value="">All Records</option>
+                    <option value="asc">Oldest First</option>
+                    <option value="desc">Newest First</option>
+
+                </select>
+
+                <select id="sortFilter"
+                        class="form-select"
+                        style="width: 130px;">
+
+                    <option value="">Sort By</option>
+                    <option value="asc">Ascending</option>
+                    <option value="desc">Descending</option>
+
+                </select>
+
+                <div class="dropdown">
+
+                    <button type="button"
+                            class="btn dropdown-toggle"
+                            data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                        Export
+                    </button>
+
+                    <ul class="dropdown-menu dropdown-menu-end">
+
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item"
+                                    id="exportPdf">
+                                Export as PDF
+                            </button>
+                        </li>
+
+                        <li>
+                            <button type="button"
+                                    class="dropdown-item"
+                                    id="exportExcel">
+                                Export as Excel
+                            </button>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="resignationTable"
+                       class="table table-bordered table-hover align-middle w-100">
+
+                    <thead class="table-light">
+
+                        <tr>
+                            <th>Resigning Employee</th>
+                            <th>Department</th>
+                            <th>Reason</th>
+                            <th>Notice Date</th>
+                            <th>Resignation Date</th>
+                            <th>Actions</th>
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <td>
+                                    @if (item.User != null)
+                                    {
+                                        @item.User.FirstName @item.User.LastName
+                                    }
+                                </td>
+
+                                <td>
+                                    @if (item.Department != null)
+                                    {
+                                        @item.Department.Name
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.Reason
+                                </td>
+
+                                <td>
+                                    @item.NoticeDate.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td>
+                                    @item.ResignDate.ToString("yyyy-MM-dd")
+                                </td>
+
+                                <td>
+
+                                    <button type="button"
+                                            class="btn btn-sm editResignationButton"
+                                            data-id="@item.ResignationId"
+                                            data-userid="@item.UserId"
+                                            data-departmentid="@item.DepartmentId"
+                                            data-noticedate="@item.NoticeDate.ToString("yyyy-MM-dd")"
+                                            data-resigndate="@item.ResignDate.ToString("yyyy-MM-dd")"
+                                            data-reason="@item.Reason"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editResignationModal"
+                                            title="Edit">
+
+                                        <i class="bi bi-pencil-square"></i>
+
+                                    </button>
+
+                                    <form asp-controller="Resignation"
+                                          asp-action="DeleteResignation"
+                                          asp-route-id="@item.ResignationId"
+                                          method="post"
+                                          style="display: inline;">
+
+                                        <button type="submit"
+                                                class="btn btn-sm"
+                                                onclick="return confirm('Are you sure you want to delete this resignation?');"
+                                                title="Delete">
+
+                                            <i class="bi bi-trash"></i>
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal fade"
+     id="addResignationModal"
+     tabindex="-1"
+     aria-labelledby="addResignationModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="addResignationModalLabel">
+                    Add Resignation
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <form asp-controller="Resignation"
+                  asp-action="AddResignation"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <div class="mb-3">
+
+                        <label for="UserId" class="form-label">
+                            Resigning Employee
+                        </label>
+
+                        <select id="UserId"
+                                name="UserId"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select Employee</option>
+
+                            @if (ViewBag.Users != null)
+                            {
+                                foreach (var user in ViewBag.Users)
+                                {
+                                    <option value="@user.Id">
+                                        @user.FirstName @user.LastName
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("UserId")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="DepartmentId" class="form-label">
+                            Department
+                        </label>
+
+                        <select id="DepartmentId"
+                                name="DepartmentId"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select Department</option>
+
+                            @if (ViewBag.Departments != null)
+                            {
+                                foreach (var department in ViewBag.Departments)
+                                {
+                                    <option value="@department.Id">
+                                        @department.Name
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("DepartmentId")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="NoticeDate" class="form-label">
+                            Notice Date
+                        </label>
+
+                        <input type="date"
+                               id="NoticeDate"
+                               name="NoticeDate"
+                               class="form-control"
+                               required />
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("NoticeDate")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="ResignDate" class="form-label">
+                            Resignation Date
+                        </label>
+
+                        <input type="date"
+                               id="ResignDate"
+                               name="ResignDate"
+                               class="form-control"
+                               required />
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("ResignDate")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="Reason" class="form-label">
+                            Reason
+                        </label>
+
+                        <textarea id="Reason"
+                                  name="Reason"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="500"
+                                  required></textarea>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("Reason")
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn"
+                            style="background-color: #F26522; color: white;">
+                        Save
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="modal fade"
+     id="editResignationModal"
+     tabindex="-1"
+     aria-labelledby="editResignationModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title" id="editResignationModalLabel">
+                    Edit Resignation
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+
+            </div>
+
+            <form asp-controller="Resignation"
+                  asp-action="EditResignation"
+                  method="post"
+                  novalidate>
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           id="editResignationId"
+                           name="ResignationId" />
+
+                    <div class="mb-3">
+
+                        <label for="editResignationUserId"
+                               class="form-label">
+                            Resigning Employee
+                        </label>
+
+                        <select id="editResignationUserId"
+                                name="UserId"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select Employee</option>
+
+                            @if (ViewBag.Users != null)
+                            {
+                                foreach (var user in ViewBag.Users)
+                                {
+                                    <option value="@user.Id">
+                                        @user.FirstName @user.LastName
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("UserId")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="editResignationDepartmentId"
+                               class="form-label">
+                            Department
+                        </label>
+
+                        <select id="editResignationDepartmentId"
+                                name="DepartmentId"
+                                class="form-select"
+                                required>
+
+                            <option value="">Select Department</option>
+
+                            @if (ViewBag.Departments != null)
+                            {
+                                foreach (var department in ViewBag.Departments)
+                                {
+                                    <option value="@department.Id">
+                                        @department.Name
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("DepartmentId")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="editNoticeDate"
+                               class="form-label">
+                            Notice Date
+                        </label>
+
+                        <input type="date"
+                               id="editNoticeDate"
+                               name="NoticeDate"
+                               class="form-control"
+                               required />
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("NoticeDate")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="editResignDate"
+                               class="form-label">
+                            Resignation Date
+                        </label>
+
+                        <input type="date"
+                               id="editResignDate"
+                               name="ResignDate"
+                               class="form-control"
+                               required />
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("ResignDate")
+                        </span>
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label for="editReason"
+                               class="form-label">
+                            Reason
+                        </label>
+
+                        <textarea id="editReason"
+                                  name="Reason"
+                                  class="form-control"
+                                  rows="4"
+                                  maxlength="500"
+                                  required></textarea>
+
+                        <span class="text-danger">
+                            @Html.ValidationMessage("Reason")
+                        </span>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn"
+                            style="background-color: #F26522; color: white;">
+                        Update Resignation
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+@section Scripts {
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.bootstrap5.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+
+            var table = $('#resignationTable').DataTable({
+
+                pageLength: 5,
+
+                order: [[4, 'asc']],
+
+                dom:
+                    '<"row mb-3"<"col-md-6"l><"col-md-6"f>>' +
+                    'rt' +
+                    '<"row mt-3"<"col-md-6"i><"col-md-6"p>>',
+
+                buttons: [
+
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Resignation List',
+                        className: 'export-excel'
+                    },
+
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Resignation List',
+                        orientation: 'landscape',
+                        pageSize: 'A4',
+                        className: 'export-pdf'
+                    }
+
+                ]
+
+            });
+
+            $('.dt-buttons').hide();
+
+            $('#dateFilter').on('change', function () {
+
+                var dateValue = $(this).val();
+
+                if (dateValue !== '') {
+                    table.order([4, dateValue]).draw();
+                }
+
+            });
+
+            $('#sortFilter').on('change', function () {
+
+                var sortValue = $(this).val();
+
+                if (sortValue !== '') {
+                    table.order([0, sortValue]).draw();
+                }
+
+            });
+
+            $('#exportExcel').on('click', function () {
+
+                table.button('.export-excel').trigger();
+
+            });
+
+            $('#exportPdf').on('click', function () {
+
+                table.button('.export-pdf').trigger();
+
+            });
+
+            $('.editResignationButton').on('click', function () {
+
+                var id = $(this).data('id');
+                var userid = $(this).data('userid');
+                var departmentid = $(this).data('departmentid');
+                var noticedate = $(this).data('noticedate');
+                var resigndate = $(this).data('resigndate');
+                var reason = $(this).data('reason');
+
+                $('#editResignationId').val(id);
+                $('#editResignationUserId').val(userid);
+                $('#editResignationDepartmentId').val(departmentid);
+                $('#editNoticeDate').val(noticedate);
+                $('#editResignDate').val(resigndate);
+                $('#editReason').val(reason);
+
+            });
+
+        });
+
+    </script>
+}

@@ -30,8 +30,18 @@ namespace hrms_mvc.Services
 
         public async Task<int> AddPromotion(Promotion promotion)
         {
-            await db.Promotions.AddAsync(promotion);
+            var existing = await db.Promotions
+                .SingleOrDefaultAsync(x =>
+                    x.UserId == promotion.UserId &&
+                    x.DesignationFrom == promotion.DesignationFrom &&
+                    x.DesignationTo == promotion.DesignationTo &&
+                    x.Date == promotion.Date);
 
+            if (existing != null)
+            {
+                return 0;
+            }
+            await db.Promotions.AddAsync(promotion);
             return await db.SaveChangesAsync();
         }
 
