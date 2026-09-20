@@ -1,0 +1,242 @@
+﻿@model hrms_mvc.Models.Tasks
+@{
+    ViewData["Title"] = "Add New Task";
+
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
+}
+
+<div class="container-fluid mt-4">
+
+    <div class="card shadow-sm border">
+
+        <div class="card-body p-4">
+
+            <div class="row justify-content-center">
+
+                <div class="col-lg-8">
+
+                    <h4 class="mb-2 fw-bold">
+                        Add New Task
+                    </h4>
+
+                    <form asp-controller="Task"
+                          asp-action="AddTask"
+                          method="post">
+
+                        
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Title
+                            </label>
+
+                            <input type="text"
+                                   name="Title"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+
+                        
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Due Date
+                                </label>
+
+                                <input type="date"
+                                       name="Deadline"
+                                       class="form-control"
+                                       required />
+
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Select Project
+                                </label>
+
+                                <select name="ProjectId"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Select a Project
+                                    </option>
+
+                                    @if (ViewBag.Projects != null)
+                                    {
+                                        @foreach (var project in ViewBag.Projects)
+                                        {
+                                            <option value="@project.ProjectsId">
+                                                @project.ProjectName
+                                            </option>
+                                        }
+                                    }
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                       
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Team Members
+                                </label>
+
+                                <button type="button"
+                                        class="btn btn-outline-secondary">
+                                    Select Team Members
+                                    <i class="ti ti-chevron-down ms-1"></i>
+                                </button>
+
+                               
+
+                            </div>
+
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Status
+                                </label>
+
+                                <select name="Status"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Select
+                                    </option>
+
+                                    <option value="Pending">
+                                        Pending
+                                    </option>
+
+                                    <option value="In Progress">
+                                        In Progress
+                                    </option>
+
+                                    <option value="Completed">
+                                        Completed
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                        
+                        <div class="row">
+
+                            <div class="col-md-6 mb-3">
+
+                                <label class="form-label">
+                                    Priority
+                                </label>
+
+                                <select name="Priority"
+                                        class="form-select"
+                                        required>
+
+                                    <option value="">
+                                        Select
+                                    </option>
+
+                                    <option value="High">
+                                        High
+                                    </option>
+
+                                    <option value="Medium">
+                                        Medium
+                                    </option>
+
+                                    <option value="Low">
+                                        Low
+                                    </option>
+
+                                </select>
+
+                            </div>
+
+                        </div>
+
+
+                      
+                        <div class="mb-3">
+
+                            <label class="form-label">
+                                Description
+                            </label>
+
+                            <textarea name="Description"
+                                      class="form-control"
+                                      rows="3"
+                                      required></textarea>
+
+                        </div>
+
+
+                     
+                        <div class="mb-4">
+
+                            <label class="form-label">
+                                Upload Attachment
+                            </label>
+
+                            <input type="file"
+                                   class="form-control"
+                                   disabled />
+
+                            <small class="text-muted">
+                                Attachment will be added later.
+                            </small>
+
+                        </div>
+
+
+                     
+                        <div class="text-end">
+
+                            <button type="submit"
+                                    class="btn btn-primary px-4">
+
+                                Add New Task
+
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

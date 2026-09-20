@@ -1,9 +1,15 @@
 using hrms_mvc.Data;
 using hrms_mvc.Repository;
-using hrms_mvc.Services;
-using Microsoft.EntityFrameworkCore;
 using hrms_mvc.Repository.EventsRepo;
+using hrms_mvc.Repository.ProjectsRepo;
+using hrms_mvc.Services;
 using hrms_mvc.Services.EventsService;
+using hrms_mvc.Services.ProjectsService;
+using Microsoft.EntityFrameworkCore;
+using hrms_mvc.Repository.TaskRepo;
+using hrms_mvc.Services.TaskService;
+using hrms_mvc.Repository.TaskRepo;
+using hrms_mvc.Services.TaskService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -62,6 +68,8 @@ builder.Services.AddScoped<ILeaveReportService, LeaveReportService>();
 builder.Services.AddScoped<IEvents, EventsService>();
 builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<IProjects, ProjectsService>();
+builder.Services.AddScoped<ITask, TaskService>();
 builder.Services.AddScoped<IManagerService, ManagerService>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 

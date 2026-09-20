@@ -1,6 +1,7 @@
 ﻿using hrms_mvc.Models;
 using hrms_mvc.Repository.EventsRepo;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents;
 using System.Reflection.Metadata.Ecma335;
 
 namespace hrms_mvc.Controllers.Events
@@ -82,5 +83,6 @@ namespace hrms_mvc.Controllers.Events
             return RedirectToAction("GetData");
         }
         
+
     }
 }

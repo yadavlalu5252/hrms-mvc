@@ -1,7 +1,8 @@
 ﻿using hrms_mvc.Data;
 using hrms_mvc.Models;
-using Microsoft.EntityFrameworkCore;
 using hrms_mvc.Repository.EventsRepo;
+using Microsoft.Azure.Documents;
+using Microsoft.EntityFrameworkCore;
 
 namespace hrms_mvc.Services.EventsService
 {
@@ -89,5 +90,8 @@ namespace hrms_mvc.Services.EventsService
                 await db.SaveChangesAsync();
             }
         }
+
+        
+        
     }
 }
