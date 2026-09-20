@@ -1,0 +1,1399 @@
+﻿@model List<hrms_mvc.Models.LeaveRequest>
+
+@using System.Text.Json
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Leave Report";
+
+    var leaveChartData = Model
+        .GroupBy(x => x.StartDate.Year)
+        .OrderBy(x => x.Key)
+        .Select(x => new
+        {
+            Year = x.Key,
+            PaidLeave = x.Count()
+        })
+        .ToList();
+
+    var chartLabels = leaveChartData
+        .Select(x => x.Year.ToString())
+        .ToList();
+
+    var paidLeaveData = leaveChartData
+        .Select(x => x.PaidLeave)
+        .ToList();
+}
+
+
+<div class="container-fluid">
+
+
+    <!-- Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h3 class="mb-1">
+                Leave Report
+            </h3>
+
+            <p class="text-muted mb-0">
+                View and analyze employee leave records
+            </p>
+
+        </div>
+
+
+        <!-- Export -->
+
+        <div class="dropdown">
+
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download me-1"></i>
+
+                Export
+
+            </button>
+
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel me-2 text-success"></i>
+
+                        Excel
+
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
+
+                        PDF
+
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+
+                        Print
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Summary Cards + Chart -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- Cards -->
+
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+
+                <!-- Total Leaves -->
+
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Total Leaves
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.TotalLeaves
+                                    </h3>
+
+                                </div>
+
+
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-calendar-check fs-4 text-primary"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Approved -->
+
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Approved Leaves
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.ApprovedLeaves
+                                    </h3>
+
+                                </div>
+
+
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-check-circle fs-4 text-success"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Pending -->
+
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Pending Requests
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.PendingLeaves
+                                    </h3>
+
+                                </div>
+
+
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Rejected -->
+
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Rejected Leaves
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.RejectedLeaves
+                                    </h3>
+
+                                </div>
+
+
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-x-circle fs-4 text-danger"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-bar-chart-fill text-danger me-2"></i>
+
+                            Leaves
+
+                        </h5>
+
+
+                        <select id="leaveYearFilter"
+                                class="form-select form-select-sm"
+                                style="width:110px;">
+
+                            <option value="all">
+                                All Data
+                            </option>
+
+                            @foreach (var year in leaveChartData.Select(x => x.Year).Distinct())
+                            {
+                                <option value="@year">
+                                    @year
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div style="height:310px;">
+
+                        <canvas id="leaveChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+
+                <!-- Date Filter -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Date
+                    </label>
+
+
+                    <select id="dateFilter"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.DateFilter))">
+
+                            All Dates
+
+                        </option>
+
+
+                        <option value="Yesterday"
+                                selected="@(ViewBag.DateFilter == "Yesterday")">
+
+                            Yesterday
+
+                        </option>
+
+
+                        <option value="Last 7 Days"
+                                selected="@(ViewBag.DateFilter == "Last 7 Days")">
+
+                            Last 7 Days
+
+                        </option>
+
+
+                        <option value="Last 30 Days"
+                                selected="@(ViewBag.DateFilter == "Last 30 Days")">
+
+                            Last 30 Days
+
+                        </option>
+
+
+                        <option value="Last Year"
+                                selected="@(ViewBag.DateFilter == "Last Year")">
+
+                            Last Year
+
+                        </option>
+
+
+                        <option value="This Year"
+                                selected="@(ViewBag.DateFilter == "This Year")">
+
+                            This Year
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Status
+                    </label>
+
+
+                    <select id="status"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.Status))">
+
+                            All Status
+
+                        </option>
+
+
+                        <option value="Approved"
+                                selected="@(ViewBag.Status == "Approved")">
+
+                            Approved
+
+                        </option>
+
+
+                        <option value="Pending"
+                                selected="@(ViewBag.Status == "Pending")">
+
+                            Pending
+
+                        </option>
+
+
+                        <option value="Rejected"
+                                selected="@(ViewBag.Status == "Rejected")">
+
+                            Rejected
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Sort -->
+
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Sort By
+                    </label>
+
+
+                    <select id="sortBy"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.SortBy))">
+
+                            Default
+
+                        </option>
+
+
+                        <option value="Ascending"
+                                selected="@(ViewBag.SortBy == "Ascending")">
+
+                            Date - Oldest First
+
+                        </option>
+
+
+                        <option value="Descending"
+                                selected="@(ViewBag.SortBy == "Descending")">
+
+                            Date - Newest First
+
+                        </option>
+
+
+                        <option value="Last 7 Days"
+                                selected="@(ViewBag.SortBy == "Last 7 Days")">
+
+                            Last 7 Days
+
+                        </option>
+
+
+                        <option value="Last Month"
+                                selected="@(ViewBag.SortBy == "Last Month")">
+
+                            Last Month
+
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Leave Table -->
+
+    <div class="card border-0 shadow-sm">
+
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Leave Records
+                </h5>
+
+                <span class="text-muted">
+                    @Model.Count record(s)
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+
+                <table id="leaveTable"
+                       class="table table-hover align-middle mb-0">
+
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>ID</th>
+
+                            <th>Employee</th>
+
+                            <th>Leave Type</th>
+
+                            <th>Start Date</th>
+
+                            <th>End Date</th>
+
+                            <th>Days</th>
+
+                            <th>Reason</th>
+
+                            <th>Approved By</th>
+
+                            <th>Status</th>
+
+                            <th style="min-width:250px;">
+                                Status History
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+
+                        @if (Model != null && Model.Any())
+                        {
+
+                            foreach (var leave in Model)
+                            {
+
+                                <tr>
+
+
+                                    <!-- ID -->
+
+                                    <td>
+
+                                        <span class="fw-semibold">
+
+                                            @leave.Id
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Employee -->
+
+                                    <td>
+
+                                        @if (leave.User != null)
+                                        {
+
+                                            <div class="fw-semibold">
+
+                                                @leave.User.FirstName
+                                                @leave.User.LastName
+
+                                            </div>
+
+
+                                            <small class="text-muted">
+
+                                                @leave.User.Email
+
+                                            </small>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Leave Type -->
+
+                                    <td>
+
+                                        @if (leave.MasterLeaveType != null)
+                                        {
+
+                                            <span>
+
+                                                @leave.MasterLeaveType.Leave
+
+                                            </span>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Start Date -->
+
+                                    <td>
+
+                                        @leave.StartDate.ToString("dd/MM/yyyy")
+
+                                    </td>
+
+
+                                    <!-- End Date -->
+
+                                    <td>
+
+                                        @leave.EndDate.ToString("dd/MM/yyyy")
+
+                                    </td>
+
+
+                                    <!-- Days -->
+
+                                    <td>
+
+                                        <span class="badge bg-light text-dark">
+
+                                            @leave.NumberOfDays
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Reason -->
+
+                                    <td>
+
+                                        @leave.Reason
+
+                                    </td>
+
+
+                                    <!-- Approved By -->
+
+                                    <td>
+
+                                        @leave.ApprovedBy
+
+                                    </td>
+
+
+                                    <!-- Status -->
+
+                                    <td>
+
+                                        @if (leave.Status == "Approved")
+                                        {
+
+                                            <span class="badge bg-success">
+
+                                                Approved
+
+                                            </span>
+
+                                        }
+                                        else if (leave.Status == "Rejected")
+                                        {
+
+                                            <span class="badge bg-danger">
+
+                                                Rejected
+
+                                            </span>
+
+                                        }
+                                        else if (leave.Status == "Pending")
+                                        {
+
+                                            <span class="badge bg-warning text-dark">
+
+                                                Pending
+
+                                            </span>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="badge bg-secondary">
+
+                                                @leave.Status
+
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- History -->
+
+                                    <td>
+
+                                        @if (!string.IsNullOrEmpty(leave.StatusHistory))
+                                        {
+
+                                            <div style="white-space:normal;line-height:1.6;">
+
+                                                @leave.StatusHistory
+
+                                            </div>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="text-muted">
+
+                                                No history
+
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            <tr>
+
+                                <td colspan="10"
+                                    class="text-center py-5">
+
+                                    <div class="text-muted">
+
+                                        <i class="bi bi-calendar-x fs-2"></i>
+
+                                        <p class="mt-2 mb-0">
+
+                                            No leave records found.
+
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    #leaveTable th {
+        white-space: nowrap;
+    }
+
+    #leaveTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+</style>
+
+
+@section Scripts
+{
+
+    <!-- DataTables -->
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+
+    <!-- Chart.js -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
+    <script>
+
+
+        $(document).ready(function() {
+
+
+            // DataTable
+
+            const leaveTable = $('#leaveTable').DataTable({
+
+                pageLength: 10,
+
+                lengthMenu: [
+
+                    [10, 25, 50, 100, -1],
+
+                    [10, 25, 50, 100, "All"]
+
+                ],
+
+                order: [],
+
+
+                dom:
+
+                    '<"row mb-3"' +
+
+                    '<"col-md-6">' +
+
+                    '<"col-md-6"f>' +
+
+                    '>' +
+
+
+                    '<"row mb-2"' +
+
+                    '<"col-md-6"l>' +
+
+                    '<"col-md-6"i>' +
+
+                    '>' +
+
+
+                    'rt' +
+
+
+                    '<"row mt-3"' +
+
+                    '<"col-md-6"i>' +
+
+                    '<"col-md-6"p>' +
+
+                    '> ',
+
+
+                buttons: [
+
+
+                    // Excel
+
+                    {
+
+                        extend: 'excel',
+
+                        title: 'Leave Report',
+
+                        filename: 'LeaveReport',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    },
+
+
+                    // PDF
+
+                    {
+
+                        extend: 'pdf',
+
+                        title: 'Leave Report',
+
+                        filename: 'LeaveReport',
+
+                        orientation: 'landscape',
+
+                        pageSize: 'A4',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        },
+
+
+                        customize: function(doc) {
+
+                            doc.content[0].alignment = 'center';
+
+                            doc.content[0].fontSize = 18;
+
+                            doc.content[0].bold = true;
+
+                            doc.content[0].margin = [0, 0, 0, 15];
+
+
+                            doc.styles.tableHeader = {
+
+                                bold: true,
+
+                                fontSize: 8,
+
+                                color: '#000000',
+
+                                alignment: 'left'
+
+                            };
+
+                        }
+
+                    },
+
+
+                    // Print
+
+                    {
+
+                        extend: 'print',
+
+                        title: 'Leave Report',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    }
+
+                ]
+
+            });
+
+
+            // Excel button
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                leaveTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // PDF button
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                leaveTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print button
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                leaveTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Chart data
+
+            const chartLabels =
+
+                @Html.Raw(
+
+                JsonSerializer.Serialize(chartLabels)
+
+                );
+
+
+            const paidLeaveData =
+
+                @Html.Raw(
+
+                JsonSerializer.Serialize(paidLeaveData)
+
+                );
+
+
+            // Chart
+
+            const canvas =
+                document.getElementById('leaveChart');
+
+
+            if (canvas && typeof Chart !== 'undefined') {
+
+
+                const leaveChart =
+
+                    new Chart(canvas, {
+
+
+                        type: 'bar',
+
+
+                        data: {
+
+                            labels: chartLabels,
+
+
+                            datasets: [
+
+                                {
+
+                                    label: 'Paid Leave',
+
+                                    data: paidLeaveData,
+
+                                    backgroundColor: '#1717ff',
+
+                                    borderColor: '#1717ff',
+
+                                    borderWidth: 1
+
+                                }
+
+                            ]
+
+                        },
+
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+
+                            plugins: {
+
+                                legend: {
+
+                                    display: true,
+
+                                    position: 'top',
+
+                                    labels: {
+
+                                        boxWidth: 38,
+
+                                        boxHeight: 10,
+
+                                        padding: 15
+
+                                    }
+
+                                },
+
+
+                                tooltip: {
+
+                                    enabled: true
+
+                                }
+
+                            },
+
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    ticks: {
+
+                                        precision: 0,
+
+                                        stepSize: 1
+
+                                    },
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Number of Leaves'
+
+                                    },
+
+                                    grid: {
+
+                                        color: '#e5e5e5'
+
+                                    }
+
+                                },
+
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Year'
+
+                                    },
+
+                                    grid: {
+
+                                        color: '#e5e5e5'
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+
+                // Year filter
+
+                $('#leaveYearFilter').on('change', function() {
+
+
+                    const selectedYear = $(this).val();
+
+
+                    if (selectedYear === 'all') {
+
+
+                        leaveChart.data.labels =
+
+                            chartLabels;
+
+
+                        leaveChart.data.datasets[0].data =
+
+                            paidLeaveData;
+
+                    }
+
+                    else {
+
+
+                        const index =
+
+                            chartLabels.indexOf(selectedYear);
+
+
+                        if (index !== -1) {
+
+
+                            leaveChart.data.labels =
+
+                                [chartLabels[index]];
+
+
+                            leaveChart.data.datasets[0].data =
+
+                                [paidLeaveData[index]];
+
+                        }
+
+                    }
+
+
+                    leaveChart.update();
+
+                });
+
+            }
+
+
+            // Leave filters
+
+            function applyLeaveFilter() {
+
+
+                const dateFilter =
+
+                    document.getElementById("dateFilter").value;
+
+
+                const status =
+
+                    document.getElementById("status").value;
+
+
+                const sortBy =
+
+                    document.getElementById("sortBy").value;
+
+
+                const params =
+
+                    new URLSearchParams();
+
+
+                if (dateFilter) {
+
+                    params.append(
+                        "dateFilter",
+                        dateFilter
+                    );
+
+                }
+
+
+                if (status) {
+
+                    params.append(
+                        "status",
+                        status
+                    );
+
+                }
+
+
+                if (sortBy) {
+
+                    params.append(
+                        "sortBy",
+                        sortBy
+                    );
+
+                }
+
+
+                window.location.href =
+
+                    '@Url.Action("LeaveReport", "Reports")' +
+
+                    (
+
+                        params.toString()
+
+                            ? "?" + params.toString()
+
+                            : ""
+
+                    );
+
+            }
+
+
+            $('#dateFilter').on(
+
+                'change',
+
+                applyLeaveFilter
+
+            );
+
+
+            $('#status').on(
+
+                'change',
+
+                applyLeaveFilter
+
+            );
+
+
+            $('#sortBy').on(
+
+                'change',
+
+                applyLeaveFilter
+
+            );
+
+
+        });
+
+    </script>
+
+}

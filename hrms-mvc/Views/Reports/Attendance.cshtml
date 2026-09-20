@@ -1,0 +1,1463 @@
+﻿@model List<hrms_mvc.Models.Attendance>
+
+@using System.Text.Json
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Attendance Report";
+
+    var selectedDateFilter = Context.Request.Query["dateFilter"].ToString();
+    var selectedStatus = Context.Request.Query["status"].ToString();
+    var selectedSortBy = Context.Request.Query["sortBy"].ToString();
+
+    var chartData = Model
+        .GroupBy(x => new
+        {
+            Year = x.Date.Year,
+            Month = x.Date.Month
+        })
+        .OrderBy(x => x.Key.Year)
+        .ThenBy(x => x.Key.Month)
+        .Select(x => new
+        {
+            Label = new DateTime(
+                x.Key.Year,
+                x.Key.Month,
+                1
+            ).ToString("MMM-yyyy"),
+
+            Year = x.Key.Year,
+
+            Present = x.Count(a => a.Status == "Present"),
+
+            Absent = x.Count(a => a.Status == "Absent")
+        })
+        .ToList();
+
+    var chartLabels = chartData
+        .Select(x => x.Label)
+        .ToList();
+
+    var presentData = chartData
+        .Select(x => x.Present)
+        .ToList();
+
+    var absentData = chartData
+        .Select(x => x.Absent)
+        .ToList();
+
+    var chartYears = chartData
+        .Select(x => x.Year)
+        .Distinct()
+        .OrderByDescending(x => x)
+        .ToList();
+}
+
+
+<div class="container-fluid mt-4">
+
+    <!-- Header -->
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="mb-1">
+                Attendance Report
+            </h2>
+
+            <p class="text-muted mb-0">
+                Employee attendance overview
+            </p>
+
+        </div>
+
+
+        <!-- Export -->
+
+        <div class="dropdown">
+
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download me-1"></i>
+
+                Export
+
+            </button>
+
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel me-2 text-success"></i>
+
+                        Excel
+
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
+
+                        PDF
+
+                    </a>
+
+                </li>
+
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+
+                        Print
+
+                    </a>
+
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Cards + Chart -->
+
+    <div class="row g-3 mb-4">
+
+        <!-- Cards -->
+
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+
+                <!-- Working Days -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 attendance-card h-100">
+
+                        <div class="card-body">
+
+                            <div class="attendance-icon working-icon">
+
+                                <i class="bi bi-calendar-check"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Total Working Days
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-1">
+
+                                @ViewBag.TotalWorkingDays
+
+                            </h2>
+
+
+                            <div class="progress attendance-progress">
+
+                                <div class="progress-bar working-progress"
+                                     style="width:15%;">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Leave Taken -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 attendance-card h-100">
+
+                        <div class="card-body">
+
+                            <div class="attendance-icon leave-icon">
+
+                                <i class="bi bi-calendar-minus"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Total Leave Taken
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-1">
+
+                                @ViewBag.TotalLeaveTaken
+
+                            </h2>
+
+
+                            <div class="progress attendance-progress">
+
+                                <div class="progress-bar leave-progress"
+                                     style="width:100%;">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Holidays -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 attendance-card h-100">
+
+                        <div class="card-body">
+
+                            <div class="attendance-icon holiday-icon">
+
+                                <i class="bi bi-calendar-event"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Total Holidays
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-1">
+
+                                @ViewBag.TotalHolidays
+
+                            </h2>
+
+
+                            <div class="progress attendance-progress">
+
+                                <div class="progress-bar holiday-progress"
+                                     style="width:15%;">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Half Days -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 attendance-card h-100">
+
+                        <div class="card-body">
+
+                            <div class="attendance-icon halfday-icon">
+
+                                <i class="bi bi-calendar2-week"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Total Half Days
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-1">
+
+                                @ViewBag.TotalHalfDays
+
+                            </h2>
+
+
+                            <div class="progress attendance-progress">
+
+                                <div class="progress-bar halfday-progress"
+                                     style="width:5%;">
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-graph-up text-danger me-2"></i>
+
+                            Attendance
+
+                        </h5>
+
+
+                        <select id="attendanceYearFilter"
+                                class="form-select form-select-sm"
+                                style="width:110px;">
+
+                            <option value="all">
+
+                                This Year
+
+                            </option>
+
+
+                            @foreach (var year in chartYears)
+                            {
+                                <option value="@year">
+
+                                    @year
+
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <div style="height:310px;">
+
+                        <canvas id="attendanceChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-controller="Reports"
+                  asp-action="Attendance">
+
+                <div class="row g-3">
+
+
+                    <!-- Date Filter -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Select Date Filter:
+
+                        </label>
+
+
+                        <select name="dateFilter"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+
+                                --Select Date Filter--
+
+                            </option>
+
+
+                            <option value="Yesterday"
+                                    selected="@(selectedDateFilter == "Yesterday")">
+
+                                Yesterday
+
+                            </option>
+
+
+                            <option value="Last 7 Days"
+                                    selected="@(selectedDateFilter == "Last 7 Days")">
+
+                                Last 7 Days
+
+                            </option>
+
+
+                            <option value="Last 30 Days"
+                                    selected="@(selectedDateFilter == "Last 30 Days")">
+
+                                Last 30 Days
+
+                            </option>
+
+
+                            <option value="Last Year"
+                                    selected="@(selectedDateFilter == "Last Year")">
+
+                                Last Year
+
+                            </option>
+
+
+                            <option value="This Year"
+                                    selected="@(selectedDateFilter == "This Year")">
+
+                                This Year
+
+                            </option>
+
+
+                            <option value="Custom Range"
+                                    selected="@(selectedDateFilter == "Custom Range")">
+
+                                Custom Range
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Status Filter -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Select Status Filter:
+
+                        </label>
+
+
+                        <select name="status"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+
+                                --Select Status--
+
+                            </option>
+
+
+                            <option value="Present"
+                                    selected="@(selectedStatus == "Present")">
+
+                                Present
+
+                            </option>
+
+
+                            <option value="Absent"
+                                    selected="@(selectedStatus == "Absent")">
+
+                                Absent
+
+                            </option>
+
+
+                            <option value="Half Day"
+                                    selected="@(selectedStatus == "Half Day")">
+
+                                Half Day
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Sort -->
+
+                    <div class="col-md-4">
+
+                        <label class="form-label">
+
+                            Sort By:
+
+                        </label>
+
+
+                        <select name="sortBy"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+
+                                --Select--
+
+                            </option>
+
+
+                            <option value="Ascending"
+                                    selected="@(selectedSortBy == "Ascending")">
+
+                                Ascending
+
+                            </option>
+
+
+                            <option value="Descending"
+                                    selected="@(selectedSortBy == "Descending")">
+
+                                Descending
+
+                            </option>
+
+
+                            <option value="Last 7 Days"
+                                    selected="@(selectedSortBy == "Last 7 Days")">
+
+                                Last 7 Days
+
+                            </option>
+
+
+                            <option value="Last Month"
+                                    selected="@(selectedSortBy == "Last Month")">
+
+                                Last Month
+
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Table -->
+
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="attendanceTable"
+                       class="table table-hover align-middle">
+
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>AttendanceId</th>
+
+                            <th>Employee</th>
+
+                            <th>Date</th>
+
+                            <th>Check-In</th>
+
+                            <th>Check-Out</th>
+
+                            <th>Lunch In</th>
+
+                            <th>Lunch-Out</th>
+
+                            <th>Status</th>
+
+                            <th>Working Hours</th>
+
+                            <th>Overtime Hours</th>
+
+                            <th>Break Hours</th>
+
+                            <th>Late</th>
+
+                            <th>Production Hours</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+
+                            <tr>
+
+                                <td>
+
+                                    @item.Id
+
+                                </td>
+
+
+                                <td>
+
+                                    <strong>
+
+                                        @(item.User?.FirstName + " " + item.User?.LastName)
+
+                                    </strong>
+
+                                </td>
+
+
+                                <td>
+
+                                    @item.Date.ToString("dd-MM-yyyy")
+
+                                </td>
+
+
+                                <td>
+
+                                    @(item.Checkin?.ToString("hh:mm tt") ?? "-")
+
+                                </td>
+
+
+                                <td>
+
+                                    @(item.Checkout?.ToString("hh:mm tt") ?? "-")
+
+                                </td>
+
+
+                                <td>
+
+                                    @(item.Lunchin?.ToString("hh:mm tt") ?? "-")
+
+                                </td>
+
+
+                                <td>
+
+                                    @(item.Lunchout?.ToString("hh:mm tt") ?? "-")
+
+                                </td>
+
+
+                                <td>
+
+                                    @if (item.Status == "Present")
+                                    {
+
+                                        <span class="badge bg-success">
+
+                                            ● Present
+
+                                        </span>
+
+                                    }
+                                    else if (item.Status == "Absent")
+                                    {
+
+                                        <span class="badge bg-danger">
+
+                                            ● Absent
+
+                                        </span>
+
+                                    }
+                                    else if (item.Status == "Half Day")
+                                    {
+
+                                        <span class="badge bg-warning text-dark">
+
+                                            ● Half Day
+
+                                        </span>
+
+                                    }
+                                    else
+                                    {
+
+                                        <span class="badge bg-secondary">
+
+                                            @item.Status
+
+                                        </span>
+
+                                    }
+
+                                </td>
+
+
+                                <td>
+
+                                    @item.WorkHours
+
+                                </td>
+
+
+                                <td>
+
+                                    @item.OTHours
+
+                                </td>
+
+
+                                <td>
+
+                                    @item.BreakHours
+
+                                </td>
+
+
+                                <td>
+
+                                    @item.Late
+
+                                </td>
+
+
+                                <td>
+
+                                    @item.ProdHours
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .attendance-card {
+        border-radius: 8px;
+        min-height: 175px;
+    }
+
+
+    .attendance-icon {
+        width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 22px;
+    }
+
+
+    .working-icon {
+        color: #ff6b35;
+        background-color: #fff0ea;
+    }
+
+
+    .leave-icon {
+        color: #1677ff;
+        background-color: #edf4ff;
+    }
+
+
+    .holiday-icon {
+        color: #ff2d95;
+        background-color: #fff0f7;
+    }
+
+
+    .halfday-icon {
+        color: #ffb000;
+        background-color: #fff8e6;
+    }
+
+
+    .attendance-progress {
+        height: 5px;
+        background-color: #e9edf3;
+        border-radius: 10px;
+    }
+
+
+    .working-progress {
+        background-color: #ff6b35;
+    }
+
+
+    .leave-progress {
+        background-color: #16c65b;
+    }
+
+
+    .holiday-progress {
+        background-color: #ff2d95;
+    }
+
+
+    .halfday-progress {
+        background-color: #ffb000;
+    }
+
+
+    #attendanceTable th {
+        white-space: nowrap;
+    }
+
+
+    #attendanceTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+</style>
+
+
+@section Scripts
+{
+
+    <!-- DataTables -->
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- Buttons -->
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
+
+    <!-- Chart.js -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+
+            // DataTable
+
+            const attendanceTable = $('#attendanceTable').DataTable({
+
+                pageLength: 10,
+
+
+                lengthMenu: [
+
+                    [10, 25, 50, 100, -1],
+
+                    [10, 25, 50, 100, "All"]
+
+                ],
+
+
+                order: [],
+
+
+                dom:
+
+                    '<"row mb-3"' +
+
+                    '<"col-md-6">' +
+
+                    '<"col-md-6"f>' +
+
+                    '>' +
+
+
+                    '<"row mb-2"' +
+
+                    '<"col-md-6"l>' +
+
+                    '<"col-md-6"i>' +
+
+                    '>' +
+
+
+                    'rt' +
+
+
+                    '<"row mt-3"' +
+
+                    '<"col-md-6"i>' +
+
+                    '<"col-md-6"p>' +
+
+                    '>',
+
+
+                buttons: [
+
+                    {
+
+                        extend: 'excel',
+
+                        title: 'Attendance Report',
+
+                        filename: 'AttendanceReport',
+
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    },
+
+
+                    {
+
+                        extend: 'pdf',
+
+                        title: 'Attendance Report',
+
+                        filename: 'AttendanceReport',
+
+                        orientation: 'landscape',
+
+                        pageSize: 'A4',
+
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        },
+
+
+                        customize: function(doc) {
+
+                            doc.content[0].alignment = 'center';
+
+                            doc.content[0].fontSize = 18;
+
+                            doc.content[0].bold = true;
+
+                            doc.content[0].margin = [0, 0, 0, 15];
+
+
+                            doc.styles.tableHeader = {
+
+                                bold: true,
+
+                                fontSize: 8,
+
+                                color: '#000000',
+
+                                alignment: 'left'
+
+                            };
+
+                        }
+
+                    },
+
+
+                    {
+
+                        extend: 'print',
+
+                        title: 'Attendance Report',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    }
+
+                ]
+
+            });
+
+
+            // Excel
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                attendanceTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // PDF
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                attendanceTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                attendanceTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Chart data
+
+            const chartLabels =
+                @Html.Raw(
+                JsonSerializer.Serialize(chartLabels)
+                );
+
+
+            const presentData =
+                @Html.Raw(
+                JsonSerializer.Serialize(presentData)
+                );
+
+
+            const absentData =
+                @Html.Raw(
+                JsonSerializer.Serialize(absentData)
+                );
+
+
+            const chartYears =
+                        @Html.Raw(
+                                JsonSerializer.Serialize(
+                                        chartData.Select(x => x.Year)
+        )
+        );
+
+
+            // Chart
+
+            const canvas =
+                document.getElementById('attendanceChart');
+
+
+            if (canvas && typeof Chart !== 'undefined') {
+
+
+                const attendanceChart =
+                    new Chart(canvas, {
+
+
+                        type: 'line',
+
+
+                        data: {
+
+
+                            labels: chartLabels,
+
+
+                            datasets: [
+
+                                {
+
+                                    label: 'Present',
+
+                                    data: presentData,
+
+                                    borderColor: '#198b00',
+
+                                    backgroundColor: '#198b00',
+
+                                    borderWidth: 3,
+
+                                    tension: 0.4,
+
+                                    fill: false,
+
+                                    pointRadius: 4,
+
+                                    pointHoverRadius: 6,
+
+                                    pointBackgroundColor: '#198b00',
+
+                                    pointBorderColor: '#198b00'
+
+                                },
+
+
+                                {
+
+                                    label: 'Absent',
+
+                                    data: absentData,
+
+                                    borderColor: '#ffb6c1',
+
+                                    backgroundColor: '#ffb6c1',
+
+                                    borderWidth: 3,
+
+                                    tension: 0.4,
+
+                                    fill: false,
+
+                                    pointRadius: 4,
+
+                                    pointHoverRadius: 6,
+
+                                    pointBackgroundColor: '#ffb6c1',
+
+                                    pointBorderColor: '#ffb6c1'
+
+                                }
+
+                            ]
+
+                        },
+
+
+                        options: {
+
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+
+                            interaction: {
+
+                                mode: 'index',
+
+                                intersect: false
+
+                            },
+
+
+                            plugins: {
+
+
+                                legend: {
+
+                                    display: true,
+
+                                    position: 'top',
+
+                                    align: 'center',
+
+                                    labels: {
+
+                                        usePointStyle: false,
+
+                                        boxWidth: 38,
+
+                                        boxHeight: 10,
+
+                                        padding: 15,
+
+                                        font: {
+
+                                            size: 12
+
+                                        }
+
+                                    }
+
+                                },
+
+
+                                tooltip: {
+
+                                    enabled: true,
+
+                                    mode: 'index',
+
+                                    intersect: false
+
+                                }
+
+                            },
+
+
+                            scales: {
+
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    suggestedMax: 6,
+
+                                    ticks: {
+
+                                        stepSize: 1,
+
+                                        precision: 0,
+
+                                        font: {
+
+                                            size: 11
+
+                                        }
+
+                                    },
+
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Number of Days',
+
+                                        font: {
+
+                                            size: 12
+
+                                        }
+
+                                    },
+
+
+                                    grid: {
+
+                                        color: '#e5e5e5'
+
+                                    }
+
+                                },
+
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Month-Year',
+
+                                        font: {
+
+                                            size: 12
+
+                                        }
+
+                                    },
+
+
+                                    ticks: {
+
+                                        font: {
+
+                                            size: 11
+
+                                        }
+
+                                    },
+
+
+                                    grid: {
+
+                                        color: '#e5e5e5'
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+
+                // Year filter
+
+                $('#attendanceYearFilter').on('change', function() {
+
+
+                    const selectedYear = $(this).val();
+
+
+                    if (selectedYear === 'all') {
+
+
+                        attendanceChart.data.labels =
+                            chartLabels;
+
+
+                        attendanceChart.data.datasets[0].data =
+                            presentData;
+
+
+                        attendanceChart.data.datasets[1].data =
+                            absentData;
+
+                    }
+                    else {
+
+
+                        const filteredLabels = [];
+
+                        const filteredPresent = [];
+
+                        const filteredAbsent = [];
+
+
+                        chartYears.forEach(function(year, index) {
+
+
+                            if (year.toString() === selectedYear) {
+
+
+                                filteredLabels.push(
+                                    chartLabels[index]
+                                );
+
+
+                                filteredPresent.push(
+                                    presentData[index]
+                                );
+
+
+                                filteredAbsent.push(
+                                    absentData[index]
+                                );
+
+                            }
+
+                        });
+
+
+                        attendanceChart.data.labels =
+                            filteredLabels;
+
+
+                        attendanceChart.data.datasets[0].data =
+                            filteredPresent;
+
+
+                        attendanceChart.data.datasets[1].data =
+                            filteredAbsent;
+
+                    }
+
+
+                    attendanceChart.update();
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+}

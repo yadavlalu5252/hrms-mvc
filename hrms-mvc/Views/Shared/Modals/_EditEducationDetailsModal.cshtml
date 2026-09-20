@@ -1,0 +1,102 @@
+﻿@model hrms_mvc.Models.EducationDetails
+
+<div class="modal fade"
+     id="editEducationModal-@Model.EducationDetailsId"
+     tabindex="-1"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    Edit Education Information
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+            </div>
+
+            <form asp-controller="EmployeeDetails"
+                  asp-action="EditEducationDetails"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <input asp-for="EducationDetailsId"
+                           type="hidden" />
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                Education Type
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="EducationType"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                University Name
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="UniversityName"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                Start Date
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="startdate"
+                                   type="date"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label class="form-label">
+                                End Date
+                                <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="enddate"
+                                   type="date"
+                                   class="form-control"
+                                   required />
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Update
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>

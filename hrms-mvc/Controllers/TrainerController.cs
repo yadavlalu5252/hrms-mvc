@@ -1,4 +1,4 @@
-﻿using hrms_mvc.Models;
+using hrms_mvc.Models;
 using hrms_mvc.Repository;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,10 +41,10 @@ namespace hrms_mvc.Controllers
                 trainer.ProfilePicture = "default.jpg";
             }
 
-            ModelState.Remove("ProfilePicture");         
+            ModelState.Remove("ProfilePicture");
+
             await service.AddTrainers(trainer);
             return RedirectToAction("FetchAll");
-           
         }
 
         public async Task<IActionResult> EditTrainer(int id)
@@ -55,10 +55,9 @@ namespace hrms_mvc.Controllers
 
         [HttpPost]
         public async Task<IActionResult> UpdateTrainer(Trainers trainer)
-        {           
-         await service.UpdateTrainers(trainer);
-         return RedirectToAction("FetchAll");
-            
+        {
+            await service.UpdateTrainers(trainer);
+            return RedirectToAction("FetchAll");
         }
 
         [HttpPost]

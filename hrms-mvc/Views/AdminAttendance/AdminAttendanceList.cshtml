@@ -1,0 +1,850 @@
+﻿@model List<hrms_mvc.Models.Attendance>
+
+@{
+    ViewData["Title"] = "Attendance Admin";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var today = DateTime.Today;
+
+    var todayRecords = Model?
+        .Where(x => x.Date.Date == today)
+        .ToList()
+        ?? new List<hrms_mvc.Models.Attendance>();
+
+    var totalEmployees = Model?
+        .Select(x => x.UserId)
+        .Distinct()
+        .Count()
+        ?? 0;
+
+    var presentCount = todayRecords
+        .Count(x => x.Status == "Present");
+
+    var lateCount = todayRecords
+        .Count(x => x.Late > 0);
+
+    var uninformedCount = todayRecords
+        .Count(x => x.Status == "Uninformed");
+
+    var permissionCount = todayRecords
+        .Count(x => x.Status == "Permission");
+
+    var absentCount = todayRecords
+        .Count(x => x.Status == "Absent");
+}
+
+<style>
+
+    .page-title {
+        color: #173b68;
+        font-weight: 600;
+    }
+
+    .summary-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+    }
+
+    .summary-title {
+        color: #667085;
+        font-size: 15px;
+    }
+
+    .summary-number {
+        color: #173b68;
+        font-size: 20px;
+        font-weight: 600;
+    }
+
+    .summary-box {
+        border-right: 1px solid #e5e7eb;
+        padding: 18px;
+    }
+
+        .summary-box:last-child {
+            border-right: none;
+        }
+
+    .status-badge {
+        padding: 5px 12px;
+        border-radius: 5px;
+        font-size: 12px;
+        font-weight: 500;
+    }
+
+    .present-badge {
+        background: #08c76f;
+        color: white;
+    }
+
+    .absent-badge {
+        background: #ff3b30;
+        color: white;
+    }
+
+    .late-badge {
+        background: #ffb400;
+        color: white;
+    }
+
+    .default-badge {
+        background: #6c757d;
+        color: white;
+    }
+
+    .production-badge {
+        background: #ff3030;
+        color: white;
+        padding: 4px 10px;
+        border-radius: 5px;
+        font-size: 12px;
+    }
+
+    .filter-card {
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        background: white;
+    }
+
+    .filter-label {
+        color: #667085;
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .table thead th {
+        background: #e9edf2;
+        color: #111827;
+        border-bottom: 1px solid #777;
+        font-weight: 600;
+        white-space: nowrap;
+    }
+
+    .table tbody td {
+        color: #667085;
+        vertical-align: middle;
+        white-space: nowrap;
+    }
+
+    .employee-name {
+        color: #173b68;
+        font-weight: 600;
+    }
+
+    .export-btn {
+        background: white;
+        border: 1px solid #dee2e6;
+        color: #212529;
+    }
+
+    .report-btn {
+        background: #286b32;
+        color: white;
+        border: none;
+    }
+
+        .report-btn:hover {
+            background: #205528;
+            color: white;
+        }
+
+    .action-btn {
+        border: none;
+        background: transparent;
+        color: #173b68;
+    }
+
+    .card {
+        border-radius: 8px;
+    }
+
+</style>
+
+
+<div class="container-fluid mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+
+            <h2 class="page-title mb-1">
+                Attendance Admin
+            </h2>
+
+            <div class="text-muted">
+                <span>⌂</span>
+                /
+                <span>Employee</span>
+                /
+                <span>Attendance Admin</span>
+            </div>
+
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <div class="dropdown">
+
+                <button class="btn export-btn dropdown-toggle"
+                        type="button"
+                        data-bs-toggle="dropdown">
+
+                    <i class="bi bi-file-earmark-arrow-down"></i>
+                    Export
+
+                </button>
+
+                <ul class="dropdown-menu">
+
+                    <li>
+                        <a class="dropdown-item"
+                           href="#"
+                           id="excelBtn">
+                            Excel
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item"
+                           href="#"
+                           id="pdfBtn">
+                            PDF
+                        </a>
+                    </li>
+
+                    <li>
+                        <a class="dropdown-item"
+                           href="#"
+                           id="printBtn">
+                            Print
+                        </a>
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <button class="btn report-btn">
+                <i class="bi bi-file-earmark-text"></i>
+                Report
+            </button>
+
+        </div>
+
+    </div>
+
+
+    @if (TempData["success"] != null)
+    {
+        <div class="alert alert-success">
+            @TempData["success"]
+        </div>
+    }
+
+
+    <div class="card shadow-sm summary-card mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <div>
+
+                    <h4 class="page-title mb-2">
+                        Attendance Details Today
+                    </h4>
+
+                    <span class="text-muted">
+                        Data from the @totalEmployees total no of employees
+                    </span>
+
+                </div>
+
+                <div class="text-end">
+
+                    <div class="page-title fw-semibold">
+                        Total Absentees Today
+                    </div>
+
+                    <div class="summary-number">
+                        @absentCount
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <div class="row border rounded">
+
+                <div class="col summary-box">
+
+                    <div class="summary-title">
+                        Present
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <span class="summary-number">
+                            @presentCount
+                        </span>
+
+                        <span class="status-badge present-badge">
+                            ↑ +1%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col summary-box">
+
+                    <div class="summary-title">
+                        Late Login
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <span class="summary-number">
+                            @lateCount
+                        </span>
+
+                        <span class="status-badge absent-badge">
+                            ↓ -1%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col summary-box">
+
+                    <div class="summary-title">
+                        Uninformed
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <span class="summary-number">
+                            @uninformedCount
+                        </span>
+
+                        <span class="status-badge absent-badge">
+                            ↓ -12%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col summary-box">
+
+                    <div class="summary-title">
+                        Permission
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <span class="summary-number">
+                            @permissionCount
+                        </span>
+
+                        <span class="status-badge present-badge">
+                            ↑ +1%
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+                <div class="col summary-box">
+
+                    <div class="summary-title">
+                        Absent
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mt-2">
+
+                        <span class="summary-number">
+                            @absentCount
+                        </span>
+
+                        <span class="status-badge absent-badge">
+                            ↓ -19%
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="card shadow-sm filter-card">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+
+                <h4 class="page-title mb-0">
+                    Admin Attendance
+                </h4>
+
+
+                <form asp-controller="AdminAttendance"
+                      asp-action="FilterAttendance"
+                      method="get"
+                      class="d-flex gap-2 align-items-end">
+
+                    <div>
+
+                        <label class="filter-label">
+                            Start Date:
+                        </label>
+
+                        <input type="date"
+                               name="startDate"
+                               class="form-control"
+                               id="startDate" />
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="filter-label">
+                            End Date:
+                        </label>
+
+                        <input type="date"
+                               name="endDate"
+                               class="form-control"
+                               id="endDate" />
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="filter-label">
+                            Status:
+                        </label>
+
+                        <select id="statusFilter"
+                                class="form-select">
+
+                            <option value="">
+                                All
+                            </option>
+
+                            <option value="Present">
+                                Present
+                            </option>
+
+                            <option value="Absent">
+                                Absent
+                            </option>
+
+                            <option value="Late">
+                                Late
+                            </option>
+
+                            <option value="Permission">
+                                Permission
+                            </option>
+
+                            <option value="Uninformed">
+                                Uninformed
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div>
+
+                        <label class="filter-label">
+                            Sort:
+                        </label>
+
+                        <select id="sortFilter"
+                                class="form-select">
+
+                            <option value="0">
+                                Recently Added
+                            </option>
+
+                            <option value="1">
+                                Date
+                            </option>
+
+                            <option value="2">
+                                Employee
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <button type="submit"
+                            class="btn btn-primary">
+
+                        Filter
+
+                    </button>
+
+
+                    <a asp-controller="AdminAttendance"
+                       asp-action="AdminAttendanceList"
+                       class="btn btn-secondary">
+
+                        Reset
+
+                    </a>
+
+                </form>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table id="attendanceTable"
+                       class="table table-hover align-middle">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Sr. No.</th>
+
+                            <th>Employee</th>
+
+                            <th>Date</th>
+
+                            <th>Status</th>
+
+                            <th>Check In</th>
+
+                            <th>Check Out</th>
+
+                            <th>Break</th>
+
+                            <th>Late</th>
+
+                            <th>Production Hours</th>
+
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+                            int count = 1;
+
+                            foreach (var item in Model)
+                            {
+                                <tr>
+
+                                    <td>
+                                        @count
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="employee-name">
+
+                                            @(item.User?.FirstName + " " +
+                                                item.User?.LastName)
+
+                                        </div>
+
+                                    </td>
+
+
+                                    <td>
+                                        @item.Date.ToString("yyyy-MM-dd")
+                                    </td>
+
+
+                                    <td>
+
+                                        @if (item.Status == "Present")
+                                        {
+                                            <span class="status-badge present-badge">
+                                                ● Present
+                                            </span>
+                                        }
+                                        else if (item.Status == "Absent")
+                                        {
+                                            <span class="status-badge absent-badge">
+                                                ● Absent
+                                            </span>
+                                        }
+                                        else if (item.Late > 0)
+                                        {
+                                            <span class="status-badge late-badge">
+                                                ● Late
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="status-badge default-badge">
+                                                ● @item.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <td>
+                                        @(item.Checkin?.ToString("hh:mm tt") ?? "")
+                                    </td>
+
+
+                                    <td>
+                                        @(item.Checkout?.ToString("hh:mm tt") ?? "")
+                                    </td>
+
+
+                                    <td>
+                                        @item.BreakHours.ToString("0.00") hrs
+                                    </td>
+
+
+                                    <td>
+                                        @item.Late min
+                                    </td>
+
+
+                                    <td>
+
+                                        <span class="production-badge">
+                                            @item.ProdHours.ToString("0.00")
+                                        </span>
+
+                                    </td>
+
+
+                                    <td>
+
+                                        <div class="d-flex gap-1">
+
+
+
+
+                                            <form asp-controller="AdminAttendance"
+                                                  asp-action="Delete"
+                                                  asp-route-id="@item.Id"
+                                                  method="post"
+                                                  onsubmit="return confirm('Are you sure you want to delete this attendance record?');">
+
+                                                @Html.AntiForgeryToken()
+
+                                                <button type="submit"
+                                                        class="btn btn-sm btn-outline-danger">
+
+                                                    Delete
+
+                                                </button>
+
+                                            </form>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+
+                                count++;
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+
+                                <td colspan="10"
+                                    class="text-center text-muted py-4">
+
+                                    No attendance records found.
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.dataTables.min.css" />
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+<script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        var table = $('#attendanceTable').DataTable({
+
+            pageLength: 10,
+
+            ordering: true,
+
+            searching: true,
+
+            lengthChange: true,
+
+            autoWidth: false,
+
+            order: [[2, 'desc']],
+
+            columnDefs: [
+                {
+                    orderable: false,
+                    targets: 9
+                }
+            ],
+
+            dom: 'rtip',
+
+            buttons: [
+
+                {
+                    extend: 'excelHtml5',
+                    title: 'Admin Attendance'
+                },
+
+                {
+                    extend: 'pdfHtml5',
+                    title: 'Admin Attendance',
+                    orientation: 'landscape',
+                    pageSize: 'A4'
+                },
+
+                {
+                    extend: 'print',
+                    title: 'Admin Attendance'
+                }
+
+            ]
+
+        });
+
+
+        $('#statusFilter').change(function () {
+
+            var value = this.value;
+
+            if (value === 'Late') {
+
+                table
+                    .column(3)
+                    .search('Late')
+                    .draw();
+
+            }
+            else {
+
+                table
+                    .column(3)
+                    .search(value)
+                    .draw();
+
+            }
+
+        });
+
+
+        $('#sortFilter').change(function () {
+
+            var column = parseInt(this.value);
+
+            table
+                .order([column, 'desc'])
+                .draw();
+
+        });
+
+
+        $('#excelBtn').click(function (e) {
+
+            e.preventDefault();
+
+            table
+                .button('.buttons-excel')
+                .trigger();
+
+        });
+
+
+        $('#pdfBtn').click(function (e) {
+
+            e.preventDefault();
+
+            table
+                .button('.buttons-pdf')
+                .trigger();
+
+        });
+
+
+        $('#printBtn').click(function (e) {
+
+            e.preventDefault();
+
+            table
+                .button('.buttons-print')
+                .trigger();
+
+        });
+
+    });
+
+</script>

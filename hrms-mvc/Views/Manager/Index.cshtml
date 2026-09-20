@@ -1,0 +1,775 @@
+﻿@model hrms_mvc.Models.ManagerDashboardViewModel
+
+
+@{
+    Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    ViewData["Title"] = "Manager Dashboard";
+
+    decimal maximumHours = new[]
+    {
+        Model.TotalWorkingHours,
+        Model.ProductiveHours,
+        Model.BreakHours,
+        Model.OvertimeHours
+    }.Max();
+
+    decimal workingHoursPercentage = maximumHours > 0
+        ? (Model.TotalWorkingHours / maximumHours) * 100
+        : 0;
+
+    decimal productiveHoursPercentage = maximumHours > 0
+        ? (Model.ProductiveHours / maximumHours) * 100
+        : 0;
+
+    decimal breakHoursPercentage = maximumHours > 0
+        ? (Model.BreakHours / maximumHours) * 100
+        : 0;
+
+    decimal overtimeHoursPercentage = maximumHours > 0
+        ? (Model.OvertimeHours / maximumHours) * 100
+        : 0;
+
+    string workingHoursWidth = $"{workingHoursPercentage:0.##}%";
+    string productiveHoursWidth = $"{productiveHoursPercentage:0.##}%";
+    string breakHoursWidth = $"{breakHoursPercentage:0.##}%";
+    string overtimeHoursWidth = $"{overtimeHoursPercentage:0.##}%";
+}
+
+<style>
+    body {
+        background-color: #f5f7fb;
+    }
+
+    .dashboard-title {
+        color: #172b4d;
+        font-weight: 700;
+    }
+
+    .dashboard-subtitle {
+        color: #7a869a;
+    }
+
+    .dashboard-card {
+        background: #ffffff;
+        border: 1px solid #e5e9f2;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(22, 34, 51, 0.04);
+        height: 100%;
+    }
+
+    .card-heading {
+        color: #172b4d;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .profile-header {
+        background: #20252b;
+        color: white;
+        border-radius: 8px 8px 0 0;
+        padding: 22px;
+    }
+
+    .profile-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 50%;
+        background: #dce8f7;
+        color: #172b4d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 27px;
+        font-weight: 700;
+    }
+
+    .profile-name {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .profile-role {
+        color: #ff7043;
+        font-size: 13px;
+    }
+
+    .profile-body {
+        padding: 22px;
+    }
+
+    .info-label {
+        color: #7a869a;
+        font-size: 13px;
+        margin-bottom: 5px;
+    }
+
+    .info-value {
+        color: #172b4d;
+        font-weight: 600;
+        margin-bottom: 18px;
+    }
+
+    .stat-card {
+        padding: 20px;
+    }
+
+    .stat-icon {
+        width: 35px;
+        height: 35px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 6px;
+        color: white;
+        font-weight: bold;
+        margin-bottom: 14px;
+    }
+
+    .orange {
+        background-color: #ff7043;
+    }
+
+    .blue {
+        background-color: #287cff;
+    }
+
+    .green {
+        background-color: #00bd68;
+    }
+
+    .pink {
+        background-color: #ed3d91;
+    }
+
+    .stat-number {
+        color: #172b4d;
+        font-size: 25px;
+        font-weight: 700;
+    }
+
+    .stat-title {
+        color: #526581;
+        font-size: 14px;
+    }
+
+    .stat-footer {
+        border-top: 1px solid #edf0f5;
+        margin-top: 14px;
+        padding-top: 12px;
+        color: #00bd68;
+        font-size: 13px;
+    }
+
+    .section-header {
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e9f2;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .section-body {
+        padding: 20px;
+    }
+
+    .leave-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f0f2f6;
+    }
+
+    .leave-item:last-child {
+        border-bottom: none;
+    }
+
+    .leave-label {
+        color: #526581;
+    }
+
+    .leave-value {
+        color: #172b4d;
+        font-weight: 700;
+    }
+
+    .hours-number {
+        color: #172b4d;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+    .hours-label {
+        color: #526581;
+        font-size: 13px;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        background-color: #e9eef5;
+        color: #526581;
+    }
+
+    .project-table th {
+        color: #526581;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .project-table td {
+        color: #172b4d;
+        font-size: 14px;
+        vertical-align: middle;
+    }
+
+    .empty-message {
+        color: #7a869a;
+        text-align: center;
+        padding: 25px 10px;
+    }
+</style>
+
+<div class="container-fluid py-4">
+    
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+        <h2 class="dashboard-title mb-1">Manager Dashboard</h2>
+
+        <p class="dashboard-subtitle mb-0">
+            Home / Manager Dashboard
+        </p>
+    </div>
+
+    <form method="get"
+          asp-controller="Manager"
+          asp-action="Index"
+          class="d-flex align-items-center gap-2">
+
+        <input type="date"
+               name="date"
+               value="@Model.SelectedDate.ToString("yyyy-MM-dd")"
+               class="form-control"
+               style="width: 170px;"
+               onchange="this.form.submit()" />
+
+    </form>
+</div>
+
+
+    <!-- Top Section -->
+    <div class="row g-4 mb-4">
+
+        <!-- Manager Profile -->
+<div class="col-xl-4 col-lg-5">
+
+    <div class="dashboard-card">
+
+        <div class="profile-header">
+
+            <div class="d-flex align-items-center gap-3">
+
+                <div class="profile-avatar">
+
+                    @if (Model.Manager != null &&
+                         !string.IsNullOrEmpty(Model.Manager.FirstName))
+                    {
+                        @Model.Manager.FirstName.Substring(0, 1).ToUpper()
+                    }
+                    else
+                    {
+                        <span>M</span>
+                    }
+
+                </div>
+
+                <div>
+
+                    <div class="profile-name">
+
+                        @if (Model.Manager != null)
+                        {
+                            @Model.Manager.FirstName @Model.Manager.LastName
+                        }
+                        else
+                        {
+                            <span>Manager</span>
+                        }
+
+                    </div>
+
+                    <div class="profile-role">
+                        Manager
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="profile-body">
+
+            <div class="info-label">
+                Email Address
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.Email ?? "Not available")
+            </div>
+
+
+            <div class="info-label">
+                Department
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.Department?.Name ?? "Not available")
+            </div>
+
+
+            <div class="info-label">
+                Username
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.FirstName ?? "Not available")
+            </div>
+
+
+            <div class="info-label">
+                Role
+            </div>
+
+            <div class="info-value">
+                @(Model.Manager?.Role?.RoleName ?? "Manager")
+            </div>
+
+
+            <!-- Production -->
+
+            <div class="text-center mt-3">
+
+                <div class="bg-warning text-dark rounded px-3 py-2 d-inline-block">
+
+                    <strong>Production :</strong>
+
+                    <br />
+
+                    <span>
+                        @Model.ProductiveHours.ToString("0.##")h
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- Check In -->
+
+            <div class="text-center mt-3">
+
+                <div class="mb-2">
+
+                    <span class="text-danger">
+                        <i class="bi bi-fingerprint"></i>
+                        Punch In at
+                    </span>
+
+                    <strong>
+                        Not Checked In
+                    </strong>
+
+                </div>
+
+
+                <a asp-controller="EmployeeAttendance"
+                   asp-action="Index"
+                   class="btn btn-primary px-4">
+
+                    Check-In
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+        <!-- Leave Details -->
+        <div class="col-xl-4 col-lg-7">
+            <div class="dashboard-card">
+
+                <div class="section-header">
+                    <span class="card-heading">Leave Details</span>
+                    <span class="status-badge">Current Year</span>
+                </div>
+
+                <div class="section-body">
+
+                    <div class="leave-item">
+                        <span class="leave-label">Total Leaves</span>
+                        <span class="leave-value">@Model.TotalLeave</span>
+                    </div>
+
+                    <div class="leave-item">
+                        <span class="leave-label">Taken Leaves</span>
+                        <span class="leave-value">@Model.TakenLeave</span>
+                    </div>
+
+                    <div class="leave-item">
+                        <span class="leave-label">Absent</span>
+                        <span class="leave-value">@Model.AbsentLeave</span>
+                    </div>
+
+                    <div class="leave-item">
+                        <span class="leave-label">Sick Leave</span>
+                        <span class="leave-value">@Model.SickLeave</span>
+                    </div>
+
+                    <div class="leave-item">
+                        <span class="leave-label">Worked Days</span>
+                        <span class="leave-value">@Model.WorkedDays</span>
+                    </div>
+
+                    <div class="leave-item">
+                        <span class="leave-label">Loss of Pay</span>
+                        <span class="leave-value">@Model.LossOfPay</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+<!-- Quick Summary -->
+<div class="col-xl-4">
+    <div class="dashboard-card">
+
+        <div class="section-header">
+            <span class="card-heading">Attendance Summary</span>
+        </div>
+
+        <div class="section-body">
+
+            <div class="d-flex justify-content-between mb-3">
+                <span class="leave-label">Working Hours</span>
+                <strong>
+                    @Model.TotalWorkingHours.ToString("0.00") hrs
+                </strong>
+            </div>
+
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-primary"
+                     style="width: @workingHoursWidth;">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mb-3">
+                <span class="leave-label">Productive Hours</span>
+                <strong>
+                    @Model.ProductiveHours.ToString("0.00") hrs
+                </strong>
+            </div>
+
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-success"
+                     style="width: @productiveHoursWidth;">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mb-3">
+                <span class="leave-label">Break Hours</span>
+                <strong>
+                    @Model.BreakHours.ToString("0.00") hrs
+                </strong>
+            </div>
+
+            <div class="progress mb-4" style="height: 8px;">
+                <div class="progress-bar bg-warning"
+                     style="width: @breakHoursWidth;">
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between">
+                <span class="leave-label">Overtime Hours</span>
+                <strong>
+                    @Model.OvertimeHours.ToString("0.00") hrs
+                </strong>
+            </div>
+
+            <div class="progress mt-2" style="height: 8px;">
+                <div class="progress-bar bg-info"
+                     style="width: @overtimeHoursWidth;">
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+    <!-- Statistics Cards -->
+    <div class="row g-4 mb-4">
+
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card stat-card">
+                <div class="stat-icon orange">W</div>
+
+                <div class="stat-number">
+                    @Model.TotalWorkingHours.ToString("0.00")
+                </div>
+
+                <div class="stat-title">
+                    Total Working Hours
+                </div>
+
+                <div class="stat-footer">
+                    Working time summary
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card stat-card">
+                <div class="stat-icon green">P</div>
+
+                <div class="stat-number">
+                    @Model.ProductiveHours.ToString("0.00")
+                </div>
+
+                <div class="stat-title">
+                    Productive Hours
+                </div>
+
+                <div class="stat-footer">
+                    Productivity summary
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card stat-card">
+                <div class="stat-icon blue">B</div>
+
+                <div class="stat-number">
+                    @Model.BreakHours.ToString("0.00")
+                </div>
+
+                <div class="stat-title">
+                    Break Hours
+                </div>
+
+                <div class="stat-footer">
+                    Break time summary
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-md-6">
+            <div class="dashboard-card stat-card">
+                <div class="stat-icon pink">O</div>
+
+                <div class="stat-number">
+                    @Model.OvertimeHours.ToString("0.00")
+                </div>
+
+                <div class="stat-title">
+                    Overtime Hours
+                </div>
+
+                <div class="stat-footer">
+                    Overtime summary
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Working Hours Details -->
+    <div class="dashboard-card mb-4">
+
+        <div class="section-header">
+            <span class="card-heading">Working Hours Details</span>
+        </div>
+
+        <div class="section-body">
+            <div class="row g-4">
+
+                <div class="col-md-3">
+                    <div class="hours-label">Total Working Hours</div>
+                    <div class="hours-number">
+                        @Model.TotalWorkingHours.ToString("0.00") hrs
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="hours-label">Productive Hours</div>
+                    <div class="hours-number">
+                        @Model.ProductiveHours.ToString("0.00") hrs
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="hours-label">Break Hours</div>
+                    <div class="hours-number">
+                        @Model.BreakHours.ToString("0.00") hrs
+                    </div>
+                </div>
+
+                <div class="col-md-3">
+                    <div class="hours-label">Overtime</div>
+                    <div class="hours-number">
+                        @Model.OvertimeHours.ToString("0.00") hrs
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="progress mt-4" style="height: 14px;">
+                <div class="progress-bar bg-success"
+                     style="width: 35%;">
+                </div>
+
+                <div class="progress-bar bg-warning"
+                     style="width: 20%;">
+                </div>
+
+                <div class="progress-bar bg-primary"
+                     style="width: 10%;">
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Projects and Tasks -->
+    <div class="row g-4">
+
+        <!-- Projects -->
+        <div class="col-xl-6">
+            <div class="dashboard-card">
+
+                <div class="section-header">
+                    <span class="card-heading">Projects</span>
+                    <span class="status-badge">
+                        @Model.Projects.Count() Projects
+                    </span>
+                </div>
+
+                <div class="section-body">
+
+                    @if (Model.Projects.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover project-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Project</th>
+                                        <th>Client</th>
+                                        <th>Status</th>
+                                        <th>Tasks</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var project in Model.Projects)
+                                    {
+                                        <tr>
+                                            <td>@project.ProjectName</td>
+                                            <td>@project.ClientName</td>
+                                            <td>
+                                                <span class="status-badge">
+                                                    @project.Status
+                                                </span>
+                                            </td>
+                                            <td>@project.TotalTasks</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-message">
+                            No ongoing project available.
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks -->
+        <div class="col-xl-6">
+            <div class="dashboard-card">
+
+                <div class="section-header">
+                    <span class="card-heading">Tasks</span>
+                    <span class="status-badge">
+                        @Model.Tasks.Count() Tasks
+                    </span>
+                </div>
+
+                <div class="section-body">
+
+                    @if (Model.Tasks.Any())
+                    {
+                        <div class="table-responsive">
+                            <table class="table table-hover project-table mb-0">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th>Project</th>
+                                        <th>Status</th>
+                                        <th>Priority</th>
+                                        <th>Deadline</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    @foreach (var task in Model.Tasks)
+                                    {
+                                        <tr>
+                                            <td>@task.Title</td>
+                                            <td>@task.ProjectName</td>
+                                            <td>
+                                                <span class="status-badge">
+                                                    @task.Status
+                                                </span>
+                                            </td>
+                                            <td>
+                                                <span class="status-badge">
+                                                    @task.Priority
+                                                </span>
+                                            </td>
+                                            <td>
+                                                @task.Deadline.ToString("dd-MM-yyyy")
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="empty-message">
+                            No recent tasks available.
+                        </div>
+                    }
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>

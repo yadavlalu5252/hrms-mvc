@@ -1,0 +1,97 @@
+﻿@model hrms_mvc.Models.User
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Login</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+</head>
+
+<body class="bg-light">
+
+    <div class="container">
+        <div class="row justify-content-center align-items-center min-vh-100">
+
+            <div class="col-md-5 col-lg-4">
+
+                <div class="card shadow border-0">
+                    <div class="card-body p-4">
+
+                        <h3 class="text-center mb-4">
+                            Login
+                        </h3>
+
+                        @if (ViewBag.ErrorMessage != null)
+    {
+        <div class="alert alert-danger">
+            @ViewBag.ErrorMessage
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">
+            @TempData["Error"]
+        </div>
+    }
+
+
+                        <form method="post">
+
+                            <div class="mb-3">
+                                <label asp-for="Email" class="form-label">
+                                    Email
+                                </label>
+
+                                <input type="email"
+                                       class="form-control"
+                                       asp-for="Email" />
+                            </div>
+
+                            <div class="mb-3">
+                                <label asp-for="Password" class="form-label">
+                                    Password
+                                </label>
+
+                                <input type="password"
+                                       class="form-control"
+                                       asp-for="Password" />
+                            </div>
+
+                            <input type="submit"
+                                   value="Login"
+                                   class="btn btn-primary w-100" />
+
+                        </form>
+
+                        <div class="text-center mt-3 mb-3">
+                            <span>OR</span>
+                        </div>
+
+                        <a asp-controller="Auth"
+   asp-action="GoogleLogin"
+   class="btn btn-outline-dark w-100 d-flex align-items-center justify-content-center gap-2">
+    <span>G</span>
+    <span>Sign in with Google</span>
+</a>
+
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

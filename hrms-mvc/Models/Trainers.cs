@@ -5,7 +5,7 @@ namespace hrms_mvc.Models
 {
     public class Trainers
     {
-        [Key]
+        [Key]  
         public int Id { get; set; }
 
         [Required(ErrorMessage = "FirstName is compulsory")]

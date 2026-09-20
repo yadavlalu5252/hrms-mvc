@@ -1,0 +1,586 @@
+﻿@model List<hrms_mvc.Models.User>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    int totalEmployees = Model.Count;
+    int activeEmployees = Model.Count(x => x.Status == "Active");
+    int inactiveEmployees = Model.Count(x => x.Status != "Active");
+
+    int newJoiners = Model.Count(x =>
+        x.DateOfJoining >= DateTime.Today.AddDays(-30));
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">Employee</h2>
+
+            <div class="text-muted">
+                <i class="bi bi-house-door"></i>
+                <span class="mx-2">/</span>
+                Employee
+                <span class="mx-2">/</span>
+                <span class="text-dark">Employee Grid</span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <a asp-controller="EmployeeList"
+               asp-action="Index"
+               class="btn btn-outline-primary">
+                <i class="bi bi-list"></i>
+                List View
+            </a>
+
+        </div>
+
+    </div>
+
+
+    <!-- Summary Cards -->
+    <div class="row g-4 mb-4">
+
+        <!-- Total Employee -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body d-flex align-items-center">
+
+                    <div class="rounded-circle bg-dark text-white d-flex align-items-center justify-content-center me-3"
+                         style="width:55px;height:55px;">
+
+                        <i class="bi bi-people fs-4"></i>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Total Employee
+                        </p>
+
+                        <h4 class="fw-bold mb-0">
+                            @totalEmployees
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Active -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body d-flex align-items-center">
+
+                    <div class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center me-3"
+                         style="width:55px;height:55px;">
+
+                        <i class="bi bi-person-check fs-4"></i>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            Active
+                        </p>
+
+                        <h4 class="fw-bold mb-0">
+                            @activeEmployees
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Inactive -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body d-flex align-items-center">
+
+                    <div class="rounded-circle bg-danger text-white d-flex align-items-center justify-content-center me-3"
+                         style="width:55px;height:55px;">
+
+                        <i class="bi bi-person-x fs-4"></i>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            InActive
+                        </p>
+
+                        <h4 class="fw-bold mb-0">
+                            @inactiveEmployees
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- New Joiners -->
+        <div class="col-xl-3 col-lg-6 col-md-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body d-flex align-items-center">
+
+                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3"
+                         style="width:55px;height:55px;">
+
+                        <i class="bi bi-person-plus fs-4"></i>
+
+                    </div>
+
+                    <div>
+
+                        <p class="text-muted mb-1">
+                            New Joiners
+                        </p>
+
+                        <h4 class="fw-bold mb-0">
+                            @newJoiners
+                        </h4>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Employee List Header -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="fw-bold mb-0">
+                    Employee List
+                </h5>
+
+               <div class="d-flex gap-3">
+
+    <!-- Designation Filter -->
+    <select id="designationFilter"
+            class="form-select"
+            style="width:180px;">
+
+        <option value="all">
+            Select Designation
+        </option>
+
+        @foreach (var designation in Model
+            .Where(x => x.Designation != null)
+            .Select(x => x.Designation!.DesignationName)
+            .Distinct()
+            .OrderBy(x => x))
+        {
+            <option value="@designation">
+                @designation
+            </option>
+        }
+
+    </select>
+
+
+    <!-- Sorting -->
+    <select id="sortingFilter"
+            class="form-select"
+            style="width:180px;">
+
+        <option value="default">
+            Sorting By
+        </option>
+
+        <option value="nameAsc">
+            Name A-Z
+        </option>
+
+        <option value="nameDesc">
+            Name Z-A
+        </option>
+
+        <option value="joiningAsc">
+            Joining Date Oldest
+        </option>
+
+        <option value="joiningDesc">
+            Joining Date Newest
+        </option>
+
+    </select>
+
+</div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Employee Grid -->
+    <div id="employeeGrid" class="row g-4">
+
+        @foreach (var item in Model)
+        {
+
+            <div class="col-xl-4 col-lg-6 col-md-6 employee-item"
+     data-designation="@item.Designation?.DesignationName"
+     data-name="@($"{item.FirstName} {item.LastName}")"
+     data-joining="@item.DateOfJoining.ToString("yyyy-MM-dd")">
+
+                <div class="card border-0 shadow-sm h-100 employee-card">
+
+                    <div class="card-body">
+
+                        <!-- Checkbox -->
+                        <div class="mb-2">
+
+                            <input type="checkbox"
+                                   class="form-check-input" />
+
+                        </div>
+
+
+                        <!-- Profile -->
+                        <div class="text-center">
+
+                            @if (!string.IsNullOrEmpty(item.ProfilePicture))
+                            {
+                                <img src="@item.ProfilePicture"
+                                     alt="Profile Picture"
+                                     class="rounded-circle border border-2 border-warning"
+                                     width="75"
+                                     height="75"
+                                     style="object-fit:cover;" />
+                            }
+                            else
+                            {
+                                <div class="rounded-circle bg-light border border-2 border-warning d-inline-flex align-items-center justify-content-center"
+                                     style="width:75px;height:75px;">
+
+                                    <i class="bi bi-person fs-2 text-secondary"></i>
+
+                                </div>
+                            }
+
+
+                            <h5 class="fw-bold mt-3 mb-1">
+
+                                @item.FirstName @item.LastName
+
+                            </h5>
+
+
+                            <p class="text-muted mb-4">
+
+                                @item.Designation?.DesignationName
+
+                            </p>
+
+                        </div>
+
+
+                        <!-- Employee Statistics -->
+                        <div class="row text-center mb-3">
+
+                            <div class="col-4">
+
+                                <small class="text-muted d-block">
+                                    Projects
+                                </small>
+
+                                <strong>
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="col-4">
+
+                                <small class="text-muted d-block">
+                                    Done
+                                </small>
+
+                                <strong>
+                                    0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="col-4">
+
+                                <small class="text-muted d-block">
+                                    Progress
+                                </small>
+
+                                <strong>
+                                    0
+                                </strong>
+
+                            </div>
+
+                        </div>
+
+
+                        <!-- Productivity -->
+                        <div class="text-center mb-2">
+
+                            <span class="text-muted">
+                                Productivity:
+                            </span>
+
+                            <span class="text-primary fw-semibold">
+                                0%
+                            </span>
+
+                        </div>
+
+
+                        <div class="progress"
+                             style="height:5px;">
+
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width:0%;">
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Action Buttons -->
+                    <div class="card-footer bg-white border-top-0 pt-0">
+
+                        <div class="d-flex justify-content-end gap-2">
+
+                            <a asp-controller="EmployeeList"
+                               asp-action="Index"
+                               class="btn btn-sm btn-outline-primary"
+                               title="Edit">
+
+                                <i class="bi bi-pencil-square"></i>
+
+                            </a>
+
+
+                            <form asp-controller="EmployeeList"
+                                  asp-action="DeleteEmployeeList"
+                                  asp-route-id="@item.Id"
+                                  method="post"
+                                  onsubmit="return confirm('Are you sure you want to delete this employee?');">
+
+                                <button type="submit"
+                                        class="btn btn-sm btn-outline-danger"
+                                        title="Delete">
+
+                                    <i class="bi bi-trash"></i>
+
+                                </button>
+
+                            </form>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .employee-card {
+        transition: all 0.2s ease;
+    }
+
+    .employee-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08) !important;
+    }
+
+    .employee-card .progress {
+        background-color: #e9edf5;
+    }
+
+</style>
+<script>
+
+    const designationFilter =
+        document.getElementById("designationFilter");
+
+    const sortingFilter =
+        document.getElementById("sortingFilter");
+
+    const employeeContainer =
+    document.getElementById("employeeGrid");
+
+    function filterEmployees() {
+
+        const designation =
+            designationFilter.value;
+
+        const employees =
+            Array.from(
+                document.querySelectorAll(".employee-item")
+            );
+
+        employees.forEach(function (employee) {
+
+            const employeeDesignation =
+                employee.getAttribute("data-designation");
+
+            if (designation === "all" ||
+                employeeDesignation === designation) {
+
+                employee.style.display = "";
+
+            }
+            else {
+
+                employee.style.display = "none";
+
+            }
+
+        });
+
+    }
+
+
+    function sortEmployees() {
+
+        const employees =
+            Array.from(
+                document.querySelectorAll(".employee-item")
+            );
+
+        const sorting =
+            sortingFilter.value;
+
+
+        if (sorting === "nameAsc") {
+
+            employees.sort(function (a, b) {
+
+                return a
+                    .getAttribute("data-name")
+                    .localeCompare(
+                        b.getAttribute("data-name")
+                    );
+
+            });
+
+        }
+
+
+        if (sorting === "nameDesc") {
+
+            employees.sort(function (a, b) {
+
+                return b
+                    .getAttribute("data-name")
+                    .localeCompare(
+                        a.getAttribute("data-name")
+                    );
+
+            });
+
+        }
+
+
+        if (sorting === "joiningAsc") {
+
+            employees.sort(function (a, b) {
+
+                return new Date(
+                    a.getAttribute("data-joining")
+                ) -
+                new Date(
+                    b.getAttribute("data-joining")
+                );
+
+            });
+
+        }
+
+
+        if (sorting === "joiningDesc") {
+
+            employees.sort(function (a, b) {
+
+                return new Date(
+                    b.getAttribute("data-joining")
+                ) -
+                new Date(
+                    a.getAttribute("data-joining")
+                );
+
+            });
+
+        }
+
+
+        employees.forEach(function (employee) {
+
+            employeeContainer.appendChild(employee);
+
+        });
+
+    }
+
+
+    designationFilter.addEventListener(
+        "change",
+        filterEmployees
+    );
+
+
+    sortingFilter.addEventListener(
+        "change",
+        sortEmployees
+    );
+
+</script>

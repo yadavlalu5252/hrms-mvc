@@ -1,0 +1,1087 @@
+﻿@model List<hrms_mvc.Models.Projects>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Project Report";
+
+    var activeProjects = Model?.Count(x => x.Status == "Active") ?? 0;
+    var inactiveProjects = Model?.Count(x => x.Status == "Inactive") ?? 0;
+
+    var inProgressTasks = Model?
+        .SelectMany(x => x.Tasks ?? new List<hrms_mvc.Models.Tasks>())
+        .Count(x => x.Status == "In Progress") ?? 0;
+
+    var completedTasks = Model?
+        .SelectMany(x => x.Tasks ?? new List<hrms_mvc.Models.Tasks>())
+        .Count(x => x.Status == "Completed") ?? 0;
+}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="mb-1">Project Report</h3>
+
+            <p class="text-muted mb-0">
+                View and analyze project information
+            </p>
+        </div>
+
+        <!-- Export -->
+        <div class="dropdown">
+
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download me-1"></i>
+                Export
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i>
+                        Excel
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                        PDF
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+                        Print
+
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Cards + Chart -->
+    <div class="row g-3 mb-4">
+
+        <!-- Left Cards -->
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+                <!-- Total Projects -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Total Projects
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.TotalProjects
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Current total
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-kanban fs-4 text-primary"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Completed -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Completed Projects
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.CompletedProjects
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Completed
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-check-circle fs-4 text-success"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Overdue -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Overdue Projects
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.OverdueProjects
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Need attention
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-exclamation-circle fs-4 text-danger"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- On Hold -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Onhold Projects
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.OnholdProjects
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Currently on hold
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-pause-circle fs-4 text-warning"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-pie-chart-fill text-danger me-2"></i>
+
+                            Projects By Tasks
+
+                        </h5>
+
+                        <span class="text-muted small">
+                            Project Data
+                        </span>
+
+                    </div>
+
+
+                    <div style="height:310px;">
+
+                        <canvas id="projectChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <div class="row g-3">
+
+                <!-- Priority -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Priority
+                    </label>
+
+                    <select id="priority"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.Priority))">
+                            All Priority
+                        </option>
+
+                        <option value="High"
+                                selected="@(ViewBag.Priority == "High")">
+                            High
+                        </option>
+
+                        <option value="Medium"
+                                selected="@(ViewBag.Priority == "Medium")">
+                            Medium
+                        </option>
+
+                        <option value="Low"
+                                selected="@(ViewBag.Priority == "Low")">
+                            Low
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Status -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Status
+                    </label>
+
+                    <select id="status"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.Status))">
+                            All Status
+                        </option>
+
+                        <option value="Active"
+                                selected="@(ViewBag.Status == "Active")">
+                            Active
+                        </option>
+
+                        <option value="Completed"
+                                selected="@(ViewBag.Status == "Completed")">
+                            Completed
+                        </option>
+
+                        <option value="Onhold"
+                                selected="@(ViewBag.Status == "Onhold")">
+                            Onhold
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+                <!-- Sort -->
+                <div class="col-md-4">
+
+                    <label class="form-label fw-semibold">
+                        Sort By
+                    </label>
+
+                    <select id="sortBy"
+                            class="form-select">
+
+                        <option value=""
+                                selected="@(string.IsNullOrEmpty(ViewBag.SortBy))">
+                            Default
+                        </option>
+
+                        <option value="Ascending"
+                                selected="@(ViewBag.SortBy == "Ascending")">
+                            Project Name - A to Z
+                        </option>
+
+                        <option value="Descending"
+                                selected="@(ViewBag.SortBy == "Descending")">
+                            Project Name - Z to A
+                        </option>
+
+                        <option value="Deadline"
+                                selected="@(ViewBag.SortBy == "Deadline")">
+                            Deadline - Oldest First
+                        </option>
+
+                        <option value="DeadlineDescending"
+                                selected="@(ViewBag.SortBy == "DeadlineDescending")">
+                            Deadline - Latest First
+                        </option>
+
+                        <option value="Priority"
+                                selected="@(ViewBag.SortBy == "Priority")">
+                            Priority
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Project List -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Project List
+                </h5>
+
+                <span class="text-muted">
+                    @Model.Count project(s)
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="projectTable"
+                       class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Project ID</th>
+
+                            <th>Project Name</th>
+
+                            <th>Client</th>
+
+                            <th>Leader</th>
+
+                            <th>Deadline</th>
+
+                            <th>Priority</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+
+                            foreach (var project in Model)
+                            {
+
+                                <tr>
+
+                                    <!-- Project ID -->
+                                    <td>
+                                        <span class="fw-semibold">
+                                            @project.ProjectsId
+                                        </span>
+                                    </td>
+
+
+                                    <!-- Project Name -->
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            @project.ProjectName
+                                        </div>
+
+                                    </td>
+
+
+                                    <!-- Client -->
+                                    <td>
+                                        @project.ClientName
+                                    </td>
+
+
+                                    <!-- Leader -->
+                                    <td>
+
+                                        @if (!string.IsNullOrEmpty(project.ManagerName))
+                                        {
+                                            <span class="fw-semibold">
+                                                @project.ManagerName
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Deadline -->
+                                    <td data-order="@project.EndDate.ToString("yyyy-MM-dd")">
+
+                                        @project.EndDate.ToString("dd/MM/yyyy")
+
+                                    </td>
+
+
+                                    <!-- Priority -->
+                                    <td>
+
+                                        @if (project.Priority == "High")
+                                        {
+                                            <span class="badge bg-danger">
+                                                High
+                                            </span>
+                                        }
+                                        else if (project.Priority == "Medium")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Medium
+                                            </span>
+                                        }
+                                        else if (project.Priority == "Low")
+                                        {
+                                            <span class="badge bg-success">
+                                                Low
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @project.Priority
+                                            </span>
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        @if (project.Status == "Active")
+                                        {
+                                            <span class="badge bg-success">
+                                                Active
+                                            </span>
+                                        }
+                                        else if (project.Status == "Completed")
+                                        {
+                                            <span class="badge bg-success">
+                                                Completed
+                                            </span>
+                                        }
+                                        else if (project.Status == "Onhold")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Onhold
+                                            </span>
+                                        }
+                                        else if (project.Status == "Inactive")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Inactive
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @project.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            <tr>
+
+                                <td colspan="7"
+                                    class="text-center py-5">
+
+                                    <div class="text-muted">
+
+                                        <i class="bi bi-kanban fs-2"></i>
+
+                                        <p class="mt-2 mb-0">
+                                            No project records found.
+                                        </p>
+
+                                    </div>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    #projectTable th {
+        white-space: nowrap;
+    }
+
+    #projectTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        margin-left: 8px;
+    }
+
+    .dt-buttons {
+        display: none;
+    }
+
+</style>
+
+
+@section Scripts
+{
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+
+            // DataTable
+
+            const projectTable = $('#projectTable').DataTable({
+
+                pageLength: 10,
+
+                lengthMenu: [
+
+                    [5, 10, 25, 50, 100, -1],
+
+                    [5, 10, 25, 50, 100, "All"]
+
+                ],
+
+                order: [[0, 'asc']],
+
+                dom:
+
+                    '<"row mb-3"' +
+
+                    '<"col-md-6"l>' +
+
+                    '<"col-md-6"f>' +
+
+                    '>' +
+
+                    'rt' +
+
+                    '<"row mt-3"' +
+
+                    '<"col-md-6"i>' +
+
+                    '<"col-md-6"p>' +
+
+                    '>',
+
+                buttons: [
+
+                    {
+
+                        extend: 'excel',
+
+                        title: 'Project Report',
+
+                        filename: 'ProjectReport',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    },
+
+                    {
+
+                        extend: 'pdf',
+
+                        title: 'Project Report',
+
+                        filename: 'ProjectReport',
+
+                        orientation: 'landscape',
+
+                        pageSize: 'A4',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        },
+
+                        customize: function(doc) {
+
+                            doc.content[0].alignment = 'center';
+
+                            doc.content[0].fontSize = 18;
+
+                            doc.content[0].bold = true;
+
+                            doc.content[0].margin = [0, 0, 0, 15];
+
+                        }
+
+                    },
+
+                    {
+
+                        extend: 'print',
+
+                        title: 'Project Report',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    }
+
+                ]
+
+            });
+
+
+            // Excel
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                projectTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // PDF
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                projectTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                projectTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Project Chart
+
+            const chartCanvas =
+                document.getElementById('projectChart');
+
+
+            if (chartCanvas && typeof Chart !== 'undefined') {
+
+
+                const projectChart = new Chart(
+
+                    chartCanvas,
+
+                    {
+
+                        type: 'pie',
+
+                        data: {
+
+                            labels: [
+
+                                'Active Project',
+
+                                'Inactive Project',
+
+                                'InProgress Task',
+
+                                'Completed Task'
+
+                            ],
+
+                            datasets: [
+
+                                {
+
+                                    data: [
+
+                                                @activeProjects,
+
+                                                @inactiveProjects,
+
+                                                @inProgressTasks,
+
+                                        @completedTasks
+
+                                    ],
+
+                                    backgroundColor: [
+
+                                        '#4CAF50',
+
+                                        '#9C27B0',
+
+                                        '#FF9800',
+
+                                        '#00C853'
+
+                                    ],
+
+                                    borderColor: '#ffffff',
+
+                                    borderWidth: 2
+
+                                }
+
+                            ]
+
+                        },
+
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+
+                            plugins: {
+
+                                legend: {
+
+                                    position: 'right',
+
+                                    labels: {
+
+                                        usePointStyle: true,
+
+                                        padding: 20
+
+                                    }
+
+                                },
+
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label: function(context) {
+
+                                            const value =
+                                                context.raw;
+
+                                            const total =
+                                                context.dataset.data
+                                                    .reduce(
+                                                        (a, b) => a + b,
+                                                        0
+                                                    );
+
+                                            const percentage =
+                                                total > 0
+                                                    ? ((value / total) * 100).toFixed(0)
+                                                    : 0;
+
+                                            return context.label +
+                                                ': ' +
+                                                value +
+                                                ' (' +
+                                                percentage +
+                                                '%)';
+
+                                        }
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+            }
+
+
+            // Filters
+
+            function applyProjectFilter() {
+
+                const priority =
+                    document.getElementById("priority").value;
+
+                const status =
+                    document.getElementById("status").value;
+
+                const sortBy =
+                    document.getElementById("sortBy").value;
+
+
+                const params =
+                    new URLSearchParams();
+
+
+                if (priority) {
+
+                    params.append(
+                        "priority",
+                        priority
+                    );
+
+                }
+
+
+                if (status) {
+
+                    params.append(
+                        "status",
+                        status
+                    );
+
+                }
+
+
+                if (sortBy) {
+
+                    params.append(
+                        "sortBy",
+                        sortBy
+                    );
+
+                }
+
+
+                window.location.href =
+                    '@Url.Action("ProjectReport", "Reports")'
+                    +
+                    (
+                        params.toString()
+                            ? "?" + params.toString()
+                            : ""
+                    );
+
+            }
+
+
+            document
+                .getElementById("priority")
+                .addEventListener(
+                    "change",
+                    applyProjectFilter
+                );
+
+
+            document
+                .getElementById("status")
+                .addEventListener(
+                    "change",
+                    applyProjectFilter
+                );
+
+
+            document
+                .getElementById("sortBy")
+                .addEventListener(
+                    "change",
+                    applyProjectFilter
+                );
+
+        });
+
+    </script>
+
+}

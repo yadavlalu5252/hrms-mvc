@@ -1,0 +1,121 @@
+﻿@model hrms_mvc.Models.Experience
+
+<div class="modal fade"
+     id="addExperienceModal"
+     tabindex="-1"
+     aria-labelledby="addExperienceModalLabel"
+     aria-hidden="true">
+     <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <h5 class="modal-title" id="addExperienceModalLabel">
+                    Company Information
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
+                </button>
+            </div>
+
+            <form asp-controller="EmployeeDetails"
+                  asp-action="AddExperienceDetails"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <div class="row">
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CompanyName" class="form-label">
+                                Previous Company Name <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="CompanyName"
+                                   class="form-control"
+                                   placeholder="Enter previous company name" />
+
+                            <span asp-validation-for="CompanyName"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="DesignationName" class="form-label">
+                                Designation <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="DesignationName"
+                                   class="form-control"
+                                   placeholder="Enter designation" />
+
+                            <span asp-validation-for="DesignationName"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FromDate" class="form-label">
+                                Start Date <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="FromDate"
+                                   type="date"
+                                   class="form-control" />
+
+                            <span asp-validation-for="FromDate"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ToDate" class="form-label">
+                                End Date <span class="text-danger">*</span>
+                            </label>
+
+                            <input asp-for="ToDate"
+                                   type="date"
+                                   class="form-control" />
+
+                            <span asp-validation-for="ToDate"
+                                  class="text-danger">
+                            </span>
+                        </div>
+
+                        <div class="col-md-12">
+                            <div class="form-check">
+                                <input asp-for="IsCurrentlyWorking"
+                                       class="form-check-input"
+                                       type="checkbox" />
+
+                                <label asp-for="IsCurrentlyWorking"
+                                       class="form-check-label">
+                                    Check if you are working presently
+                                </label>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button"
+                            class="btn btn-light"
+                            data-bs-dismiss="modal">
+                        Cancel
+                    </button>
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Save
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
