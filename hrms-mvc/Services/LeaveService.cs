@@ -239,5 +239,56 @@ namespace hrms_mvc.Services
                     x.Status == "Active")
                 .ToListAsync();
         }
+        public async Task<List<LeaveRequest>> GetManagerLeaveRequests(int managerId)
+        {
+            var manager = await db.Users
+                .FirstOrDefaultAsync(x => x.Id == managerId);
+
+            if (manager == null || manager.DepartmentId == null)
+            {
+                return new List<LeaveRequest>();
+            }
+
+            return await db.LeaveRequests
+                .Include(x => x.User)
+                .Include(x => x.MasterLeaveType)
+                .Where(x =>
+                    x.User.DepartmentId == manager.DepartmentId &&
+                    x.User.RoleId == 2)
+                .OrderByDescending(x => x.Id)
+                .ToListAsync();
+        }
+        public async Task ApproveLeave(
+           int id,
+           string approvedBy)
+        {
+            var leave =
+                await db.LeaveRequests
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (leave != null)
+            {
+                leave.Status = "Approved";
+                leave.ApprovedBy = approvedBy;
+
+                await db.SaveChangesAsync();
+            }
+        }
+        public async Task RejectLeave(
+    int id,
+    string approvedBy)
+        {
+            var leave =
+                await db.LeaveRequests
+                    .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (leave != null)
+            {
+                leave.Status = "Rejected";
+                leave.ApprovedBy = approvedBy;
+
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }
