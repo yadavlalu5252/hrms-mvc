@@ -53,25 +53,15 @@
                 </a>
 
 
-                <a asp-controller="Manager"
-                   asp-action="Team">
-
-                    <i class="bi bi-people"></i>
-
-                    <span>
-                        My Team
-                    </span>
-
-                </a>
 
 
-                <a asp-controller="Manager"
-                   asp-action="LeaveRequests">
+                <a asp-controller="ManagerTimesheet"
+                   asp-action="ManagerTimesheet">
 
                     <i class="bi bi-calendar-x"></i>
 
                     <span>
-                        Leave Requests
+                        Timesheet
                     </span>
 
                 </a>
@@ -80,29 +70,33 @@
                 <a asp-controller="Promotion"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Promotion
+<i class="bi bi-graph-up-arrow"></i>
+                    <span>Promotion</span>
+                    
                 </a>
                 <!-- Resignation -->
                 <a asp-controller="Resignation"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Resignation
+                   <i class="bi bi-person-dash"></i>
+                    <span>Resignation</span>
+                    
                 </a>
                 <!-- Termination -->
                 <a asp-controller="Termination"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Termination
+                   <i class="bi bi-person-x"></i>
+                    <span>Termination</span>
+                    
                 </a>
                 <!-- Tickets -->
                 <a asp-controller="Ticket"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Ticket
+                   <i class="bi bi-ticket-perforated"></i>
+                    <span>Ticket</span>
+                    
                 </a>
 
                 <details>
