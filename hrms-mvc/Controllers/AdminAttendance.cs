@@ -8,71 +8,73 @@ namespace hrms_mvc.Controllers
     {
         private readonly IAttendanceService attendanceService;
 
-        public AdminAttendanceController(IAttendanceService attendanceService)
+        public AdminAttendanceController(
+            IAttendanceService attendanceService)
         {
             this.attendanceService = attendanceService;
         }
 
-
-
+        [HttpGet]
         public async Task<IActionResult> AdminAttendanceList()
         {
             var attendanceList =
                 await attendanceService.GetAttendanceList();
 
-            ViewBag.Employees =
-                await attendanceService.GetEmployees();
-
             return View(attendanceList);
         }
 
-        public async Task<IActionResult> FilterAttendance(
-            DateTime? startDate,DateTime? endDate)
-        {
-            var attendanceList =
-                await attendanceService.GetAttendanceByDate( startDate,endDate);
-
-            ViewBag.Employees =await attendanceService.GetEmployees();
-
-            return View("AdminAttendanceList", attendanceList);
-        }
-
-
-   
+        [HttpGet]
         public async Task<IActionResult> AttendanceByUser(int userId)
         {
-            var attendanceList =await attendanceService.GetAttendanceByUserId(userId);
-
-            ViewBag.Employees =await attendanceService.GetEmployees();
+            var attendanceList =
+                await attendanceService.GetAttendanceByUserId(userId);
 
             return View("AdminAttendanceList", attendanceList);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(Attendance attendance)
+        [HttpGet]
+        public async Task<IActionResult> FilterAttendance(
+            DateTime? startDate,
+            DateTime? endDate)
         {
-            ModelState.Remove("User");
+            var attendanceList =
+                await attendanceService.GetAttendanceByDate(
+                    startDate,
+                    endDate);
 
-            if (ModelState.IsValid)
+            return View("AdminAttendanceList", attendanceList);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Details(int id)
+        {
+            var attendance =
+                await attendanceService.GetAttendanceById(id);
+
+            if (attendance == null)
             {
-                await attendanceService.AddAttendance(attendance);
-
-                TempData["success"] = "Attendance added successfully!";
-
-                return RedirectToAction("AdminAttendanceList");
+                return NotFound();
             }
 
-            var attendanceList =
-                await attendanceService.GetAttendanceList();
+            return View(attendance);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var attendance =
+                await attendanceService.GetAttendanceById(id);
+
+            if (attendance == null)
+            {
+                return NotFound();
+            }
 
             ViewBag.Employees =
                 await attendanceService.GetEmployees();
 
-            return View("AdminAttendanceList", attendanceList);
-    
+            return View(attendance);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -80,8 +82,6 @@ namespace hrms_mvc.Controllers
             int id,
             Attendance attendance)
         {
-            ModelState.Remove("User");
-
             if (id != attendance.Id)
             {
                 return BadRequest();
@@ -91,20 +91,18 @@ namespace hrms_mvc.Controllers
             {
                 await attendanceService.UpdateAttendance(attendance);
 
-                TempData["success"] = "Attendance updated successfully!";
+                TempData["success"] =
+                    "Attendance updated successfully!";
 
-                return RedirectToAction("AdminAttendanceList");
+                return RedirectToAction(
+                    nameof(AdminAttendanceList));
             }
-
-            var attendanceList =
-                await attendanceService.GetAttendanceList();
 
             ViewBag.Employees =
                 await attendanceService.GetEmployees();
 
-            return View("AdminAttendanceList", attendanceList);
+            return View(attendance);
         }
-
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -112,9 +110,11 @@ namespace hrms_mvc.Controllers
         {
             await attendanceService.DeleteAttendance(id);
 
-            TempData["success"] ="Attendance deleted successfully!";
+            TempData["success"] =
+                "Attendance deleted successfully!";
 
-            return RedirectToAction("AdminAttendanceList");
+            return RedirectToAction(
+                nameof(AdminAttendanceList));
         }
     }
 }

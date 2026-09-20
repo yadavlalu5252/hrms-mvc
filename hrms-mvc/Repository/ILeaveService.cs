@@ -18,22 +18,21 @@ namespace hrms_mvc.Repository
 
         Task<DepartmentLeaves?> GetDepartmentLeave(int id);
 
-        Task AddDepartmentLeave(
-            DepartmentLeaves departmentLeave);
+        Task AddDepartmentLeave(DepartmentLeaves departmentLeave);
 
         Task DeleteDepartmentLeave(int id);
 
         Task<List<Department>> GetDepartments();
 
-        Task ChangeLeaveTypeStatus(
-            int id,
-            string status);
+        Task ChangeLeaveTypeStatus(int id, string status);
+
         Task<List<LeaveRequest>> GetMyLeaveRequests(int userId);
 
-        Task<List<LeaveBalance>>GetMyLeaveBalances(int userId);
+        Task<List<LeaveBalance>> GetMyLeaveBalances(int userId);
 
-        Task<List<MasterLeaveType>>GetAvailableLeaveTypes();
+        Task<List<MasterLeaveType>> GetAvailableLeaveTypes(int userId);
 
-        Task AddLeaveRequest( LeaveRequest leaveRequest);
+        Task AddLeaveRequest(LeaveRequest leaveRequest);
+        Task<List<DepartmentLeaves>> GetMyDepartmentLeaves(int userId);
     }
 }

@@ -17,16 +17,14 @@ namespace hrms_mvc.Controllers
 
         public async Task<IActionResult> ManageLeaveType()
         {
-            var leaveTypes =
-                await service.GetLeaveTypes();
+            var leaveTypes =await service.GetLeaveTypes();
 
             return View(leaveTypes);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddLeaveType(
-            MasterLeaveType leaveType)
+        public async Task<IActionResult> AddLeaveType( MasterLeaveType leaveType)
         {
             ModelState.Remove("DepartmentLeaves");
             ModelState.Remove("LeaveBalances");
@@ -38,8 +36,7 @@ namespace hrms_mvc.Controllers
             {
                 await service.AddLeaveType(leaveType);
 
-                TempData["success"] =
-                    "Leave type added successfully!";
+                TempData["success"] = "Leave type added successfully!";
 
                 return RedirectToAction(
                     nameof(ManageLeaveType));
@@ -184,11 +181,9 @@ namespace hrms_mvc.Controllers
         {
             await service.DeleteDepartmentLeave(id);
 
-            TempData["success"] =
-                "Department leave deleted successfully!";
+            TempData["success"] = "Department leave deleted successfully!";
 
-            return RedirectToAction(
-                nameof(DepartmentLeaveDetails));
+            return RedirectToAction(nameof(DepartmentLeaveDetails));
         }
     }
 }
