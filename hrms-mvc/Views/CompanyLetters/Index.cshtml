@@ -1,0 +1,63 @@
+﻿@model IEnumerable<hrms_mvc.Models.Documents>
+
+@{
+    ViewData["Title"] = "Company Letters";
+}
+
+<h2>Company Letters</h2>
+
+<table class="table table-bordered table-striped">
+
+    <thead>
+        <tr>
+            <th>Document ID</th>
+            <th>Letter Name</th>
+            <th>File Name</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @if (Model != null && Model.Any())
+        {
+            @foreach (var document in Model)
+            {
+                <tr>
+                    <td>@document.DocId</td>
+
+                    <td>@document.DocName</td>
+
+                    <td>@document.DocFile</td>
+
+                    <td>
+                        <a asp-controller="AdminUploadFileList"
+                           asp-action="ViewFile"
+                           asp-route-id="@document.DocId"
+                           target="_blank"
+                           class="btn btn-sm btn-info">
+                            View
+                        </a>
+
+                        <a asp-controller="AdminUploadFileList"
+                           asp-action="Download"
+                           asp-route-id="@document.DocId"
+                           class="btn btn-sm btn-success">
+                            Download
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="4" class="text-center">
+                    No company letters found.
+                </td>
+            </tr>
+        }
+
+    </tbody>
+
+</table>

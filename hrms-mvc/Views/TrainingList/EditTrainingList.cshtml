@@ -1,0 +1,220 @@
+﻿@model hrms_mvc.Models.TrainingListModal
+
+<div class="main-wrapper">
+    <div class="card p-4">
+
+        <h3 class="mb-4">Edit Training</h3>
+
+        <form asp-controller="TrainingList"
+              asp-action="UpdateTrainingList"
+              method="post">
+
+            <input type="hidden"
+                   asp-for="TrainingId" />
+
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Trainer
+                        </label>
+
+                        <select class="form-select"
+                                asp-for="TrainersId"
+                                asp-items="ViewBag.Trainers">
+
+                            <option value="0">
+                                Select Trainer
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="TrainersId"
+                              class="text-danger"></span>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Training Type
+                        </label>
+
+                        <select class="form-select"
+                                asp-for="TrainingTypeId"
+                                asp-items="ViewBag.TrainingTypes">
+
+                            <option value="0">
+                                Select Training Type
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="TrainingTypeId"
+                              class="text-danger"></span>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            User
+                        </label>
+
+                        <select class="form-select"
+                                asp-for="UserId"
+                                asp-items="ViewBag.Users">
+
+                            <option value="0">
+                                Select User
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="UserId"
+                              class="text-danger"></span>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Training Cost
+                        </label>
+
+                        <input type="number"
+                               step="0.0001"
+                               class="form-control"
+                               asp-for="TrainingCost">
+
+                        <span asp-validation-for="TrainingCost"
+                              class="text-danger"></span>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Description
+                </label>
+
+                <textarea class="form-control"
+                          asp-for="Description"
+                          rows="4"></textarea>
+
+                <span asp-validation-for="Description"
+                      class="text-danger"></span>
+
+            </div>
+
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Status
+                </label>
+
+                <select class="form-select"
+                        asp-for="Status">
+
+                    <option value="Active">
+                        Active
+                    </option>
+
+                    <option value="Inactive">
+                        Inactive
+                    </option>
+
+                </select>
+
+                <span asp-validation-for="Status"
+                      class="text-danger"></span>
+
+            </div>
+
+
+            <div class="row">
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Start Date
+                        </label>
+
+                        <input type="date"
+                               class="form-control"
+                               asp-for="StartDate">
+
+                        <span asp-validation-for="StartDate"
+                              class="text-danger"></span>
+
+                    </div>
+                </div>
+
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            End Date
+                        </label>
+
+                        <input type="date"
+                               class="form-control"
+                               asp-for="EndDate">
+
+                        <span asp-validation-for="EndDate"
+                              class="text-danger"></span>
+
+                    </div>
+                </div>
+
+            </div>
+
+
+            <div class="d-flex justify-content-end">
+
+                <a asp-controller="TrainingList"
+                   asp-action="FetchAll"
+                   class="btn btn-light me-2">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Update Training
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+
+    <partial name="_ValidationScriptsPartial" />
+
+}

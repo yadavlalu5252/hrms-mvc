@@ -51,6 +51,18 @@ builder.Services
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+builder.Services.AddScoped<ITrainingTypeService, TrainingTypeService>();
+builder.Services.AddScoped<ITrainingListService, TrainingListService>();
+builder.Services.AddScoped<IMasterDocAdminService, MasterDocAdminService>();
+builder.Services.AddScoped<IMasterDocEmpService, MasterDocEmpService>();
+builder.Services.AddScoped<IAdminFileUpload, AdminFileUploadService>();
+
+builder.Services.AddScoped<IUploadedDocument, UploadedDocumentListService>();
+builder.Services.AddScoped<IMyDocument, MyDocumentService>();
+builder.Services.AddScoped<ICompanyLetters, CompanyLettersService>();
+builder.Services.AddScoped<IEmployeeUploadDocument, EmployeeUploadDocumentService>();
+
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
@@ -102,6 +114,7 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseStaticFiles();
 
 app.UseStatusCodePagesWithReExecute("/Error/NotFound");
 

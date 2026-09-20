@@ -8,7 +8,7 @@ namespace hrms_mvc.Models
         [Key]  
         public int Id { get; set; }
 
-        [Required(ErrorMessage = "FirsName is compulsory")]
+        [Required(ErrorMessage = "FirstName is compulsory")]
         public string Fname { get; set; }
 
         [Required(ErrorMessage = "LastName is compulsory")]
@@ -21,7 +21,7 @@ namespace hrms_mvc.Models
         [EmailAddress(ErrorMessage = "Please enter a valid email")]
         public string Email { get; set; }
 
-        [Required(ErrorMessage = "Descripion is compulsory")]
+        [Required(ErrorMessage = "Description is compulsory")]
         public string Description { get; set; }
 
         [Required(ErrorMessage = "Status is compulsory")]
@@ -29,7 +29,11 @@ namespace hrms_mvc.Models
 
         [Required(ErrorMessage = "ProfilePicture is compulsory")]
         public string ProfilePicture { get; set; }
+
+        [NotMapped]
+        public IFormFile? imagename { get; set; }
+
         [Required(ErrorMessage = "Phone is compulsory")]
-        public string? Phone { get; set; }
+        public string Phone { get; set; }
     }
 }

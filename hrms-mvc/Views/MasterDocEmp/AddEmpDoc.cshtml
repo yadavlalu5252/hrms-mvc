@@ -1,0 +1,52 @@
+﻿@model hrms_mvc.Models.MasterDocEmp
+
+<div class="main-wrapper">
+    <div class="card p-4">
+
+        <h3 class="mb-4">
+            Add Employee Document Name
+        </h3>
+
+        <form asp-controller="MasterDocEmp"
+      asp-action="AddEmpDoc"
+      method="post">
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Document Name
+                </label>
+
+                <input type="text"
+                       class="form-control"
+                       asp-for="EmpDocName"
+                       placeholder="Enter Document Name">
+
+                <span asp-validation-for="EmpDocName"
+                      class="text-danger"></span>
+
+            </div>
+
+            <div class="d-flex justify-content-end">
+
+                <a asp-controller="MasterDocEmp"
+                   asp-action="FetchAll"
+                   class="btn btn-light me-2">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Add
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

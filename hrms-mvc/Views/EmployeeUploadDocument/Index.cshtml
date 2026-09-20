@@ -1,0 +1,61 @@
+﻿@model hrms_mvc.Models.EmployeeDocumentUploadViewModel
+
+@{
+    ViewData["Title"] = "Upload Document";
+}
+
+<h2>Upload Document</h2>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
+<form asp-controller="EmployeeUploadDocument"
+      asp-action="Index"
+      method="post"
+      enctype="multipart/form-data">
+
+    <div class="mb-3">
+        <label class="form-label">Document Name</label>
+
+        <input asp-for="DocumentName"
+               class="form-control"
+               placeholder="Enter document name" />
+
+        <span asp-validation-for="DocumentName"
+              class="text-danger">
+        </span>
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Choose File</label>
+
+        <input asp-for="File"
+               type="file"
+               class="form-control" />
+
+        <span asp-validation-for="File"
+              class="text-danger">
+        </span>
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary">
+        Upload Document
+    </button>
+
+    <a asp-controller="MyDocument"
+       asp-action="Index"
+       class="btn btn-info">
+        My Documents
+    </a>
+
+</form>
+
+@section Scripts
+{
+    <partial name="_ValidationScriptsPartial" />
+}
