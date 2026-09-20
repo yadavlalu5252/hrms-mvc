@@ -1,5 +1,7 @@
 using hrms_mvc.Data;
 using hrms_mvc.Repository;
+using hrms_mvc.Services;
+using Microsoft.EntityFrameworkCore;
 using hrms_mvc.Repository.EventsRepo;
 using hrms_mvc.Repository.ProjectsRepo;
 using hrms_mvc.Services;
@@ -49,15 +51,16 @@ builder.Services
 
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
-
-builder.Services.AddScoped<ILeaveService, LeaveService>();
-builder.Services.AddScoped<IAttendanceService, AttendanceService>();
-builder.Services.AddScoped<ITimesheetService, TimesheetService>();
-
 builder.Services.AddScoped<IDepartmentService, DepartmentService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
 builder.Services.AddScoped<IDesignationService, DesignationService>();
 builder.Services.AddScoped<IPromotionService, PromotionService>();
+builder.Services.AddScoped<IResignationService, ResignationService>();
+builder.Services.AddScoped<ITerminationService, TerminationService>();
+builder.Services.AddScoped<ITicketsService, TicketsService>();
+
+
+
 
 builder.Services.AddScoped<IResignationService, ResignationService>();
 
@@ -84,9 +87,9 @@ builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 
 
-
-
 var app = builder.Build();
+
+
 
 // Global exception handling
 app.UseExceptionHandler("/Error/Index");

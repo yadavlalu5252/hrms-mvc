@@ -27,6 +27,17 @@ namespace hrms_mvc.Services
 
         public async Task<int> AddTermination(Termination termination)
         {
+            var existing = await db.Terminations
+                   .SingleOrDefaultAsync(x =>
+                    x.UserId == termination.UserId &&
+                    x.TerminationType == termination.TerminationType &&
+                    x.NoticeDate == termination.NoticeDate &&
+                    x.ResignDate == termination.ResignDate);
+
+            if (existing != null)
+            {
+                return 0;
+            }
             await db.Terminations.AddAsync(termination);
             return await db.SaveChangesAsync();
         }

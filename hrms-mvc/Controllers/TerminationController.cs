@@ -15,6 +15,7 @@ namespace hrms_mvc.Controllers
         public async Task<IActionResult> Index()
         {
             var allTerminations = await ts.GetAllTerminations();
+            ViewBag.Users = await ts.GetAllUsers();
             return View(allTerminations);
         }
 
