@@ -1,128 +1,411 @@
 ﻿@model List<hrms_mvc.Models.User>
 
+@using System.Text.Json
+
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
     ViewData["Title"] = "Employee Report";
+
+    var chartData = Model
+        .GroupBy(x => new
+        {
+            Year = x.DateOfJoining.Year,
+            Month = x.DateOfJoining.Month
+        })
+        .OrderBy(x => x.Key.Year)
+        .ThenBy(x => x.Key.Month)
+        .Select(x => new
+        {
+            Label = new DateTime(
+                x.Key.Year,
+                x.Key.Month,
+                1
+            ).ToString("MMM-yyyy"),
+
+            Year = x.Key.Year,
+
+            Active = x.Count(e => e.Status == "Active"),
+
+            Inactive = x.Count(e => e.Status != "Active")
+        })
+        .ToList();
+
+    var chartLabels = chartData
+        .Select(x => x.Label)
+        .ToList();
+
+    var activeEmployees = chartData
+        .Select(x => x.Active)
+        .ToList();
+
+    var inactiveEmployees = chartData
+        .Select(x => x.Inactive)
+        .ToList();
+
+    var chartYears = chartData
+        .Select(x => x.Year)
+        .Distinct()
+        .OrderByDescending(x => x)
+        .ToList();
 }
+
 
 <div class="container-fluid mt-4">
 
-    <!-- ================================= -->
-    <!-- HEADER -->
-    <!-- ================================= -->
+    <!-- Header -->
 
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-            <h2>Employee Report</h2>
+
+            <h2 class="mb-1">
+                Employee Report
+            </h2>
 
             <p class="text-muted mb-0">
                 Overview of employee information
             </p>
-        </div>
-
-    </div>
-
-
-    <!-- ================================= -->
-    <!-- SUMMARY CARDS -->
-    <!-- ================================= -->
-
-    <div class="row mb-4">
-
-        <!-- Total Employees -->
-        <div class="col-md-3 mb-3">
-
-            <div class="card shadow-sm border-0 h-100">
-
-                <div class="card-body">
-
-                    <h6 class="text-muted">
-                        Total Employees
-                    </h6>
-
-                    <h2 class="mb-0">
-                        @ViewBag.TotalEmployees
-                    </h2>
-
-                </div>
-
-            </div>
 
         </div>
 
 
-        <!-- Total Departments -->
-        <div class="col-md-3 mb-3">
+        <!-- Export -->
 
-            <div class="card shadow-sm border-0 h-100">
+        <div class="dropdown">
 
-                <div class="card-body">
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
 
-                    <h6 class="text-muted">
-                        Total Departments
-                    </h6>
+                <i class="bi bi-download me-1"></i>
 
-                    <h2 class="mb-0">
-                        @ViewBag.TotalDepartments
-                    </h2>
+                Export
 
-                </div>
-
-            </div>
-
-        </div>
+            </button>
 
 
-        <!-- Active Employees -->
-        <div class="col-md-3 mb-3">
+            <ul class="dropdown-menu dropdown-menu-end">
 
-            <div class="card shadow-sm border-0 h-100">
+                <li>
 
-                <div class="card-body">
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
 
-                    <h6 class="text-muted">
-                        Active Employees
-                    </h6>
+                        <i class="bi bi-file-earmark-excel me-2 text-success"></i>
 
-                    <h2 class="mb-0">
-                        @ViewBag.ActiveEmployees
-                    </h2>
+                        Excel
 
-                </div>
+                    </a>
 
-            </div>
-
-        </div>
+                </li>
 
 
-        <!-- Roles -->
-        <div class="col-md-3 mb-3">
+                <li>
 
-            <div class="card shadow-sm border-0 h-100">
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
 
-                <div class="card-body">
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
 
-                    <h6 class="text-muted">
-                        Roles
-                    </h6>
+                        PDF
 
-                    <h2 class="mb-0">
-                        @ViewBag.TotalRoles
-                    </h2>
+                    </a>
 
-                </div>
+                </li>
 
-            </div>
+
+                <li>
+
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+
+                        Print
+
+                    </a>
+
+                </li>
+
+            </ul>
 
         </div>
 
     </div>
 
 
-    <!-- ================================= -->
-    <!-- FILTER SECTION -->
-    <!-- ================================= -->
+    <!-- Cards + Chart -->
+
+    <div class="row g-3 mb-4">
+
+
+        <!-- Cards -->
+
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+
+                <!-- Total Employees -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 h-100 employee-summary-card">
+
+                        <div class="card-body">
+
+                            <div class="summary-icon employee-icon">
+
+                                <i class="bi bi-people"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Total Employees
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-0">
+
+                                @ViewBag.TotalEmployees
+
+                            </h2>
+
+
+                            <small class="text-muted">
+
+                                Current total
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Total Departments -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 h-100 employee-summary-card">
+
+                        <div class="card-body">
+
+                            <div class="summary-icon department-icon">
+
+                                <i class="bi bi-building"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Total Departments
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-0">
+
+                                @ViewBag.TotalDepartments
+
+                            </h2>
+
+
+                            <small class="text-muted">
+
+                                Current total
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Active Employees -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 h-100 employee-summary-card">
+
+                        <div class="card-body">
+
+                            <div class="summary-icon active-icon">
+
+                                <i class="bi bi-person-check"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Active Employees
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-0">
+
+                                @ViewBag.ActiveEmployees
+
+                            </h2>
+
+
+                            <small class="text-muted">
+
+                                Currently active
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Roles -->
+
+                <div class="col-6">
+
+                    <div class="card shadow-sm border-0 h-100 employee-summary-card">
+
+                        <div class="card-body">
+
+                            <div class="summary-icon roles-icon">
+
+                                <i class="bi bi-person-badge"></i>
+
+                            </div>
+
+
+                            <p class="text-muted mb-2 mt-3">
+
+                                Roles
+
+                            </p>
+
+
+                            <h2 class="fw-semibold mb-0">
+
+                                @ViewBag.TotalRoles
+
+                            </h2>
+
+
+                            <small class="text-muted">
+
+                                Total roles
+
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+
+        <div class="col-lg-6">
+
+            <div class="card shadow-sm border-0 h-100">
+
+                <div class="card-body">
+
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-bar-chart-fill text-danger me-2"></i>
+
+                            Employee
+
+                        </h5>
+
+
+                        <div class="d-flex align-items-center gap-3">
+
+
+                            <div class="small text-muted">
+
+                                <span class="legend-dot active-dot"></span>
+
+                                Active Employees
+
+                            </div>
+
+
+                            <div class="small text-muted">
+
+                                <span class="legend-dot inactive-dot"></span>
+
+                                Inactive Employees
+
+                            </div>
+
+
+                            <select id="employeeYearFilter"
+                                    class="form-select form-select-sm"
+                                    style="width:110px;">
+
+                                <option value="all">
+
+                                    This Year
+
+                                </option>
+
+
+                                @foreach (var year in chartYears)
+                                {
+                                    <option value="@year">
+
+                                        @year
+
+                                    </option>
+                                }
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+                    <div style="height:310px;">
+
+                        <canvas id="employeeChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
 
     <div class="card shadow-sm border-0 mb-3">
 
@@ -130,17 +413,22 @@
 
             <div class="row align-items-center">
 
+
                 <!-- Title -->
+
                 <div class="col-md-6">
 
                     <h5 class="mb-0">
+
                         Employees List
+
                     </h5>
 
                 </div>
 
 
-                <!-- STATUS FILTER -->
+                <!-- Status -->
+
                 <div class="col-md-3 mt-2 mt-md-0">
 
                     <form method="get"
@@ -151,54 +439,63 @@
                                 class="form-select"
                                 onchange="this.form.submit()">
 
-                            @if (string.IsNullOrEmpty(
-                                ViewBag.SelectedStatus))
+
+                            @if (string.IsNullOrEmpty(ViewBag.SelectedStatus))
                             {
                                 <option value="" selected>
+
                                     All Status
+
                                 </option>
                             }
                             else
                             {
                                 <option value="">
+
                                     All Status
+
                                 </option>
                             }
 
 
                             @if (ViewBag.SelectedStatus == "Active")
                             {
-                                <option value="Active"
-                                        selected>
+                                <option value="Active" selected>
+
                                     Active
+
                                 </option>
                             }
                             else
                             {
                                 <option value="Active">
+
                                     Active
+
                                 </option>
                             }
 
 
                             @if (ViewBag.SelectedStatus == "Inactive")
                             {
-                                <option value="Inactive"
-                                        selected>
+                                <option value="Inactive" selected>
+
                                     Inactive
+
                                 </option>
                             }
                             else
                             {
                                 <option value="Inactive">
+
                                     Inactive
+
                                 </option>
                             }
 
                         </select>
 
 
-                        <!-- Keep date filter -->
                         <input type="hidden"
                                name="dateFilter"
                                value="@ViewBag.SelectedDateFilter" />
@@ -208,7 +505,8 @@
                 </div>
 
 
-                <!-- DATE FILTER -->
+                <!-- Date -->
+
                 <div class="col-md-3 mt-2 mt-md-0">
 
                     <form method="get"
@@ -220,86 +518,99 @@
                                 onchange="this.form.submit()">
 
 
-                            @if (string.IsNullOrEmpty(
-                                ViewBag.SelectedDateFilter) ||
-                                ViewBag.SelectedDateFilter == "recent")
+                            @if (string.IsNullOrEmpty(ViewBag.SelectedDateFilter) ||
+                                 ViewBag.SelectedDateFilter == "recent")
                             {
-                                <option value="recent"
-                                        selected>
+                                <option value="recent" selected>
+
                                     Recently Added
+
                                 </option>
                             }
                             else
                             {
                                 <option value="recent">
+
                                     Recently Added
+
                                 </option>
                             }
 
 
                             @if (ViewBag.SelectedDateFilter == "asc")
                             {
-                                <option value="asc"
-                                        selected>
+                                <option value="asc" selected>
+
                                     Ascending
+
                                 </option>
                             }
                             else
                             {
                                 <option value="asc">
+
                                     Ascending
+
                                 </option>
                             }
 
 
                             @if (ViewBag.SelectedDateFilter == "desc")
                             {
-                                <option value="desc"
-                                        selected>
+                                <option value="desc" selected>
+
                                     Descending
+
                                 </option>
                             }
                             else
                             {
                                 <option value="desc">
+
                                     Descending
+
                                 </option>
                             }
 
 
                             @if (ViewBag.SelectedDateFilter == "month")
                             {
-                                <option value="month"
-                                        selected>
+                                <option value="month" selected>
+
                                     Last Month
+
                                 </option>
                             }
                             else
                             {
                                 <option value="month">
+
                                     Last Month
+
                                 </option>
                             }
 
 
                             @if (ViewBag.SelectedDateFilter == "7days")
                             {
-                                <option value="7days"
-                                        selected>
+                                <option value="7days" selected>
+
                                     Last 7 Days
+
                                 </option>
                             }
                             else
                             {
                                 <option value="7days">
+
                                     Last 7 Days
+
                                 </option>
                             }
 
                         </select>
 
 
-                        <!-- Keep status filter -->
                         <input type="hidden"
                                name="status"
                                value="@ViewBag.SelectedStatus" />
@@ -315,9 +626,7 @@
     </div>
 
 
-    <!-- ================================= -->
-    <!-- EMPLOYEE TABLE -->
-    <!-- ================================= -->
+    <!-- Table -->
 
     <div class="card shadow-sm border-0">
 
@@ -327,6 +636,7 @@
 
                 <table id="employeeTable"
                        class="table table-hover align-middle">
+
 
                     <thead class="table-light">
 
@@ -353,75 +663,97 @@
 
                     <tbody>
 
+
                         @if (Model != null && Model.Any())
                         {
+
                             foreach (var employee in Model)
                             {
+
                                 <tr>
 
-                                    <!-- User ID -->
+
                                     <td>
+
                                         @employee.Id
+
                                     </td>
 
 
-                                    <!-- Name -->
                                     <td>
+
                                         <strong>
+
                                             @employee.FirstName
                                             @employee.LastName
+
                                         </strong>
+
                                     </td>
 
 
-                                    <!-- Email -->
                                     <td>
+
                                         @employee.Email
+
                                     </td>
 
 
-                                    <!-- Department -->
                                     <td>
+
                                         @(employee.Department?.Name ?? "-")
+
                                     </td>
 
 
-                                    <!-- Phone -->
                                     <td>
+
                                         @employee.MobileNumber
+
                                     </td>
 
 
-                                    <!-- Date -->
                                     <td>
-                                        @employee.DateOfJoining
-                                        .ToString("dd-MM-yyyy")
+
+                                        @employee.DateOfJoining.ToString("dd-MM-yyyy")
+
                                     </td>
 
 
-                                    <!-- Status -->
                                     <td>
+
 
                                         @if (employee.Status == "Active")
                                         {
+
                                             <span class="badge bg-success">
+
                                                 ● Active
+
                                             </span>
+
                                         }
                                         else
                                         {
+
                                             <span class="badge bg-danger">
+
                                                 ● Inactive
+
                                             </span>
+
                                         }
 
                                     </td>
 
                                 </tr>
+
                             }
+
                         }
                         else
                         {
+
                             <tr>
 
                                 <td colspan="7"
@@ -432,7 +764,9 @@
                                 </td>
 
                             </tr>
+
                         }
+
 
                     </tbody>
 
@@ -447,87 +781,555 @@
 </div>
 
 
-<!-- ================================= -->
-<!-- DATATABLES -->
-<!-- ================================= -->
+<style>
+
+    .employee-summary-card {
+        border-radius: 8px;
+        min-height: 170px;
+        transition: 0.2s ease;
+    }
+
+
+        .employee-summary-card:hover {
+            transform: translateY(-2px);
+        }
+
+
+    .summary-icon {
+        width: 42px;
+        height: 42px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 20px;
+    }
+
+
+    .employee-icon {
+        color: #ff7a45;
+        background-color: #fff1eb;
+    }
+
+
+    .department-icon {
+        color: #20c997;
+        background-color: #e9fbf5;
+    }
+
+
+    .active-icon {
+        color: #3d8bfd;
+        background-color: #edf4ff;
+    }
+
+
+    .roles-icon {
+        color: #ff4d4f;
+        background-color: #fff0f0;
+    }
+
+
+    .legend-dot {
+        width: 8px;
+        height: 8px;
+        display: inline-block;
+        border-radius: 2px;
+        margin-right: 5px;
+    }
+
+
+    .active-dot {
+        background-color: #7bcf80;
+    }
+
+
+    .inactive-dot {
+        background-color: #e9ecef;
+    }
+
+
+    #employeeTable th {
+        white-space: nowrap;
+    }
+
+
+    #employeeTable td {
+        vertical-align: middle;
+    }
+
+</style>
+
+
 @section Scripts
 {
+
+    <!-- DataTables -->
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.colVis.min.js"></script>
+
+
+    <!-- Chart.js -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
     <script>
 
         $(document).ready(function() {
 
-            $('#employeeTable').DataTable({
 
-                // Number of rows
+            // DataTable
+
+            const employeeTable = $('#employeeTable').DataTable({
+
                 pageLength: 10,
 
-                // Page length options
+
                 lengthMenu: [
+
                     [10, 25, 50, 100, -1],
+
                     [10, 25, 50, 100, "All"]
+
                 ],
 
-                // Default sorting
-                // Column 5 = Date of Joining
-                order: [
-                    [5, 'desc']
-                ],
 
-                // Buttons
+                order: [],
+
+
                 dom:
+
                     '<"row mb-3"' +
-                    '<"col-md-6"B>' +
+
+                    '<"col-md-6">' +
+
                     '<"col-md-6"f>' +
+
                     '>' +
+
 
                     '<"row mb-2"' +
+
                     '<"col-md-6"l>' +
+
                     '<"col-md-6"i>' +
+
                     '>' +
+
 
                     'rt' +
 
+
                     '<"row mt-3"' +
+
                     '<"col-md-6"i>' +
+
                     '<"col-md-6"p>' +
+
                     '>',
 
-                buttons:
-                    [
-                        {
-                            extend: 'copy',
-                            text: 'Copy',
-                            className: 'btn btn-secondary'
-                        },
 
-                        {
-                            extend: 'excel',
-                            text: 'Excel',
-                            className: 'btn btn-success'
-                        },
+                buttons: [
 
-                        {
-                            extend: 'pdf',
-                            text: 'PDF',
-                            className: 'btn btn-danger'
-                        },
+                    {
 
-                        {
-                            extend: 'print',
-                            text: 'Print',
-                            className: 'btn btn-primary'
-                        },
+                        extend: 'excel',
 
-                        {
-                            extend: 'colvis',
-                            text: 'Columns',
-                            className: 'btn btn-dark'
+                        title: 'Employee Report',
+
+                        filename: 'EmployeeReport',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
                         }
-                    ]
+
+                    },
+
+
+                    {
+
+                        extend: 'pdf',
+
+                        title: 'Employee Report',
+
+                        filename: 'EmployeeReport',
+
+                        orientation: 'landscape',
+
+                        pageSize: 'A4',
+
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        },
+
+
+                        customize: function(doc) {
+
+                            doc.content[0].alignment = 'center';
+
+                            doc.content[0].fontSize = 18;
+
+                            doc.content[0].bold = true;
+
+                            doc.content[0].margin = [0, 0, 0, 15];
+
+
+                            doc.styles.tableHeader = {
+
+                                bold: true,
+
+                                fontSize: 10,
+
+                                color: '#000000',
+
+                                alignment: 'left'
+
+                            };
+
+                        }
+
+                    },
+
+
+                    {
+
+                        extend: 'print',
+
+                        title: 'Employee Report',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    }
+
+                ]
 
             });
+
+
+            // Export Excel
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                employeeTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // Export PDF
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                employeeTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                employeeTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Chart data
+
+            const chartLabels =
+                @Html.Raw(
+                JsonSerializer.Serialize(chartLabels)
+                );
+
+
+            const activeData =
+                @Html.Raw(
+                JsonSerializer.Serialize(activeEmployees)
+                );
+
+
+            const inactiveData =
+                @Html.Raw(
+                JsonSerializer.Serialize(inactiveEmployees)
+                );
+
+
+            const chartYears =
+                        @Html.Raw(
+                                JsonSerializer.Serialize(
+                                        chartData.Select(x => x.Year)
+        )
+        );
+
+
+            // Chart
+
+            const canvas =
+                document.getElementById('employeeChart');
+
+
+            if (canvas && typeof Chart !== 'undefined') {
+
+
+                const employeeChart =
+                    new Chart(canvas, {
+
+
+                        type: 'bar',
+
+
+                        data: {
+
+
+                            labels: chartLabels,
+
+
+                            datasets: [
+
+                                {
+
+                                    label: 'Active Employees',
+
+                                    data: activeData,
+
+                                    backgroundColor: '#7bcf80',
+
+                                    borderWidth: 0,
+
+                                    barPercentage: 0.55,
+
+                                    categoryPercentage: 0.7
+
+                                },
+
+
+                                {
+
+                                    label: 'Inactive Employees',
+
+                                    data: inactiveData,
+
+                                    backgroundColor: '#e9ecef',
+
+                                    borderWidth: 0,
+
+                                    barPercentage: 0.55,
+
+                                    categoryPercentage: 0.7
+
+                                }
+
+                            ]
+
+                        },
+
+
+                        options: {
+
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+
+                            plugins: {
+
+
+                                legend: {
+
+                                    display: false
+
+                                },
+
+
+                                tooltip: {
+
+                                    enabled: true
+
+                                }
+
+                            },
+
+
+                            scales: {
+
+
+                                y: {
+
+                                    beginAtZero: true,
+
+
+                                    ticks: {
+
+                                        precision: 0
+
+                                    },
+
+
+                                    grid: {
+
+                                        color: '#eeeeee'
+
+                                    }
+
+                                },
+
+
+                                x: {
+
+                                    grid: {
+
+                                        color: '#eeeeee'
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+
+                // Year filter
+
+                $('#employeeYearFilter').on('change', function() {
+
+
+                    const selectedYear = $(this).val();
+
+
+                    if (selectedYear === 'all') {
+
+
+                        employeeChart.data.labels =
+                            chartLabels;
+
+
+                        employeeChart.data.datasets[0].data =
+                            activeData;
+
+
+                        employeeChart.data.datasets[1].data =
+                            inactiveData;
+
+                    }
+                    else {
+
+
+                        const filteredLabels = [];
+
+                        const filteredActive = [];
+
+                        const filteredInactive = [];
+
+
+                        chartYears.forEach(function(year, index) {
+
+
+                            if (year.toString() === selectedYear) {
+
+
+                                filteredLabels.push(
+                                    chartLabels[index]
+                                );
+
+
+                                filteredActive.push(
+                                    activeData[index]
+                                );
+
+
+                                filteredInactive.push(
+                                    inactiveData[index]
+                                );
+
+                            }
+
+                        });
+
+
+                        employeeChart.data.labels =
+                            filteredLabels;
+
+
+                        employeeChart.data.datasets[0].data =
+                            filteredActive;
+
+
+                        employeeChart.data.datasets[1].data =
+                            filteredInactive;
+
+                    }
+
+
+                    employeeChart.update();
+
+                });
+
+            }
 
         });
 
     </script>
+
 }

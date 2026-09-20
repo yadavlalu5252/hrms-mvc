@@ -1,53 +1,35 @@
-﻿@model List<hrms_mvc.Models.LeaveRequest>
-
-@using System.Text.Json
+﻿@model List<hrms_mvc.Models.Projects>
 
 @{
     Layout = "~/Views/Shared/_AdminLayout.cshtml";
-    ViewData["Title"] = "Leave Report";
+    ViewData["Title"] = "Project Report";
 
-    var leaveChartData = Model
-        .GroupBy(x => x.StartDate.Year)
-        .OrderBy(x => x.Key)
-        .Select(x => new
-        {
-            Year = x.Key,
-            PaidLeave = x.Count()
-        })
-        .ToList();
+    var activeProjects = Model?.Count(x => x.Status == "Active") ?? 0;
+    var inactiveProjects = Model?.Count(x => x.Status == "Inactive") ?? 0;
 
-    var chartLabels = leaveChartData
-        .Select(x => x.Year.ToString())
-        .ToList();
+    var inProgressTasks = Model?
+        .SelectMany(x => x.Tasks ?? new List<hrms_mvc.Models.Tasks>())
+        .Count(x => x.Status == "In Progress") ?? 0;
 
-    var paidLeaveData = leaveChartData
-        .Select(x => x.PaidLeave)
-        .ToList();
+    var completedTasks = Model?
+        .SelectMany(x => x.Tasks ?? new List<hrms_mvc.Models.Tasks>())
+        .Count(x => x.Status == "Completed") ?? 0;
 }
-
 
 <div class="container-fluid">
 
-
     <!-- Header -->
-
     <div class="d-flex justify-content-between align-items-center mb-4">
 
         <div>
-
-            <h3 class="mb-1">
-                Leave Report
-            </h3>
+            <h3 class="mb-1">Project Report</h3>
 
             <p class="text-muted mb-0">
-                View and analyze employee leave records
+                View and analyze project information
             </p>
-
         </div>
 
-
         <!-- Export -->
-
         <div class="dropdown">
 
             <button class="btn btn-outline-secondary dropdown-toggle"
@@ -55,56 +37,43 @@
                     data-bs-toggle="dropdown">
 
                 <i class="bi bi-download me-1"></i>
-
                 Export
 
             </button>
 
-
             <ul class="dropdown-menu dropdown-menu-end">
 
                 <li>
-
                     <a class="dropdown-item"
                        href="#"
                        id="exportExcel">
 
-                        <i class="bi bi-file-earmark-excel me-2 text-success"></i>
-
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i>
                         Excel
 
                     </a>
-
                 </li>
 
-
                 <li>
-
                     <a class="dropdown-item"
                        href="#"
                        id="exportPdf">
 
-                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
-
+                        <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
                         PDF
 
                     </a>
-
                 </li>
 
-
                 <li>
-
                     <a class="dropdown-item"
                        href="#"
                        id="exportPrint">
 
                         <i class="bi bi-printer me-2"></i>
-
                         Print
 
                     </a>
-
                 </li>
 
             </ul>
@@ -114,20 +83,15 @@
     </div>
 
 
-    <!-- Summary Cards + Chart -->
-
+    <!-- Cards + Chart -->
     <div class="row g-3 mb-4">
 
-
-        <!-- Cards -->
-
+        <!-- Left Cards -->
         <div class="col-lg-6">
 
             <div class="row g-3">
 
-
-                <!-- Total Leaves -->
-
+                <!-- Total Projects -->
                 <div class="col-md-6">
 
                     <div class="card border-0 shadow-sm h-100">
@@ -139,19 +103,22 @@
                                 <div>
 
                                     <p class="text-muted mb-1">
-                                        Total Leaves
+                                        Total Projects
                                     </p>
 
                                     <h3 class="mb-0">
-                                        @ViewBag.TotalLeaves
+                                        @ViewBag.TotalProjects
                                     </h3>
+
+                                    <small class="text-muted">
+                                        Current total
+                                    </small>
 
                                 </div>
 
-
                                 <div class="bg-primary bg-opacity-10 rounded-circle p-3">
 
-                                    <i class="bi bi-calendar-check fs-4 text-primary"></i>
+                                    <i class="bi bi-kanban fs-4 text-primary"></i>
 
                                 </div>
 
@@ -164,8 +131,7 @@
                 </div>
 
 
-                <!-- Approved -->
-
+                <!-- Completed -->
                 <div class="col-md-6">
 
                     <div class="card border-0 shadow-sm h-100">
@@ -177,15 +143,18 @@
                                 <div>
 
                                     <p class="text-muted mb-1">
-                                        Approved Leaves
+                                        Completed Projects
                                     </p>
 
                                     <h3 class="mb-0">
-                                        @ViewBag.ApprovedLeaves
+                                        @ViewBag.CompletedProjects
                                     </h3>
 
-                                </div>
+                                    <small class="text-muted">
+                                        Completed
+                                    </small>
 
+                                </div>
 
                                 <div class="bg-success bg-opacity-10 rounded-circle p-3">
 
@@ -202,8 +171,7 @@
                 </div>
 
 
-                <!-- Pending -->
-
+                <!-- Overdue -->
                 <div class="col-md-6">
 
                     <div class="card border-0 shadow-sm h-100">
@@ -215,19 +183,22 @@
                                 <div>
 
                                     <p class="text-muted mb-1">
-                                        Pending Requests
+                                        Overdue Projects
                                     </p>
 
                                     <h3 class="mb-0">
-                                        @ViewBag.PendingLeaves
+                                        @ViewBag.OverdueProjects
                                     </h3>
+
+                                    <small class="text-muted">
+                                        Need attention
+                                    </small>
 
                                 </div>
 
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
 
-                                <div class="bg-warning bg-opacity-10 rounded-circle p-3">
-
-                                    <i class="bi bi-hourglass-split fs-4 text-warning"></i>
+                                    <i class="bi bi-exclamation-circle fs-4 text-danger"></i>
 
                                 </div>
 
@@ -240,8 +211,7 @@
                 </div>
 
 
-                <!-- Rejected -->
-
+                <!-- On Hold -->
                 <div class="col-md-6">
 
                     <div class="card border-0 shadow-sm h-100">
@@ -253,19 +223,22 @@
                                 <div>
 
                                     <p class="text-muted mb-1">
-                                        Rejected Leaves
+                                        Onhold Projects
                                     </p>
 
                                     <h3 class="mb-0">
-                                        @ViewBag.RejectedLeaves
+                                        @ViewBag.OnholdProjects
                                     </h3>
+
+                                    <small class="text-muted">
+                                        Currently on hold
+                                    </small>
 
                                 </div>
 
+                                <div class="bg-warning bg-opacity-10 rounded-circle p-3">
 
-                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
-
-                                    <i class="bi bi-x-circle fs-4 text-danger"></i>
+                                    <i class="bi bi-pause-circle fs-4 text-warning"></i>
 
                                 </div>
 
@@ -283,48 +256,32 @@
 
 
         <!-- Chart -->
-
         <div class="col-lg-6">
 
             <div class="card border-0 shadow-sm h-100">
 
                 <div class="card-body">
 
-
                     <div class="d-flex justify-content-between align-items-center mb-2">
 
                         <h5 class="mb-0 fw-semibold">
 
-                            <i class="bi bi-bar-chart-fill text-danger me-2"></i>
+                            <i class="bi bi-pie-chart-fill text-danger me-2"></i>
 
-                            Leaves
+                            Projects By Tasks
 
                         </h5>
 
-
-                        <select id="leaveYearFilter"
-                                class="form-select form-select-sm"
-                                style="width:110px;">
-
-                            <option value="all">
-                                All Data
-                            </option>
-
-                            @foreach (var year in leaveChartData.Select(x => x.Year).Distinct())
-                            {
-                                <option value="@year">
-                                    @year
-                                </option>
-                            }
-
-                        </select>
+                        <span class="text-muted small">
+                            Project Data
+                        </span>
 
                     </div>
 
 
                     <div style="height:310px;">
 
-                        <canvas id="leaveChart"></canvas>
+                        <canvas id="projectChart"></canvas>
 
                     </div>
 
@@ -338,71 +295,40 @@
 
 
     <!-- Filters -->
-
     <div class="card border-0 shadow-sm mb-4">
 
         <div class="card-body">
 
             <div class="row g-3">
 
-
-                <!-- Date Filter -->
-
+                <!-- Priority -->
                 <div class="col-md-4">
 
                     <label class="form-label fw-semibold">
-                        Date
+                        Priority
                     </label>
 
-
-                    <select id="dateFilter"
+                    <select id="priority"
                             class="form-select">
 
                         <option value=""
-                                selected="@(string.IsNullOrEmpty(ViewBag.DateFilter))">
-
-                            All Dates
-
+                                selected="@(string.IsNullOrEmpty(ViewBag.Priority))">
+                            All Priority
                         </option>
 
-
-                        <option value="Yesterday"
-                                selected="@(ViewBag.DateFilter == "Yesterday")">
-
-                            Yesterday
-
+                        <option value="High"
+                                selected="@(ViewBag.Priority == "High")">
+                            High
                         </option>
 
-
-                        <option value="Last 7 Days"
-                                selected="@(ViewBag.DateFilter == "Last 7 Days")">
-
-                            Last 7 Days
-
+                        <option value="Medium"
+                                selected="@(ViewBag.Priority == "Medium")">
+                            Medium
                         </option>
 
-
-                        <option value="Last 30 Days"
-                                selected="@(ViewBag.DateFilter == "Last 30 Days")">
-
-                            Last 30 Days
-
-                        </option>
-
-
-                        <option value="Last Year"
-                                selected="@(ViewBag.DateFilter == "Last Year")">
-
-                            Last Year
-
-                        </option>
-
-
-                        <option value="This Year"
-                                selected="@(ViewBag.DateFilter == "This Year")">
-
-                            This Year
-
+                        <option value="Low"
+                                selected="@(ViewBag.Priority == "Low")">
+                            Low
                         </option>
 
                     </select>
@@ -411,46 +337,33 @@
 
 
                 <!-- Status -->
-
                 <div class="col-md-4">
 
                     <label class="form-label fw-semibold">
                         Status
                     </label>
 
-
                     <select id="status"
                             class="form-select">
 
                         <option value=""
                                 selected="@(string.IsNullOrEmpty(ViewBag.Status))">
-
                             All Status
-
                         </option>
 
-
-                        <option value="Approved"
-                                selected="@(ViewBag.Status == "Approved")">
-
-                            Approved
-
+                        <option value="Active"
+                                selected="@(ViewBag.Status == "Active")">
+                            Active
                         </option>
 
-
-                        <option value="Pending"
-                                selected="@(ViewBag.Status == "Pending")">
-
-                            Pending
-
+                        <option value="Completed"
+                                selected="@(ViewBag.Status == "Completed")">
+                            Completed
                         </option>
 
-
-                        <option value="Rejected"
-                                selected="@(ViewBag.Status == "Rejected")">
-
-                            Rejected
-
+                        <option value="Onhold"
+                                selected="@(ViewBag.Status == "Onhold")">
+                            Onhold
                         </option>
 
                     </select>
@@ -459,54 +372,43 @@
 
 
                 <!-- Sort -->
-
                 <div class="col-md-4">
 
                     <label class="form-label fw-semibold">
                         Sort By
                     </label>
 
-
                     <select id="sortBy"
                             class="form-select">
 
                         <option value=""
                                 selected="@(string.IsNullOrEmpty(ViewBag.SortBy))">
-
                             Default
-
                         </option>
-
 
                         <option value="Ascending"
                                 selected="@(ViewBag.SortBy == "Ascending")">
-
-                            Date - Oldest First
-
+                            Project Name - A to Z
                         </option>
-
 
                         <option value="Descending"
                                 selected="@(ViewBag.SortBy == "Descending")">
-
-                            Date - Newest First
-
+                            Project Name - Z to A
                         </option>
 
-
-                        <option value="Last 7 Days"
-                                selected="@(ViewBag.SortBy == "Last 7 Days")">
-
-                            Last 7 Days
-
+                        <option value="Deadline"
+                                selected="@(ViewBag.SortBy == "Deadline")">
+                            Deadline - Oldest First
                         </option>
 
+                        <option value="DeadlineDescending"
+                                selected="@(ViewBag.SortBy == "DeadlineDescending")">
+                            Deadline - Latest First
+                        </option>
 
-                        <option value="Last Month"
-                                selected="@(ViewBag.SortBy == "Last Month")">
-
-                            Last Month
-
+                        <option value="Priority"
+                                selected="@(ViewBag.SortBy == "Priority")">
+                            Priority
                         </option>
 
                     </select>
@@ -520,21 +422,19 @@
     </div>
 
 
-    <!-- Leave Table -->
-
+    <!-- Project List -->
     <div class="card border-0 shadow-sm">
-
 
         <div class="card-header bg-white border-0 py-3">
 
             <div class="d-flex justify-content-between align-items-center">
 
                 <h5 class="mb-0">
-                    Leave Records
+                    Project List
                 </h5>
 
                 <span class="text-muted">
-                    @Model.Count record(s)
+                    @Model.Count project(s)
                 </span>
 
             </div>
@@ -546,36 +446,26 @@
 
             <div class="table-responsive">
 
-
-                <table id="leaveTable"
+                <table id="projectTable"
                        class="table table-hover align-middle mb-0">
-
 
                     <thead class="table-light">
 
                         <tr>
 
-                            <th>ID</th>
+                            <th>Project ID</th>
 
-                            <th>Employee</th>
+                            <th>Project Name</th>
 
-                            <th>Leave Type</th>
+                            <th>Client</th>
 
-                            <th>Start Date</th>
+                            <th>Leader</th>
 
-                            <th>End Date</th>
+                            <th>Deadline</th>
 
-                            <th>Days</th>
-
-                            <th>Reason</th>
-
-                            <th>Approved By</th>
+                            <th>Priority</th>
 
                             <th>Status</th>
-
-                            <th style="min-width:250px;">
-                                Status History
-                            </th>
 
                         </tr>
 
@@ -584,209 +474,128 @@
 
                     <tbody>
 
-
                         @if (Model != null && Model.Any())
                         {
 
-                            foreach (var leave in Model)
+                            foreach (var project in Model)
                             {
 
                                 <tr>
 
-
-                                    <!-- ID -->
-
+                                    <!-- Project ID -->
                                     <td>
-
                                         <span class="fw-semibold">
-
-                                            @leave.Id
-
+                                            @project.ProjectsId
                                         </span>
+                                    </td>
+
+
+                                    <!-- Project Name -->
+                                    <td>
+
+                                        <div class="fw-semibold">
+                                            @project.ProjectName
+                                        </div>
 
                                     </td>
 
 
-                                    <!-- Employee -->
+                                    <!-- Client -->
+                                    <td>
+                                        @project.ClientName
+                                    </td>
 
+
+                                    <!-- Leader -->
                                     <td>
 
-                                        @if (leave.User != null)
+                                        @if (!string.IsNullOrEmpty(project.ManagerName))
                                         {
-
-                                            <div class="fw-semibold">
-
-                                                @leave.User.FirstName
-                                                @leave.User.LastName
-
-                                            </div>
-
-
-                                            <small class="text-muted">
-
-                                                @leave.User.Email
-
-                                            </small>
-
+                                            <span class="fw-semibold">
+                                                @project.ManagerName
+                                            </span>
                                         }
                                         else
                                         {
-
                                             <span class="text-muted">
                                                 N/A
                                             </span>
-
                                         }
 
                                     </td>
 
 
-                                    <!-- Leave Type -->
+                                    <!-- Deadline -->
+                                    <td data-order="@project.EndDate.ToString("yyyy-MM-dd")">
 
+                                        @project.EndDate.ToString("dd/MM/yyyy")
+
+                                    </td>
+
+
+                                    <!-- Priority -->
                                     <td>
 
-                                        @if (leave.MasterLeaveType != null)
+                                        @if (project.Priority == "High")
                                         {
-
-                                            <span>
-
-                                                @leave.MasterLeaveType.Leave
-
+                                            <span class="badge bg-danger">
+                                                High
                                             </span>
-
+                                        }
+                                        else if (project.Priority == "Medium")
+                                        {
+                                            <span class="badge bg-warning text-dark">
+                                                Medium
+                                            </span>
+                                        }
+                                        else if (project.Priority == "Low")
+                                        {
+                                            <span class="badge bg-success">
+                                                Low
+                                            </span>
                                         }
                                         else
                                         {
-
-                                            <span class="text-muted">
-                                                N/A
+                                            <span class="badge bg-secondary">
+                                                @project.Priority
                                             </span>
-
                                         }
-
-                                    </td>
-
-
-                                    <!-- Start Date -->
-
-                                    <td>
-
-                                        @leave.StartDate.ToString("dd/MM/yyyy")
-
-                                    </td>
-
-
-                                    <!-- End Date -->
-
-                                    <td>
-
-                                        @leave.EndDate.ToString("dd/MM/yyyy")
-
-                                    </td>
-
-
-                                    <!-- Days -->
-
-                                    <td>
-
-                                        <span class="badge bg-light text-dark">
-
-                                            @leave.NumberOfDays
-
-                                        </span>
-
-                                    </td>
-
-
-                                    <!-- Reason -->
-
-                                    <td>
-
-                                        @leave.Reason
-
-                                    </td>
-
-
-                                    <!-- Approved By -->
-
-                                    <td>
-
-                                        @leave.ApprovedBy
 
                                     </td>
 
 
                                     <!-- Status -->
-
                                     <td>
 
-                                        @if (leave.Status == "Approved")
+                                        @if (project.Status == "Active")
                                         {
-
                                             <span class="badge bg-success">
-
-                                                Approved
-
+                                                Active
                                             </span>
-
                                         }
-                                        else if (leave.Status == "Rejected")
+                                        else if (project.Status == "Completed")
                                         {
-
-                                            <span class="badge bg-danger">
-
-                                                Rejected
-
+                                            <span class="badge bg-success">
+                                                Completed
                                             </span>
-
                                         }
-                                        else if (leave.Status == "Pending")
+                                        else if (project.Status == "Onhold")
                                         {
-
                                             <span class="badge bg-warning text-dark">
-
-                                                Pending
-
+                                                Onhold
                                             </span>
-
+                                        }
+                                        else if (project.Status == "Inactive")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Inactive
+                                            </span>
                                         }
                                         else
                                         {
-
                                             <span class="badge bg-secondary">
-
-                                                @leave.Status
-
+                                                @project.Status
                                             </span>
-
-                                        }
-
-                                    </td>
-
-
-                                    <!-- History -->
-
-                                    <td>
-
-                                        @if (!string.IsNullOrEmpty(leave.StatusHistory))
-                                        {
-
-                                            <div style="white-space:normal;line-height:1.6;">
-
-                                                @leave.StatusHistory
-
-                                            </div>
-
-                                        }
-                                        else
-                                        {
-
-                                            <span class="text-muted">
-
-                                                No history
-
-                                            </span>
-
                                         }
 
                                     </td>
@@ -801,17 +610,15 @@
 
                             <tr>
 
-                                <td colspan="10"
+                                <td colspan="7"
                                     class="text-center py-5">
 
                                     <div class="text-muted">
 
-                                        <i class="bi bi-calendar-x fs-2"></i>
+                                        <i class="bi bi-kanban fs-2"></i>
 
                                         <p class="mt-2 mb-0">
-
-                                            No leave records found.
-
+                                            No project records found.
                                         </p>
 
                                     </div>
@@ -837,13 +644,21 @@
 
 <style>
 
-    #leaveTable th {
+    #projectTable th {
         white-space: nowrap;
     }
 
-    #leaveTable td {
+    #projectTable td {
         white-space: nowrap;
         vertical-align: middle;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        margin-left: 8px;
+    }
+
+    .dt-buttons {
+        display: none;
     }
 
 </style>
@@ -853,14 +668,12 @@
 {
 
     <!-- DataTables -->
-
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
 
 
     <!-- DataTables Buttons -->
-
     <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
@@ -875,55 +688,41 @@
 
 
     <!-- Chart.js -->
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 
 
     <script>
-
 
         $(document).ready(function() {
 
 
             // DataTable
 
-            const leaveTable = $('#leaveTable').DataTable({
+            const projectTable = $('#projectTable').DataTable({
 
                 pageLength: 10,
 
                 lengthMenu: [
 
-                    [10, 25, 50, 100, -1],
+                    [5, 10, 25, 50, 100, -1],
 
-                    [10, 25, 50, 100, "All"]
+                    [5, 10, 25, 50, 100, "All"]
 
                 ],
 
-                order: [],
-
+                order: [[0, 'asc']],
 
                 dom:
 
                     '<"row mb-3"' +
 
-                    '<"col-md-6">' +
+                    '<"col-md-6"l>' +
 
                     '<"col-md-6"f>' +
 
                     '>' +
 
-
-                    '<"row mb-2"' +
-
-                    '<"col-md-6"l>' +
-
-                    '<"col-md-6"i>' +
-
-                    '>' +
-
-
                     'rt' +
-
 
                     '<"row mt-3"' +
 
@@ -931,21 +730,17 @@
 
                     '<"col-md-6"p>' +
 
-                    '> ',
-
+                    '>',
 
                 buttons: [
-
-
-                    // Excel
 
                     {
 
                         extend: 'excel',
 
-                        title: 'Leave Report',
+                        title: 'Project Report',
 
-                        filename: 'LeaveReport',
+                        filename: 'ProjectReport',
 
                         exportOptions: {
 
@@ -961,16 +756,13 @@
 
                     },
 
-
-                    // PDF
-
                     {
 
                         extend: 'pdf',
 
-                        title: 'Leave Report',
+                        title: 'Project Report',
 
-                        filename: 'LeaveReport',
+                        filename: 'ProjectReport',
 
                         orientation: 'landscape',
 
@@ -988,7 +780,6 @@
 
                         },
 
-
                         customize: function(doc) {
 
                             doc.content[0].alignment = 'center';
@@ -999,31 +790,15 @@
 
                             doc.content[0].margin = [0, 0, 0, 15];
 
-
-                            doc.styles.tableHeader = {
-
-                                bold: true,
-
-                                fontSize: 8,
-
-                                color: '#000000',
-
-                                alignment: 'left'
-
-                            };
-
                         }
 
                     },
-
-
-                    // Print
 
                     {
 
                         extend: 'print',
 
-                        title: 'Leave Report',
+                        title: 'Project Report',
 
                         exportOptions: {
 
@@ -1044,100 +819,107 @@
             });
 
 
-            // Excel button
+            // Excel
 
             $('#exportExcel').on('click', function(e) {
 
                 e.preventDefault();
 
-                leaveTable
+                projectTable
                     .button('.buttons-excel')
                     .trigger();
 
             });
 
 
-            // PDF button
+            // PDF
 
             $('#exportPdf').on('click', function(e) {
 
                 e.preventDefault();
 
-                leaveTable
+                projectTable
                     .button('.buttons-pdf')
                     .trigger();
 
             });
 
 
-            // Print button
+            // Print
 
             $('#exportPrint').on('click', function(e) {
 
                 e.preventDefault();
 
-                leaveTable
+                projectTable
                     .button('.buttons-print')
                     .trigger();
 
             });
 
 
-            // Chart data
+            // Project Chart
 
-            const chartLabels =
-
-                @Html.Raw(
-
-                JsonSerializer.Serialize(chartLabels)
-
-                );
+            const chartCanvas =
+                document.getElementById('projectChart');
 
 
-            const paidLeaveData =
-
-                @Html.Raw(
-
-                JsonSerializer.Serialize(paidLeaveData)
-
-                );
+            if (chartCanvas && typeof Chart !== 'undefined') {
 
 
-            // Chart
+                const projectChart = new Chart(
 
-            const canvas =
-                document.getElementById('leaveChart');
+                    chartCanvas,
 
+                    {
 
-            if (canvas && typeof Chart !== 'undefined') {
-
-
-                const leaveChart =
-
-                    new Chart(canvas, {
-
-
-                        type: 'bar',
-
+                        type: 'pie',
 
                         data: {
 
-                            labels: chartLabels,
+                            labels: [
 
+                                'Active Project',
+
+                                'Inactive Project',
+
+                                'InProgress Task',
+
+                                'Completed Task'
+
+                            ],
 
                             datasets: [
 
                                 {
 
-                                    label: 'Paid Leave',
+                                    data: [
 
-                                    data: paidLeaveData,
+                                                @activeProjects,
 
-                                    backgroundColor: '#1717ff',
+                                                @inactiveProjects,
 
-                                    borderColor: '#1717ff',
+                                                @inProgressTasks,
 
-                                    borderWidth: 1
+                                        @completedTasks
+
+                                    ],
+
+                                    backgroundColor: [
+
+                                        '#4CAF50',
+
+                                        '#9C27B0',
+
+                                        '#FF9800',
+
+                                        '#00C853'
+
+                                    ],
+
+                                    borderColor: '#ffffff',
+
+                                    borderWidth: 2
 
                                 }
 
@@ -1157,17 +939,13 @@
 
                                 legend: {
 
-                                    display: true,
-
-                                    position: 'top',
+                                    position: 'right',
 
                                     labels: {
 
-                                        boxWidth: 38,
+                                        usePointStyle: true,
 
-                                        boxHeight: 10,
-
-                                        padding: 15
+                                        padding: 20
 
                                     }
 
@@ -1176,57 +954,33 @@
 
                                 tooltip: {
 
-                                    enabled: true
+                                    callbacks: {
 
-                                }
+                                        label: function(context) {
 
-                            },
+                                            const value =
+                                                context.raw;
 
+                                            const total =
+                                                context.dataset.data
+                                                    .reduce(
+                                                        (a, b) => a + b,
+                                                        0
+                                                    );
 
-                            scales: {
+                                            const percentage =
+                                                total > 0
+                                                    ? ((value / total) * 100).toFixed(0)
+                                                    : 0;
 
-                                y: {
+                                            return context.label +
+                                                ': ' +
+                                                value +
+                                                ' (' +
+                                                percentage +
+                                                '%)';
 
-                                    beginAtZero: true,
-
-                                    ticks: {
-
-                                        precision: 0,
-
-                                        stepSize: 1
-
-                                    },
-
-                                    title: {
-
-                                        display: true,
-
-                                        text: 'Number of Leaves'
-
-                                    },
-
-                                    grid: {
-
-                                        color: '#e5e5e5'
-
-                                    }
-
-                                },
-
-
-                                x: {
-
-                                    title: {
-
-                                        display: true,
-
-                                        text: 'Year'
-
-                                    },
-
-                                    grid: {
-
-                                        color: '#e5e5e5'
+                                        }
 
                                     }
 
@@ -1236,93 +990,36 @@
 
                         }
 
-                    });
-
-
-                // Year filter
-
-                $('#leaveYearFilter').on('change', function() {
-
-
-                    const selectedYear = $(this).val();
-
-
-                    if (selectedYear === 'all') {
-
-
-                        leaveChart.data.labels =
-
-                            chartLabels;
-
-
-                        leaveChart.data.datasets[0].data =
-
-                            paidLeaveData;
-
                     }
 
-                    else {
-
-
-                        const index =
-
-                            chartLabels.indexOf(selectedYear);
-
-
-                        if (index !== -1) {
-
-
-                            leaveChart.data.labels =
-
-                                [chartLabels[index]];
-
-
-                            leaveChart.data.datasets[0].data =
-
-                                [paidLeaveData[index]];
-
-                        }
-
-                    }
-
-
-                    leaveChart.update();
-
-                });
+                );
 
             }
 
 
-            // Leave filters
+            // Filters
 
-            function applyLeaveFilter() {
+            function applyProjectFilter() {
 
-
-                const dateFilter =
-
-                    document.getElementById("dateFilter").value;
-
+                const priority =
+                    document.getElementById("priority").value;
 
                 const status =
-
                     document.getElementById("status").value;
 
-
                 const sortBy =
-
                     document.getElementById("sortBy").value;
 
 
                 const params =
-
                     new URLSearchParams();
 
 
-                if (dateFilter) {
+                if (priority) {
 
                     params.append(
-                        "dateFilter",
-                        dateFilter
+                        "priority",
+                        priority
                     );
 
                 }
@@ -1349,48 +1046,39 @@
 
 
                 window.location.href =
-
-                    '@Url.Action("LeaveReport", "Reports")' +
-
+                    '@Url.Action("ProjectReport", "Reports")'
+                    +
                     (
-
                         params.toString()
-
                             ? "?" + params.toString()
-
                             : ""
-
                     );
 
             }
 
 
-            $('#dateFilter').on(
-
-                'change',
-
-                applyLeaveFilter
-
-            );
-
-
-            $('#status').on(
-
-                'change',
-
-                applyLeaveFilter
-
-            );
+            document
+                .getElementById("priority")
+                .addEventListener(
+                    "change",
+                    applyProjectFilter
+                );
 
 
-            $('#sortBy').on(
+            document
+                .getElementById("status")
+                .addEventListener(
+                    "change",
+                    applyProjectFilter
+                );
 
-                'change',
 
-                applyLeaveFilter
-
-            );
-
+            document
+                .getElementById("sortBy")
+                .addEventListener(
+                    "change",
+                    applyProjectFilter
+                );
 
         });
 

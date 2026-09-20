@@ -52,28 +52,21 @@ namespace hrms_mvc.Services
 
             else if (dateFilter == "asc")
             {
-                query = query.OrderBy(x => x.DateOfJoining);
+                query = query.OrderBy(x => x.Id);
             }
 
             else if (dateFilter == "desc")
             {
-                query = query.OrderByDescending(x => x.DateOfJoining);
+                query = query.OrderByDescending(x => x.Id);
             }
-            
+
             else if (dateFilter == "month")
             {
-                var firstDayOfThisMonth =
-                    new DateTime(
-                        DateTime.Today.Year,
-                        DateTime.Today.Month,
-                        1);
+                var firstDayOfThisMonth = new DateTime(DateTime.Today.Year, DateTime.Today.Month,1);
 
-                var firstDayOfLastMonth =
-                    firstDayOfThisMonth.AddMonths(-1);
+                var firstDayOfLastMonth =firstDayOfThisMonth.AddMonths(-1);
 
-                query = query.Where(x =>
-                    x.DateOfJoining >= firstDayOfLastMonth &&
-                    x.DateOfJoining < firstDayOfThisMonth);
+                query = query.Where(x => x.DateOfJoining >= firstDayOfLastMonth &&x.DateOfJoining < firstDayOfThisMonth);
             }
 
             else if (dateFilter == "7days")
@@ -81,9 +74,7 @@ namespace hrms_mvc.Services
                 var today = DateTime.Today;
                 var sevenDaysAgo = today.AddDays(-7);
 
-                query = query.Where(x =>
-                    x.DateOfJoining >= sevenDaysAgo &&
-                    x.DateOfJoining <= today);
+                query = query.Where(x =>x.DateOfJoining >= sevenDaysAgo &&x.DateOfJoining <= today);
             }
 
             return await query.ToListAsync();

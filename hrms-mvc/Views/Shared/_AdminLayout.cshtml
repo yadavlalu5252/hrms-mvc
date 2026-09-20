@@ -113,53 +113,97 @@
                         </a>
                     </div>
                 </details>
+<!-- Projects -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Projects
+        <span class="menu-arrow">⌄</span>
+    </summary>
 
-                <!-- Leave-->
-                <details>
-                    <summary class="sidebar-link">
-                        Leave
-                        <span class="menu-arrow">⌄</span>
-                    </summary>
+    <div class="submenu">
+        <a asp-controller="Projects"
+           asp-action="GetProject">
+            Projects
+        </a>
 
-                    <div class="submenu">
-                   <a asp-controller="AdminLeave" asp-action="AddLeaveDeptwise">Leave Deptwise</a>
-                   <a asp-controller="AdminLeave" asp-action="DepartmentLeaveDetails">Departement Leave</a>
-                   <a asp-controller="AdminLeave" asp-action="ManageLeaveType">Manage Leave Types</a>
-                   <a asp-controller="AdminLeave" asp-action="ManageLeaveSettings">Manage Leave Settings</a>
+        <a asp-controller="Task"
+           asp-action="Index">
+            Task
+        </a>
 
-                
-                    </div>
-                </details>
+        <a asp-controller="TaskBoard"
+           asp-action="TaskBoard">
+            TaskBoard
+        </a>
+    </div>
+</details>
 
 
-                <!-- Attendance-->
-                <details>
-                    <summary class="sidebar-link">
-                        Attendance
-                        <span class="menu-arrow">⌄</span>
-                    </summary>
+<!-- Leave -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Leave
+        <span class="menu-arrow">⌄</span>
+    </summary>
 
-                    <div class="submenu">
-                        <a asp-controller="AdminAttendance" asp-action="AdminAttendanceList">Attendance List</a>
-                       
+    <div class="submenu">
+        <a asp-controller="AdminLeave"
+           asp-action="AddLeaveDeptwise">
+            Leave Deptwise
+        </a>
 
-                
-                    </div>
-                </details>
-                <!-- Timesheet-->
-                <details>
-                    <summary class="sidebar-link">
-                        Timesheet
-                        <span class="menu-arrow">⌄</span>
-                    </summary>
+        <a asp-controller="AdminLeave"
+           asp-action="DepartmentLeaveDetails">
+            Departement Leave
+        </a>
 
-                    <div class="submenu">
-                        <a asp-controller="AdminTimesheet" asp-action="AdminTimesheet">Timesheet </a>
-                       
+        <a asp-controller="AdminLeave"
+           asp-action="ManageLeaveType">
+            Manage Leave Types
+        </a>
 
-                
-                    </div>
-                </details>
+        <a asp-controller="AdminLeave"
+           asp-action="ManageLeaveSettings">
+            Manage Leave Settings
+        </a>
+    </div>
+</details>
+
+
+<!-- Attendance -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Attendance
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+        <a asp-controller="AdminAttendance"
+           asp-action="AdminAttendanceList">
+            Attendance List
+        </a>
+    </div>
+</details>
+
+
+<!-- Timesheet -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Timesheet
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+        <a asp-controller="AdminTimesheet"
+           asp-action="AdminTimesheet">
+            Timesheet
+        </a>
+    </div>
+</details>                </details>
 
                 <!-- Training -->
                 <details>
@@ -212,6 +256,26 @@
                         <a asp-controller="Reports"
                            asp-action="LeaveReport">
                             Leave Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="PayslipReport">
+                            Payslip Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="ProjectReport">
+                            Project Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="TaskReport">
+                            Task Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="DailyReport">
+                            Daily Report
                         </a>
 
                     </div>
@@ -402,7 +466,7 @@
             </footer>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
+           
             @await RenderSectionAsync("Scripts", required: false)
         </div>
 
