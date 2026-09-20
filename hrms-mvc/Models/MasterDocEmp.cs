@@ -4,7 +4,9 @@ namespace hrms_mvc.Models
 {
     public class MasterDocEmp
     {
+        [Key]
         public int EmpId { get; set; }
+
         [Required(ErrorMessage = "DocumentName is required.")]
         public string EmpDocName { get; set; }
 

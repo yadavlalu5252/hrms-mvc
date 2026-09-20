@@ -1,6 +1,9 @@
-﻿using hrms_mvc.Repository;
+﻿
+
+using hrms_mvc.Repository;
 using hrms_mvc.Services;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Azure.Documents.Spatial;
 
 namespace hrms_mvc.Controllers
 {
@@ -11,11 +14,22 @@ namespace hrms_mvc.Controllers
 
         private readonly ILeaveReportService lrs;
 
-        public ReportsController(IEmployeeReportService ers, IAttendanceReportService ars, ILeaveReportService lrs)
+        private readonly IProjectReportService prs;
+
+        private readonly IDailyReportService drs;
+
+        private readonly ITaskReportService trs;
+
+        private readonly IPaySlipReportService pss;
+        public ReportsController(IPaySlipReportService pss, IEmployeeReportService ers, IAttendanceReportService ars, ILeaveReportService lrs, IProjectReportService prs, IDailyReportService drs, ITaskReportService trs)
         {
+            this.pss = pss;
             this.ers = ers;
             this.ars = ars;
             this.lrs = lrs;
+            this.prs = prs;
+            this.drs = drs;
+            this.trs = trs;
         }
 
         public async Task<IActionResult> Index(string? status,string? dateFilter)
@@ -53,7 +67,6 @@ namespace hrms_mvc.Controllers
 
         public async Task<IActionResult> LeaveReport(string? dateFilter,string? status,string? sortBy)
         {
-            // Summary cards
             ViewBag.TotalLeaves = await lrs.TotalLeaves();
 
             ViewBag.ApprovedLeaves = await lrs.ApprovedLeaves();
@@ -62,12 +75,85 @@ namespace hrms_mvc.Controllers
 
             ViewBag.RejectedLeaves = await lrs.RejectedLeaves();
 
-            // Leave records
-            var records =await lrs.GetLeaveRecords(dateFilter,status,sortBy);
 
-            // Keep selected filter values
+            var records = await lrs.GetLeaveRecords(dateFilter,status,sortBy);
+
+ 
             ViewBag.DateFilter = dateFilter;
+            ViewBag.Status = status; 
+            ViewBag.SortBy = sortBy;
+
+            return View(records);
+        }
+
+        public async Task<IActionResult> ProjectReport( string? priority,string? status,string? sortBy)
+        {
+
+            ViewBag.TotalProjects =await prs.TotalProjects();
+
+            ViewBag.CompletedProjects =await prs.CompletedProjects();
+
+            ViewBag.OverdueProjects = await prs.OverdueProjects();
+
+            ViewBag.OnholdProjects = await prs.OnholdProjects();
+
+            var projects =await prs.GetProjectRecords(priority,status,sortBy);
+
+            ViewBag.Priority = priority;
             ViewBag.Status = status;
+            ViewBag.SortBy = sortBy;
+
+
+            return View(projects);
+        }
+
+        public async Task<IActionResult> TaskReport(string? priority,string? status,string? sortBy)
+        {
+
+            ViewBag.TotalTasks = await trs.TotalTasks();
+
+            ViewBag.CompletedTasks = await trs.CompletedTasks();
+
+            ViewBag.OnHoldTasks = await trs.OnHoldTasks();
+
+            ViewBag.OverdueTasks = await trs.OverdueTasks();
+
+            var tasks = await trs.GetTaskRecords(priority,status,sortBy);
+
+            ViewBag.Priority = priority;
+            ViewBag.Status = status;
+            ViewBag.SortBy = sortBy;
+
+            return View(tasks);
+        }
+
+        public async Task<IActionResult> DailyReport(string? status,string? sortBy)
+        {
+
+            ViewBag.TotalPresent = await drs.TotalPresent();
+            ViewBag.TotalAbsent = await drs.TotalAbsent();
+
+            ViewBag.CompletedTasks = await drs.CompletedTasks();
+            ViewBag.PendingTasks = await drs.PendingTasks();
+
+            var records = await drs.GetDailyAttendance(status, sortBy);
+
+            ViewBag.Status = status;
+            ViewBag.SortBy = sortBy;
+
+            return View(records);
+        }
+
+        public async Task<IActionResult> PayslipReport(string? month,string? sortBy)
+        {
+            ViewBag.TotalPayroll = await pss.TotalPayroll();
+            ViewBag.TotalDeductions = await pss.TotalDeductions();
+            ViewBag.NetPay = await pss.NetPay();
+            ViewBag.TotalEarnings = await pss.TotalEarnings();
+
+            var records = await pss.GetPayslipRecords(month, sortBy);
+
+            ViewBag.Month = month;
             ViewBag.SortBy = sortBy;
 
             return View(records);

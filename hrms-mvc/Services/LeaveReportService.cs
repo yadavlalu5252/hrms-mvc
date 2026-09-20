@@ -23,55 +23,45 @@ namespace hrms_mvc.Services
 
         public async Task<List<LeaveRequest>> GetLeaveRecords(string? dateFilter, string? Status, string? SortBy)
         {
-            var query = db.LeaveRequests
-               .Include(x => x.User)
-               .Include(x => x.MasterLeaveType)
-               .AsQueryable();
+            var query = db.LeaveRequests.Include(x => x.User).Include(x => x.MasterLeaveType).AsQueryable();
 
-            // Status Filter
+
             if (!string.IsNullOrEmpty(Status))
             {
                 query = query.Where(x => x.Status == Status);
             }
 
-            // Date Filter
             if (dateFilter == "Yesterday")
             {
                 var yesterday = DateTime.Today.AddDays(-1);
 
-                query = query.Where(x =>
-                    x.StartDate.Date == yesterday);
+                query = query.Where(x => x.StartDate.Date == yesterday);
             }
             else if (dateFilter == "Last 7 Days")
             {
                 var date = DateTime.Today.AddDays(-7);
 
-                query = query.Where(x =>
-                    x.StartDate >= date);
+                query = query.Where(x =>x.StartDate >= date);
             }
             else if (dateFilter == "Last 30 Days")
             {
                 var date = DateTime.Today.AddDays(-30);
 
-                query = query.Where(x =>
-                    x.StartDate >= date);
+                query = query.Where(x =>x.StartDate >= date);
             }
             else if (dateFilter == "Last Year")
             {
                 var lastYear = DateTime.Today.Year - 1;
 
-                query = query.Where(x =>
-                    x.StartDate.Year == lastYear);
+                query = query.Where(x =>x.StartDate.Year == lastYear);
             }
             else if (dateFilter == "This Year")
             {
                 var currentYear = DateTime.Today.Year;
 
-                query = query.Where(x =>
-                    x.StartDate.Year == currentYear);
+                query = query.Where(x =>x.StartDate.Year == currentYear);
             }
 
-            // Sorting
             if (SortBy == "Ascending")
             {
                 query = query.OrderBy(x => x.StartDate);
@@ -82,19 +72,15 @@ namespace hrms_mvc.Services
             }
             else if (SortBy == "Last 7 Days")
             {
-                query = query
-                    .OrderByDescending(x => x.StartDate);
+                query = query.OrderByDescending(x => x.StartDate);
             }
             else if (SortBy == "Last Month")
             {
-                query = query
-                    .OrderBy(x => x.StartDate);
+                query = query.OrderBy(x => x.StartDate);
             }
             else
             {
-                // Default sorting
-                query = query
-                    .OrderByDescending(x => x.StartDate);
+                query = query.OrderByDescending(x => x.StartDate);
             }
 
             return await query.ToListAsync();

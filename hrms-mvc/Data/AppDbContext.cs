@@ -37,7 +37,7 @@ namespace hrms_mvc.Data
         public DbSet<LeaveBalance> LeaveBalances { get; set; }
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<MasterLeaveType> MasterLeaveTypes { get; set; }
-        public DbSet<Attendance> Attendances { get; set; }
+       
         public DbSet<TrainingType> TrainingType { get; set; }
         public DbSet<Traininglist> Traininglist { get; set; }
 
@@ -55,8 +55,7 @@ namespace hrms_mvc.Data
         public DbSet<TicketComment> TicketComments { get; set; }
         public DbSet<TicketResolution> TicketResolutions { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
-
-
+        
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

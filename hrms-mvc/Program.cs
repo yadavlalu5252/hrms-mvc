@@ -1,9 +1,9 @@
 using hrms_mvc.Data;
 using hrms_mvc.Repository;
-using hrms_mvc.Services;
-using Microsoft.EntityFrameworkCore;
 using hrms_mvc.Repository.EventsRepo;
+using hrms_mvc.Services;
 using hrms_mvc.Services.EventsService;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,8 +43,10 @@ builder.Services.AddScoped<IAttendanceReportService, AttendanceReportService>();
 builder.Services.AddScoped<ILeaveReportService, LeaveReportService>();
 builder.Services.AddScoped<IEvents, EventsService>();
 builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
-
-
+builder.Services.AddScoped<IProjectReportService, ProjectReportService>();
+builder.Services.AddScoped<ITaskReportService, TaskReportService>();
+builder.Services.AddScoped<IDailyReportService, DailyReportService>();
+builder.Services.AddScoped<IPaySlipReportService, PaySlipReportService>();
 
 
 
@@ -76,7 +78,7 @@ app.MapStaticAssets();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Event}/{action=index11}/{id?}"
+    pattern: "{controller=Auth}/{action=Login}/{id?}"
 )
 .WithStaticAssets();
 

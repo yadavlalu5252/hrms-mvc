@@ -1,0 +1,991 @@
+﻿@model List<hrms_mvc.Models.Attendance>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Daily Report";
+
+    var presentData = Model?
+        .Where(x => x.Status == "Present")
+        .GroupBy(x => x.Date.ToString("M-yyyy"))
+        .ToDictionary(x => x.Key, x => x.Count())
+        ?? new Dictionary<string, int>();
+
+    var absentData = Model?
+        .Where(x => x.Status == "Absent")
+        .GroupBy(x => x.Date.ToString("M-yyyy"))
+        .ToDictionary(x => x.Key, x => x.Count())
+        ?? new Dictionary<string, int>();
+
+    var chartLabels = Model?
+        .Select(x => x.Date.ToString("M-yyyy"))
+        .Distinct()
+        .OrderBy(x => DateTime.ParseExact(
+            x,
+            "M-yyyy",
+            System.Globalization.CultureInfo.InvariantCulture))
+        .ToList()
+        ?? new List<string>();
+}
+
+<div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="mb-1">Daily Report</h3>
+
+            <p class="text-muted mb-0">
+                Daily attendance overview
+            </p>
+        </div>
+
+        <!-- Export -->
+        <div class="dropdown">
+
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download me-1"></i>
+                Export
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel text-success me-2"></i>
+                        Excel
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf text-danger me-2"></i>
+                        PDF
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+                        Print
+
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Summary Cards + Chart -->
+    <div class="row g-3 mb-4">
+
+        <!-- Left Cards -->
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+                <!-- Total Present -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Total Present
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.TotalPresent
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Present employees
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-person-check fs-4 text-success"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Completed Tasks -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Completed Tasks
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.CompletedTasks
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Completed tasks
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-check-circle fs-4 text-success"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Total Absent -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Total Absent
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.TotalAbsent
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Absent employees
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-person-x fs-4 text-danger"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Pending Tasks -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Pending Tasks
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        @ViewBag.PendingTasks
+                                    </h3>
+
+                                    <small class="text-muted">
+                                        Pending tasks
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-hourglass-split fs-4 text-info"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Attendance Chart -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-bar-chart-line text-danger me-2"></i>
+
+                            Daily Attendance
+
+                        </h5>
+
+                        <span class="text-muted small">
+                            Attendance Data
+                        </span>
+
+                    </div>
+
+                    <div style="height:310px;">
+
+                        <canvas id="dailyAttendanceChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="card border-0 shadow-sm mb-4">
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-controller="Reports"
+                  asp-action="DailyReport">
+
+                <div class="row g-3">
+
+                    <!-- Status -->
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Select Status Filter:
+                        </label>
+
+                        <select name="status"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                --Select Status--
+                            </option>
+
+                            @if (ViewBag.Status == "Present")
+                            {
+                                <option value="Present" selected>
+                                    Present
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Present">
+                                    Present
+                                </option>
+                            }
+
+                            @if (ViewBag.Status == "Absent")
+                            {
+                                <option value="Absent" selected>
+                                    Absent
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Absent">
+                                    Absent
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Sort -->
+                    <div class="col-md-6">
+
+                        <label class="form-label">
+                            Sort By:
+                        </label>
+
+                        <select name="sortBy"
+                                class="form-select"
+                                onchange="this.form.submit()">
+
+                            <option value="">
+                                --Select--
+                            </option>
+
+                            @if (ViewBag.SortBy == "Ascending")
+                            {
+                                <option value="Ascending" selected>
+                                    Ascending
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Ascending">
+                                    Ascending
+                                </option>
+                            }
+
+                            @if (ViewBag.SortBy == "Descending")
+                            {
+                                <option value="Descending" selected>
+                                    Descending
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Descending">
+                                    Descending
+                                </option>
+                            }
+
+                            @if (ViewBag.SortBy == "Last 7 Days")
+                            {
+                                <option value="Last 7 Days" selected>
+                                    Last 7 Days
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Last 7 Days">
+                                    Last 7 Days
+                                </option>
+                            }
+
+                            @if (ViewBag.SortBy == "Last Month")
+                            {
+                                <option value="Last Month" selected>
+                                    Last Month
+                                </option>
+                            }
+                            else
+                            {
+                                <option value="Last Month">
+                                    Last Month
+                                </option>
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Attendance List -->
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-header bg-white border-0 py-3">
+
+            <div class="d-flex justify-content-between align-items-center">
+
+                <h5 class="mb-0">
+                    Daily Attendance List
+                </h5>
+
+                <span class="text-muted">
+                    @Model.Count record(s)
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="table-responsive">
+
+                <table id="dailyAttendanceTable"
+                       class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Name</th>
+
+                            <th>Date</th>
+
+                            <th>Department</th>
+
+                            <th>Status</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+
+                            foreach (var attendance in Model)
+                            {
+
+                                <tr>
+
+                                    <!-- Name -->
+                                    <td>
+
+                                        <span class="fw-semibold">
+
+                                            @attendance.User?.FirstName
+                                            @attendance.User?.LastName
+
+                                        </span>
+
+                                    </td>
+
+
+                                    <!-- Date -->
+                                    <td data-order="@attendance.Date.ToString("yyyy-MM-dd")">
+
+                                        @attendance.Date.ToString("dd-MM-yyyy")
+
+                                    </td>
+
+
+                                    <!-- Department -->
+                                    <td>
+
+                                        @(attendance.User?.Department?.Name ?? "-")
+
+                                    </td>
+
+
+                                    <!-- Status -->
+                                    <td>
+
+                                        @if (attendance.Status == "Present")
+                                        {
+                                            <span class="badge bg-success">
+                                                Present
+                                            </span>
+                                        }
+                                        else if (attendance.Status == "Absent")
+                                        {
+                                            <span class="badge bg-danger">
+                                                Absent
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-secondary">
+                                                @attendance.Status
+                                            </span>
+                                        }
+
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            <tr>
+
+                                <td colspan="4"
+                                    class="text-center text-muted py-4">
+
+                                    No attendance records available.
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    #dailyAttendanceTable th {
+        white-space: nowrap;
+    }
+
+    #dailyAttendanceTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .dt-buttons {
+        display: none;
+    }
+
+</style>
+
+
+@section Scripts
+{
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+
+            // DataTable
+
+            const attendanceTable =
+                $('#dailyAttendanceTable').DataTable({
+
+                    pageLength: 10,
+
+                    lengthMenu: [
+
+                        [5, 10, 25, 50, 100, -1],
+
+                        [5, 10, 25, 50, 100, "All"]
+
+                    ],
+
+                    order: [[1, 'asc']],
+
+                    dom:
+
+                        '<"row mb-3"' +
+
+                        '<"col-md-6"l>' +
+
+                        '<"col-md-6"f>' +
+
+                        '>' +
+
+                        'rt' +
+
+                        '<"row mt-3"' +
+
+                        '<"col-md-6"i>' +
+
+                        '<"col-md-6"p>' +
+
+                        '>',
+
+                    buttons: [
+
+                        {
+
+                            extend: 'excel',
+
+                            title: 'Daily Attendance Report',
+
+                            filename: 'DailyAttendanceReport',
+
+                            exportOptions: {
+
+                                columns: ':visible',
+
+                                modifier: {
+
+                                    search: 'applied'
+
+                                }
+
+                            }
+
+                        },
+
+                        {
+
+                            extend: 'pdf',
+
+                            title: 'Daily Attendance Report',
+
+                            filename: 'DailyAttendanceReport',
+
+                            orientation: 'landscape',
+
+                            pageSize: 'A4',
+
+                            exportOptions: {
+
+                                columns: ':visible',
+
+                                modifier: {
+
+                                    search: 'applied'
+
+                                }
+
+                            },
+
+                            customize: function(doc) {
+
+                                doc.content[0].alignment = 'center';
+
+                                doc.content[0].fontSize = 18;
+
+                                doc.content[0].bold = true;
+
+                                doc.content[0].margin = [0, 0, 0, 15];
+
+                            }
+
+                        },
+
+                        {
+
+                            extend: 'print',
+
+                            title: 'Daily Attendance Report',
+
+                            exportOptions: {
+
+                                columns: ':visible',
+
+                                modifier: {
+
+                                    search: 'applied'
+
+                                }
+
+                            }
+
+                        }
+
+                    ]
+
+                });
+
+
+            // Excel
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                attendanceTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // PDF
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                attendanceTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                attendanceTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Attendance Chart
+
+            const chartLabels = @Html.Raw(
+                            System.Text.Json.JsonSerializer.Serialize(chartLabels)
+                            );
+
+
+            const presentData = @Html.Raw(
+                                            System.Text.Json.JsonSerializer.Serialize(
+                                                    chartLabels.Select(x =>
+                            presentData.ContainsKey(x)
+                            ? presentData[x]
+                            : 0
+                            )
+                            )
+                            );
+
+
+            const absentData = @Html.Raw(
+                                            System.Text.Json.JsonSerializer.Serialize(
+                                                    chartLabels.Select(x =>
+                            absentData.ContainsKey(x)
+                            ? absentData[x]
+                            : 0
+                            )
+                            )
+                            );
+
+
+            const chartCanvas =
+                document.getElementById('dailyAttendanceChart');
+
+
+            if (chartCanvas && typeof Chart !== 'undefined') {
+
+                new Chart(
+
+                    chartCanvas,
+
+                    {
+
+                        type: 'line',
+
+                        data: {
+
+                            labels: chartLabels,
+
+                            datasets: [
+
+                                {
+
+                                    label: 'Present',
+
+                                    data: presentData,
+
+                                    borderColor: '#008000',
+
+                                    backgroundColor: 'rgba(0,128,0,0.10)',
+
+                                    borderWidth: 3,
+
+                                    tension: 0.4,
+
+                                    fill: false,
+
+                                    pointRadius: 4,
+
+                                    pointHoverRadius: 6
+
+                                },
+
+                                {
+
+                                    label: 'Absent',
+
+                                    data: absentData,
+
+                                    borderColor: '#ffb6c1',
+
+                                    backgroundColor: 'rgba(255,182,193,0.10)',
+
+                                    borderWidth: 3,
+
+                                    tension: 0.4,
+
+                                    fill: false,
+
+                                    pointRadius: 4,
+
+                                    pointHoverRadius: 6
+
+                                }
+
+                            ]
+
+                        },
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+                            interaction: {
+
+                                mode: 'index',
+
+                                intersect: false
+
+                            },
+
+                            plugins: {
+
+                                legend: {
+
+                                    position: 'top',
+
+                                    labels: {
+
+                                        usePointStyle: false,
+
+                                        padding: 15
+
+                                    }
+
+                                },
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label: function(context) {
+
+                                            return context.dataset.label +
+                                                ': ' +
+                                                context.raw;
+
+                                        }
+
+                                    }
+
+                                }
+
+                            },
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    ticks: {
+
+                                        precision: 0
+
+                                    },
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Number of Days'
+
+                                    }
+
+                                },
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Month-Year'
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+            }
+
+        });
+
+    </script>
+
+}
