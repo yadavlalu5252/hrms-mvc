@@ -38,6 +38,7 @@ namespace hrms_mvc.Data
         public DbSet<LeaveRequest> LeaveRequests { get; set; }
         public DbSet<MasterLeaveType> MasterLeaveTypes { get; set; }
        
+
         public DbSet<TrainingType> TrainingType { get; set; }
         public DbSet<Traininglist> Traininglist { get; set; }
 
@@ -56,6 +57,9 @@ namespace hrms_mvc.Data
         public DbSet<TicketResolution> TicketResolutions { get; set; }
         public DbSet<TicketAttachment> TicketAttachments { get; set; }
         
+        public DbSet<EducationDetails> EducationDetails { get; set; }
+        public DbSet<Experience> Experiences { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -186,6 +190,24 @@ namespace hrms_mvc.Data
                 .WithMany()
                 .HasForeignKey(a => a.UploadedBy)
                 .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<EducationDetails>()
+                .HasOne(x => x.User)
+                .WithMany(x => x.EducationDetails)
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Timesheet>()
+            .HasOne(t => t.Projects)
+            .WithMany()
+            .HasForeignKey(t => t.ProjectId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+            modelBuilder.Entity<Experience>()
+            .HasOne(x => x.User)
+            .WithMany(x => x.Experiences)
+            .HasForeignKey(x => x.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

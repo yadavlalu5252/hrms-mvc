@@ -16,9 +16,13 @@ namespace hrms_mvc.Services
         public async Task<User?> GetEmployeeProfile(int id)
         {
             var data = await db.Users
-                .Include(x=>x.Designation)
-                .Include(x=>x.Department)
-                .SingleOrDefaultAsync(x => x.Id == id);
+         .Include(x=>x.Department)
+         .Include(x=>x.Designation)
+        .Include(x => x.EmployeeBankDetails)
+        .Include(x => x.EmployeeFamilyDetails)
+        .Include(x => x.EducationDetails)
+        .Include(x => x.Experiences)
+        .FirstOrDefaultAsync(x => x.Id == id);
             return data;
         }
 
@@ -56,6 +60,48 @@ namespace hrms_mvc.Services
         public async Task<int> UpdateFamilyDetails(EmployeeFamilyDetail familyDetail)
         {
             db.EmployeeFamilyDetails.Update(familyDetail);
+            return await db.SaveChangesAsync();
+        }
+
+
+        public async Task<List<EducationDetails>> GetEducationDetails(int userId)
+        {
+            return await db.EducationDetails
+                .Where(e => e.UserId == userId)
+                .ToListAsync();
+        }
+        public async Task<int> AddEducationDetails(EducationDetails educationDetails)
+        {
+            db.EducationDetails.Add(educationDetails);
+
+            return await db.SaveChangesAsync();
+        }
+
+        public async Task<int> UpdateEducationDetails(EducationDetails educationDetails)
+        {
+            db.EducationDetails.Update(educationDetails);
+
+            return await db.SaveChangesAsync();
+        }
+
+        public async Task<List<Experience>> GetExperienceDetails(int userId)
+        {
+            return await db.Experiences
+                .Where(x => x.UserId == userId)
+                .ToListAsync();
+        }
+
+        public async Task<int> AddExperienceDetails(Experience experience)
+        {
+            db.Experiences.Add(experience);
+
+            return await db.SaveChangesAsync();
+        }
+
+        public async Task<int> UpdateExperienceDetails(Experience experience)
+        {
+            db.Experiences.Update(experience);
+
             return await db.SaveChangesAsync();
         }
     }

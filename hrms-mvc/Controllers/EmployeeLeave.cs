@@ -4,33 +4,42 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace hrms_mvc.Controllers
 {
-    public class LeaveController : Controller
+    public class EmployeeLeaveController : Controller
     {
         private readonly ILeaveService service;
 
-        public LeaveController(
-            ILeaveService service)
+        public EmployeeLeaveController(ILeaveService service)
         {
             this.service = service;
         }
 
-
-
         [HttpGet]
-        public async Task<IActionResult> ViewMyLeaveRequests(
-            int userId)
+        public async Task<IActionResult> ViewMyLeaveRequests()
         {
+            var userId =
+                HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Auth");
+            }
+
             var leaveRequests =
-                await service.GetMyLeaveRequests(userId);
+                await service.GetMyLeaveRequests(
+                    userId.Value);
 
             var leaveBalances =
-                await service.GetMyLeaveBalances(userId);
+                await service.GetMyLeaveBalances(
+                    userId.Value);
 
             var leaveTypes =
-                await service.GetAvailableLeaveTypes();
+                await service.GetAvailableLeaveTypes(
+                    userId.Value);
 
             ViewBag.UserId =
-                userId;
+                userId.Value;
 
             ViewBag.LeaveBalances =
                 leaveBalances;
@@ -41,13 +50,24 @@ namespace hrms_mvc.Controllers
             return View(leaveRequests);
         }
 
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApplyLeave(
             LeaveRequest leaveRequest)
         {
+            var userId =
+                HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Auth");
+            }
+
+            leaveRequest.UserId =
+                userId.Value;
+
             ModelState.Remove("User");
             ModelState.Remove("MasterLeaveType");
             ModelState.Remove("ApprovedBy");
@@ -60,7 +80,6 @@ namespace hrms_mvc.Controllers
                 (leaveRequest.EndDate -
                  leaveRequest.StartDate).Days + 1;
 
-
             if (ModelState.IsValid)
             {
                 await service.AddLeaveRequest(
@@ -70,38 +89,53 @@ namespace hrms_mvc.Controllers
                     "Leave applied successfully!";
 
                 return RedirectToAction(
-                    "ViewMyLeaveRequests",
-                    new
-                    {
-                        userId =
-                            leaveRequest.UserId
-                    });
+                    "ViewMyLeaveRequests");
             }
-
 
             var leaveRequests =
                 await service.GetMyLeaveRequests(
-                    leaveRequest.UserId);
+                    userId.Value);
 
             var leaveBalances =
                 await service.GetMyLeaveBalances(
-                    leaveRequest.UserId);
+                    userId.Value);
 
             var leaveTypes =
-                await service.GetAvailableLeaveTypes();
-
+                await service.GetAvailableLeaveTypes(
+                    userId.Value);
 
             ViewBag.UserId =
-                leaveRequest.UserId;
+                userId.Value;
 
-            ViewBag.LeaveBalances =leaveBalances;
+            ViewBag.LeaveBalances =
+                leaveBalances;
 
-            ViewBag.LeaveTypes = leaveTypes;
-
+            ViewBag.LeaveTypes =
+                leaveTypes;
 
             return View(
                 "ViewMyLeaveRequests",
                 leaveRequests);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DepartmentLeaveDetails()
+        {
+            var userId =
+                HttpContext.Session.GetInt32("UserId");
+
+            if (userId == null)
+            {
+                return RedirectToAction(
+                    "Login",
+                    "Auth");
+            }
+
+            var departmentLeaves =
+                await service.GetMyDepartmentLeaves(
+                    userId.Value);
+
+            return View(departmentLeaves);
         }
     }
 }

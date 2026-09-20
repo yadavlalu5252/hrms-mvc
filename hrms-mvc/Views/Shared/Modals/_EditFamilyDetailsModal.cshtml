@@ -1,0 +1,142 @@
+﻿@model hrms_mvc.Models.EmployeeFamilyDetail
+
+
+<div class="modal fade"
+     id="editFamilyDetailsModal"
+     tabindex="-1"
+     aria-labelledby="editFamilyDetailsModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold"
+                    id="editFamilyDetailsModalLabel">
+
+                    Family Information
+
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form asp-controller="EmployeeDetails"
+                  asp-action="EditFamilyDetails"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <input type="hidden"
+                           asp-for="Id" />
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Name <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="text"
+                               asp-for="Name"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Family Id
+                        </label>
+
+                        <input type="text"
+                               asp-for="Id"
+                               class="form-control"
+                               readonly />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Relationship
+                        </label>
+
+                        <input type="text"
+                               asp-for="Relation"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Phone
+                        </label>
+
+                        <input type="text"
+                               asp-for="MobileNumber"
+                               class="form-control" />
+
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label class="form-label fw-semibold">
+                            Date of Birth <span class="text-danger">*</span>
+                        </label>
+
+                        <input type="date"
+                               asp-for="DateOfBirth"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-light border"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn text-white"
+                            style="background-color: #ff6a00;">
+
+                        Save
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .form-control {
+        min-height: 42px;
+        border-radius: 6px;
+    }
+
+    .form-control:focus {
+        border-color: #ff6a00;
+        box-shadow: 0 0 0 0.15rem rgba(255, 106, 0, 0.15);
+    }
+</style>

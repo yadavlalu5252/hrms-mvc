@@ -1,0 +1,950 @@
+﻿@model List<hrms_mvc.Models.TaskBoards>
+
+@{
+     ViewData["Title"] = "Task Board";
+
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
+
+    var projectGroups = Model
+        .Where(x => x.Project != null && x.Task != null)
+        .GroupBy(x => x.ProjectId)
+        .ToList();
+}
+
+<div class="container-fluid taskboard-page">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h2 class="fw-bold mb-1">Task Board</h2>
+
+            <div class="text-muted">
+                Home /
+                <span class="mx-1">Projects</span> /
+                <span class="text-dark">Task Board</span>
+            </div>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button type="button"
+                    class="btn btn-light border px-3">
+                Export ▼
+            </button>
+
+            <a asp-controller="TaskBoard"
+               asp-action="AddTaskBoard"
+               class="btn btn-orange px-4">
+
+                + Add New Board
+
+            </a>
+
+        </div>
+
+    </div>
+
+
+    @if (projectGroups.Count > 0)
+    {
+        @foreach (var projectGroup in projectGroups)
+        {
+            var firstBoard = projectGroup.First();
+            var project = firstBoard.Project;
+
+            var totalTask = projectGroup.Count();
+
+            var pendingTask = projectGroup.Count(x =>
+                x.Task != null &&
+                x.Task.Status != null &&
+                x.Task.Status.ToLower() == "pending");
+
+            var completedTask = projectGroup.Count(x =>
+                x.Task != null &&
+                x.Task.Status != null &&
+                x.Task.Status.ToLower() == "completed");
+
+
+            
+            <div class="card border mb-4 project-board"
+                 data-project-name="@project.ProjectName.ToLower()">
+
+                <!-- PROJECT HEADER -->
+
+                <div class="card-header bg-white py-4">
+
+                    <div class="row align-items-center">
+
+                        <div class="col-md-5">
+
+                            <h4 class="fw-bold mb-0">
+                                @project.ProjectName
+                            </h4>
+
+                        </div>
+
+
+                        <div class="col-md-7">
+
+                            <div class="d-flex justify-content-md-end
+                                        align-items-center
+                                        flex-wrap gap-3">
+
+                                <span>
+                                    Total Task :
+                                    <strong>@totalTask</strong>
+                                </span>
+
+                                <span class="header-divider"></span>
+
+                                <span>
+                                    Pending :
+                                    <strong>@pendingTask</strong>
+                                </span>
+
+                                <span class="header-divider"></span>
+
+                                <span>
+                                    Completed :
+                                    <strong>@completedTask</strong>
+                                </span>
+
+
+                                <div class="search-box">
+
+                                    <span class="search-icon">
+                                        🔍
+                                    </span>
+
+                                    <input type="text"
+                                           class="form-control project-search"
+                                           placeholder="Search Project" />
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                
+                <div class="card-body border-bottom py-3">
+
+                    <div class="d-flex justify-content-between
+                                align-items-center flex-wrap gap-3">
+
+                        <div class="d-flex align-items-center gap-2">
+
+                            <strong>Priority</strong>
+
+
+                            <div class="priority-buttons">
+
+                                <button type="button"
+                                        class="priority-btn active"
+                                        data-priority="All">
+                                    All
+                                </button>
+
+                                <button type="button"
+                                        class="priority-btn"
+                                        data-priority="High">
+                                    High
+                                </button>
+
+                                <button type="button"
+                                        class="priority-btn"
+                                        data-priority="Medium">
+                                    Medium
+                                </button>
+
+                                <button type="button"
+                                        class="priority-btn"
+                                        data-priority="Low">
+                                    Low
+                                </button>
+
+                            </div>
+
+                        </div>
+
+
+                        <div>
+
+                            <select class="form-select status-filter">
+                                <option value="All">
+                                    Select Status
+                                </option>
+
+                                <option value="Pending">
+                                    Pending
+                                </option>
+
+                                <option value="In Progress">
+                                    Inprogress
+                                </option>
+
+                                <option value="On Hold">
+                                    Onhold
+                                </option>
+
+                                <option value="Completed">
+                                    Completed
+                                </option>
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                
+                <div class="card-body kanban-background">
+
+                    <div class="row g-3">
+
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="kanban-column">
+
+                                <div class="kanban-heading">
+                                    Pending
+                                </div>
+
+
+                                <div class="kanban-body">
+
+                                    @{
+                                        var pendingBoards = projectGroup
+                                            .Where(x =>
+                                                x.Task != null &&
+                                                x.Task.Status != null &&
+                                                x.Task.Status.ToLower() == "pending")
+                                            .ToList();
+                                    }
+
+
+                                    @foreach (var board in pendingBoards)
+                                    {
+                                        <div class="task-item"
+                                             data-priority="@board.Task.Priority"
+                                             data-status="Pending">
+
+                                            <div class="task-card">
+
+                                                <div class="d-flex
+                                                            justify-content-between
+                                                            align-items-start">
+
+                                                    <span class="priority-badge">
+                                                        @board.Task.Priority
+                                                    </span>
+
+                                                    <span class="task-menu">
+                                                        ⋮
+                                                    </span>
+
+                                                </div>
+
+
+                                                <h5 class="task-title">
+                                                    @board.Task.Title
+                                                </h5>
+
+
+                                                <div class="progress task-progress">
+
+                                                    <div class="progress-bar"
+                                                         role="progressbar"
+                                                         style="width:@board.Percentage%">
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="percentage-text">
+                                                    @board.Percentage%
+                                                </div>
+
+
+                                                <div class="task-date">
+
+                                                    Due on:
+                                                    <strong>
+                                                        @board.DueDate.ToString("dd MMM yyyy")
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    }
+
+
+                                    <a asp-controller="Task"
+                                       asp-action="Task"
+                                       class="new-task-button">
+
+                                        + New Task
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="kanban-column">
+
+                                <div class="kanban-heading">
+                                    Inprogress
+                                </div>
+
+
+                                <div class="kanban-body">
+
+                                    @{
+                                        var progressBoards = projectGroup
+                                            .Where(x =>
+                                                x.Task != null &&
+                                                x.Task.Status != null &&
+                                                (
+                                                    x.Task.Status.ToLower() == "in progress" ||
+                                                    x.Task.Status.ToLower() == "inprogress"
+                                                ))
+                                            .ToList();
+                                    }
+
+
+                                    @foreach (var board in progressBoards)
+                                    {
+                                        <div class="task-item"
+                                             data-priority="@board.Task.Priority"
+                                             data-status="In Progress">
+
+                                            <div class="task-card">
+
+                                                <div class="d-flex
+                                                            justify-content-between
+                                                            align-items-start">
+
+                                                    <span class="priority-badge">
+                                                        @board.Task.Priority
+                                                    </span>
+
+                                                    <span class="task-menu">
+                                                        ⋮
+                                                    </span>
+
+                                                </div>
+
+
+                                                <h5 class="task-title">
+                                                    @board.Task.Title
+                                                </h5>
+
+
+                                                <div class="progress task-progress">
+
+                                                    <div class="progress-bar"
+                                                         role="progressbar"
+                                                         style="width:@board.Percentage%">
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="percentage-text">
+                                                    @board.Percentage%
+                                                </div>
+
+
+                                                <div class="task-date">
+
+                                                    Due on:
+                                                    <strong>
+                                                        @board.DueDate.ToString("dd MMM yyyy")
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    }
+
+
+                                    <a asp-controller="Task"
+                                       asp-action="Task"
+                                       class="new-task-button">
+
+                                        + New Task
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="kanban-column">
+
+                                <div class="kanban-heading">
+                                    Onhold
+                                </div>
+
+
+                                <div class="kanban-body">
+
+                                    @{
+                                        var onHoldBoards = projectGroup
+                                            .Where(x =>
+                                                x.Task != null &&
+                                                x.Task.Status != null &&
+                                                (
+                                                    x.Task.Status.ToLower() == "on hold" ||
+                                                    x.Task.Status.ToLower() == "onhold"
+                                                ))
+                                            .ToList();
+                                    }
+
+
+                                    @foreach (var board in onHoldBoards)
+                                    {
+                                        <div class="task-item"
+                                             data-priority="@board.Task.Priority"
+                                             data-status="On Hold">
+
+                                            <div class="task-card">
+
+                                                <div class="d-flex
+                                                            justify-content-between
+                                                            align-items-start">
+
+                                                    <span class="priority-badge">
+                                                        @board.Task.Priority
+                                                    </span>
+
+                                                    <span class="task-menu">
+                                                        ⋮
+                                                    </span>
+
+                                                </div>
+
+
+                                                <h5 class="task-title">
+                                                    @board.Task.Title
+                                                </h5>
+
+
+                                                <div class="progress task-progress">
+
+                                                    <div class="progress-bar"
+                                                         role="progressbar"
+                                                         style="width:@board.Percentage%">
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="percentage-text">
+                                                    @board.Percentage%
+                                                </div>
+
+
+                                                <div class="task-date">
+
+                                                    Due on:
+                                                    <strong>
+                                                        @board.DueDate.ToString("dd MMM yyyy")
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    }
+
+
+                                    <a asp-controller="Task"
+                                       asp-action="Task"
+                                       class="new-task-button">
+
+                                        + New Task
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+
+
+                        <div class="col-xl-3 col-md-6">
+
+                            <div class="kanban-column">
+
+                                <div class="kanban-heading">
+                                    Completed
+                                </div>
+
+
+                                <div class="kanban-body">
+
+                                    @{
+                                        var completedBoards = projectGroup
+                                            .Where(x =>
+                                                x.Task != null &&
+                                                x.Task.Status != null &&
+                                                x.Task.Status.ToLower() == "completed")
+                                            .ToList();
+                                    }
+
+
+                                    @foreach (var board in completedBoards)
+                                    {
+                                        <div class="task-item"
+                                             data-priority="@board.Task.Priority"
+                                             data-status="Completed">
+
+                                            <div class="task-card">
+
+                                                <div class="d-flex
+                                                            justify-content-between
+                                                            align-items-start">
+
+                                                    <span class="priority-badge">
+                                                        @board.Task.Priority
+                                                    </span>
+
+                                                    <span class="task-menu">
+                                                        ⋮
+                                                    </span>
+
+                                                </div>
+
+
+                                                <h5 class="task-title">
+                                                    @board.Task.Title
+                                                </h5>
+
+
+                                                <div class="progress task-progress">
+
+                                                    <div class="progress-bar"
+                                                         role="progressbar"
+                                                         style="width:@board.Percentage%">
+                                                    </div>
+
+                                                </div>
+
+
+                                                <div class="percentage-text">
+                                                    @board.Percentage%
+                                                </div>
+
+
+                                                <div class="task-date">
+
+                                                    Due on:
+                                                    <strong>
+                                                        @board.DueDate.ToString("dd MMM yyyy")
+                                                    </strong>
+
+                                                </div>
+
+                                            </div>
+
+                                        </div>
+                                    }
+
+
+                                    <a asp-controller="Task"
+                                       asp-action="Task"
+                                       class="new-task-button">
+
+                                        + New Task
+
+                                    </a>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+    }
+    else
+    {
+        <div class="card border-0 shadow-sm">
+
+            <div class="card-body text-center py-5">
+
+                <h4 class="fw-bold">
+                    No Task Board Found
+                </h4>
+
+                <p class="text-muted">
+                    Create your first task board.
+                </p>
+
+                <a asp-controller="TaskBoard"
+                   asp-action="AddTaskBoard"
+                   class="btn btn-orange">
+
+                    + Add New Board
+
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+</div>
+
+
+<style>
+
+    .taskboard-page {
+        padding: 25px 28px;
+    }
+
+    .btn-orange {
+        background: #ff6b2c;
+        border: 1px solid #ff6b2c;
+        color: white;
+        border-radius: 5px;
+        font-weight: 500;
+    }
+
+    .btn-orange:hover {
+        background: #e85b20;
+        color: white;
+    }
+
+    .header-divider {
+        width: 1px;
+        height: 22px;
+        background: #dddddd;
+    }
+
+    .search-box {
+        position: relative;
+        width: 215px;
+    }
+
+    .search-box .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 8px;
+        z-index: 2;
+        font-size: 13px;
+    }
+
+    .search-box input {
+        padding-left: 34px;
+        height: 42px;
+    }
+
+    .priority-buttons {
+        display: flex;
+        background: #f5f6f8;
+        border: 1px solid #e5e7eb;
+        border-radius: 6px;
+        padding: 3px;
+    }
+
+    .priority-btn {
+        border: 0;
+        background: transparent;
+        padding: 7px 15px;
+        border-radius: 5px;
+    }
+
+    .priority-btn.active {
+        background: white;
+        box-shadow: 0 1px 4px rgba(0,0,0,.15);
+        font-weight: 600;
+    }
+
+    .status-filter {
+        min-width: 150px;
+    }
+
+    .kanban-background {
+        background: #edf2f5;
+        padding: 18px;
+    }
+
+    .kanban-column {
+        background: #f6f7f9;
+        min-height: 420px;
+        border-radius: 4px;
+    }
+
+    .kanban-heading {
+        background: white;
+        border: 1px solid #eeeeee;
+        border-radius: 4px;
+        text-align: center;
+        padding: 17px 10px;
+        font-size: 18px;
+        font-weight: 600;
+        color: #5c6675;
+    }
+
+    .kanban-body {
+        padding: 18px;
+    }
+
+    .task-card {
+        background: white;
+        border: 1px solid #dddddd;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 17px;
+        box-shadow: 0 2px 5px rgba(0,0,0,.06);
+    }
+
+    .priority-badge {
+        border: 1px solid #555;
+        border-radius: 4px;
+        padding: 2px 9px;
+        font-size: 12px;
+        font-weight: 600;
+        background: white;
+    }
+
+    .task-menu {
+        font-size: 20px;
+        cursor: pointer;
+        line-height: 15px;
+    }
+
+    .task-title {
+        margin-top: 12px;
+        margin-bottom: 10px;
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .task-progress {
+        height: 7px;
+        margin-top: 8px;
+        background: #e7ebf0;
+    }
+
+    .task-progress .progress-bar {
+        background: #f5b400;
+    }
+
+    .percentage-text {
+        font-size: 11px;
+        margin-top: -7px;
+        position: relative;
+        text-align: center;
+    }
+
+    .task-date {
+        border-bottom: 1px solid #eeeeee;
+        padding: 13px 0;
+        margin-bottom: 8px;
+        font-size: 14px;
+    }
+
+    .new-task-button {
+        display: block;
+        width: 100%;
+        background: white;
+        border: 1px dashed #d7dce1;
+        border-radius: 4px;
+        text-align: center;
+        padding: 10px;
+        text-decoration: none;
+        color: #111;
+        font-weight: 500;
+    }
+
+    .new-task-button:hover {
+        background: #fafafa;
+        color: #111;
+    }
+
+</style>
+
+
+<script>
+
+    
+    document.querySelectorAll(".priority-btn")
+        .forEach(function (button) {
+
+            button.addEventListener("click", function () {
+
+                var projectBoard =
+                    this.closest(".project-board");
+
+                var selectedPriority =
+                    this.getAttribute("data-priority");
+
+
+                projectBoard
+                    .querySelectorAll(".priority-btn")
+                    .forEach(function (btn) {
+
+                        btn.classList.remove("active");
+
+                    });
+
+
+                this.classList.add("active");
+
+
+                var tasks =
+                    projectBoard.querySelectorAll(".task-item");
+
+
+                tasks.forEach(function (task) {
+
+                    var priority =
+                        task.getAttribute("data-priority");
+
+
+                    if (selectedPriority === "All" ||
+                        priority === selectedPriority) {
+
+                        task.style.display = "block";
+
+                    }
+                    else {
+
+                        task.style.display = "none";
+
+                    }
+
+                });
+
+            });
+
+        });
+
+
+
+    
+    document.querySelectorAll(".status-filter")
+        .forEach(function (dropdown) {
+
+            dropdown.addEventListener("change", function () {
+
+                var projectBoard =
+                    this.closest(".project-board");
+
+                var selectedStatus =
+                    this.value;
+
+
+                var tasks =
+                    projectBoard.querySelectorAll(".task-item");
+
+
+                tasks.forEach(function (task) {
+
+                    var status =
+                        task.getAttribute("data-status");
+
+
+                    if (selectedStatus === "All" ||
+                        status === selectedStatus) {
+
+                        task.style.display = "block";
+
+                    }
+                    else {
+
+                        task.style.display = "none";
+
+                    }
+
+                });
+
+            });
+
+        });
+
+
+
+    
+    document.querySelectorAll(".project-search")
+        .forEach(function (input) {
+
+            input.addEventListener("keyup", function () {
+
+                var searchValue =
+                    this.value.toLowerCase();
+
+
+                document.querySelectorAll(".project-board")
+                    .forEach(function (board) {
+
+                        var projectName =
+                            board.getAttribute(
+                                "data-project-name"
+                            );
+
+
+                        if (projectName.includes(searchValue)) {
+
+                            board.style.display = "block";
+
+                        }
+                        else {
+
+                            board.style.display = "none";
+
+                        }
+
+                    });
+
+            });
+
+        });
+
+</script>

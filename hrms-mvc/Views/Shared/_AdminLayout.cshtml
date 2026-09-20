@@ -36,8 +36,8 @@
             <nav class="sidebar-menu">
 
                 <!-- Dashboard -->
-                <a asp-controller="Auth"
-                   asp-action="Admin"
+                <a asp-controller="Admin"
+                   asp-action="Index"
                    class="sidebar-link active">
                     <span>⌂</span>
                     Dashboard
@@ -96,10 +96,115 @@
                     </summary>
 
                     <div class="submenu">
-                        <a href="#">Event List</a>
-                        <a href="#">Add Event</a>
+                        <a asp-controller="Event"
+                           asp-action="index11">
+                            Add event
+                        </a>
+                    </div>
+                    <div class="submenu">
+                        <a asp-controller="Event"
+                           asp-action="MasterEvent">
+                            Add Master Event
+                        </a>
+                    </div>
+                    <div class="submenu">
+                        <a asp-controller="Event"
+                           asp-action="GetData">
+                            Event List
+                        </a>
                     </div>
                 </details>
+<!-- Projects -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Projects
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+        <a asp-controller="Projects"
+           asp-action="GetProject">
+            Projects
+        </a>
+
+        <a asp-controller="Task"
+           asp-action="Index">
+            Task
+        </a>
+
+        <a asp-controller="TaskBoard"
+           asp-action="TaskBoard">
+            TaskBoard
+        </a>
+    </div>
+</details>
+
+
+<!-- Leave -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Leave
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+        <a asp-controller="AdminLeave"
+           asp-action="AddLeaveDeptwise">
+            Leave Deptwise
+        </a>
+
+        <a asp-controller="AdminLeave"
+           asp-action="DepartmentLeaveDetails">
+            Departement Leave
+        </a>
+
+        <a asp-controller="AdminLeave"
+           asp-action="ManageLeaveType">
+            Manage Leave Types
+        </a>
+
+        <a asp-controller="AdminLeave"
+           asp-action="ManageLeaveSettings">
+            Manage Leave Settings
+        </a>
+    </div>
+</details>
+
+
+<!-- Attendance -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Attendance
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+        <a asp-controller="AdminAttendance"
+           asp-action="AdminAttendanceList">
+            Attendance List
+        </a>
+    </div>
+</details>
+
+
+<!-- Timesheet -->
+<details>
+    <summary class="sidebar-link">
+        <span>♧</span>
+        Timesheet
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+        <a asp-controller="AdminTimesheet"
+           asp-action="AdminTimesheet">
+            Timesheet
+        </a>
+    </div>
+</details>                </details>
 
                 <!-- Training -->
                 <details>
@@ -204,6 +309,27 @@
                         <a href="#">Upload Document</a>
                     </div>
                 </details>
+                <!-- Promotion -->
+                <a asp-controller="Promotion"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Promotion
+                </a>
+                <!-- Resignation -->
+                <a asp-controller="Resignation"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Resignation
+                </a>
+                <!-- Termination -->
+                <a asp-controller="Termination"
+                   asp-action="Index"
+                   class="sidebar-link">
+                    <span>⌂</span>
+                    Termination
+                </a>
 
                 <!-- Logout -->
                 <a asp-controller="Auth"
@@ -219,16 +345,129 @@
 
         <div class="admin-content">
 
-            <header class="admin-header">
-                <h2>HRMS - Admin Panel</h2>
-            </header>
+           <header class="admin-header">
+
+    <!-- Left Side -->
+    <div class="header-left">
+
+
+
+
+        <!-- Search -->
+        <div class="header-search">
+
+            <i class="bi bi-search"></i>
+
+            <input type="text"
+                   placeholder="Search in HRMS"
+                   id="adminSearch" />
+
+           
+
+        </div>
+
+    </div>
+
+
+    <!-- Right Side -->
+    <div class="header-right">
+
+        <!-- Profile -->
+        <div class="profile-dropdown">
+
+            <button type="button"
+                    class="profile-button"
+                    id="profileButton">
+
+                @if (!string.IsNullOrEmpty(Context.Session.GetString("ProfilePicture")))
+                {
+                    <img src="@Context.Session.GetString("ProfilePicture")"
+                         class="header-profile-image"
+                         alt="Profile" />
+                }
+                else
+                {
+                    <div class="header-profile-icon">
+                        <i class="bi bi-person"></i>
+                    </div>
+                }
+
+            </button>
+
+
+            <!-- Dropdown -->
+            <div class="profile-menu"
+                 id="profileMenu">
+
+                <div class="profile-menu-header">
+
+                    <div class="profile-menu-icon">
+                        <i class="bi bi-person"></i>
+                    </div>
+
+                    <div>
+
+                        <strong>
+                            @Context.Session.GetString("Name")
+                        </strong>
+
+                        <small>
+                            @Context.Session.GetString("Email")
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="profile-menu-divider"></div>
+
+
+                <!-- My Profile -->
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="profile-menu-item">
+
+                    <i class="bi bi-person"></i>
+
+                    <span>
+                        My Profile
+                    </span>
+
+                </a>
+
+
+                <!-- Logout -->
+                <a asp-controller="Auth"
+                   asp-action="Logout"
+                   class="profile-menu-item logout-item">
+
+                    <i class="bi bi-power"></i>
+
+                    <span>
+                        Logout
+                    </span>
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
 
             <main>
                 @RenderBody()
             </main>
 
             <footer>
-                <p>Admin Layout</p>
+<<<<<<< HEAD
+                <p>Designed and developed by team2</p>
+=======
+                <p>Designed and developed by Team2</p>
+>>>>>>> origin/main
             </footer>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
@@ -238,6 +477,35 @@
 
     </div>
 
+    <script>
 
+    const profileButton =
+        document.getElementById("profileButton");
+
+    const profileMenu =
+        document.getElementById("profileMenu");
+
+
+    profileButton.addEventListener("click", function (event) {
+
+        event.stopPropagation();
+
+        profileMenu.classList.toggle("show");
+
+    });
+
+
+    document.addEventListener("click", function (event) {
+
+        if (!profileMenu.contains(event.target) &&
+            !profileButton.contains(event.target)) {
+
+            profileMenu.classList.remove("show");
+
+        }
+
+    });
+
+</script>
 </body>
 </html>

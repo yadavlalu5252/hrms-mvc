@@ -1,0 +1,275 @@
+﻿@model hrms_mvc.Models.TaskBoards
+
+@{
+    ViewData["Title"] = "Add Task Board";
+
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
+
+    var projects = ViewBag.Projects as List<hrms_mvc.Models.Projects>;
+}
+
+
+<div class="container-fluid mt-4">
+
+    <div class="mb-4">
+
+        <h2 class="fw-bold mb-1">
+            Task Board
+        </h2>
+
+        <div class="text-muted">
+            Projects / Task Board
+        </div>
+
+    </div>
+
+
+    <div class="card border-0 shadow-sm">
+
+        <div class="card-body p-4">
+
+            <form asp-controller="TaskBoard"
+                  asp-action="AddTaskBoard"
+                  method="post">
+
+
+                <div class="row">
+
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Project Name
+                        </label>
+
+                        <select asp-for="ProjectId"
+                                id="ProjectId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Project
+                            </option>
+
+                            @if (projects != null)
+                            {
+                                foreach (var project in projects)
+                                {
+                                    <option value="@project.ProjectsId">
+                                        @project.ProjectName
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Task Name
+                        </label>
+
+                        <select asp-for="TaskId"
+                                id="TaskId"
+                                class="form-select"
+                                required>
+
+                            <option value="">
+                                Select Task
+                            </option>
+
+                        </select>
+
+                        <span asp-validation-for="TaskId"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+
+
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Percentage
+                        </label>
+
+                        <input asp-for="Percentage"
+                               type="number"
+                               min="0"
+                               max="100"
+                               class="form-control"
+                               placeholder="Enter Percentage"
+                               required />
+
+                    </div>
+
+
+
+
+                    <div class="col-md-6 mb-4">
+
+                        <label class="form-label fw-semibold">
+                            Due Date
+                        </label>
+
+                        <input asp-for="DueDate"
+                               type="date"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+                </div>
+
+
+
+
+                <div class="d-flex justify-content-end gap-2">
+
+                    <a asp-controller="TaskBoard"
+                       asp-action="TaskBoard"
+                       class="btn btn-light border px-4">
+
+                        Cancel
+
+                    </a>
+
+
+                    <button type="submit"
+                            class="btn btn-orange px-4">
+
+                        Save
+
+                    </button>
+
+                </div>
+
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    .btn-orange {
+        background-color: #ff6b2c;
+        border-color: #ff6b2c;
+        color: white;
+    }
+
+    .btn-orange:hover {
+        background-color: #e85b20;
+        border-color: #e85b20;
+        color: white;
+    }
+
+</style>
+
+
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        var projectDropdown =
+            document.getElementById("ProjectId");
+
+        var taskDropdown =
+            document.getElementById("TaskId");
+
+
+        projectDropdown.addEventListener("change", function () {
+
+            var projectId = this.value;
+
+
+
+            taskDropdown.innerHTML =
+                '<option value="">Select Task</option>';
+
+
+
+            if (projectId === "") {
+                return;
+            }
+
+
+
+            fetch('/TaskBoard/GetTasksByProject?projectId=' + projectId)
+
+                .then(function (response) {
+
+                    if (!response.ok) {
+                        throw new Error("Unable to load tasks");
+                    }
+
+                    return response.json();
+
+                })
+
+                .then(function (data) {
+
+
+
+                    if (data.length === 0) {
+
+                        taskDropdown.innerHTML =
+                            '<option value="">No Tasks Found</option>';
+
+                        return;
+                    }
+
+
+
+                    data.forEach(function (task) {
+
+                        var option =
+                            document.createElement("option");
+
+
+                        option.value = task.id;
+
+
+                        option.textContent = task.title;
+
+
+                        taskDropdown.appendChild(option);
+
+                    });
+
+                })
+
+                .catch(function (error) {
+
+                    console.log(error);
+
+                    taskDropdown.innerHTML =
+                        '<option value="">Unable to load tasks</option>';
+
+                });
+
+        });
+
+    });
+
+</script>

@@ -22,9 +22,9 @@ namespace hrms_mvc.Models
 		public string? ApprovedBy { get; set; }
 		public DateTime? ApprovedAt { get; set; }
 
-		//[ForeignKey("Projects")]
-		//public int ProjectId { get; set; }
-		//public Projects Projects { get; set; }
+		[ForeignKey("Projects")]
+		public int ProjectId { get; set; }
+		public Projects Projects { get; set; }
 
 
 	}

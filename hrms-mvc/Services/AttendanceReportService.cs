@@ -15,9 +15,7 @@ namespace hrms_mvc.Services
 
         public async Task<List<Attendance>> GetAttendanceRecords( string? dateFilter,string? status,string? sortBy)
         {
-            var query = db.Attendances
-                .Include(x => x.User)
-                .AsQueryable();
+            var query = db.Attendances.Include(x => x.User).AsQueryable();
 
             if (!string.IsNullOrEmpty(status))
             {

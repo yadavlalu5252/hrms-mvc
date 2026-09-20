@@ -1,0 +1,1365 @@
+﻿@model List<hrms_mvc.Models.Projects>
+
+@{
+    ViewData["Title"] = "Projects";
+
+    var role = Context.Session.GetString("Role");
+
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
+}
+
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.8/css/jquery.dataTables.min.css" />
+
+<style>
+
+    .projects-page {
+        padding: 10px 0;
+    }
+
+    
+    .project-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+        .project-header h2 {
+            font-size: 25px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+    .breadcrumb-text {
+        color: #6c757d;
+        font-size: 14px;
+    }
+
+    .top-buttons {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .normal-btn {
+        background: white;
+        border: 1px solid #dee2e6;
+        padding: 9px 14px;
+        border-radius: 5px;
+    }
+
+    .add-project-btn {
+        background: #ff5e14;
+        color: white;
+        border: none;
+        padding: 10px 17px;
+        border-radius: 5px;
+        font-weight: 600;
+    }
+
+    .project-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 7px;
+        margin-bottom: 20px;
+    }
+
+    .project-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 18px 20px;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+        .project-card-header h5 {
+            margin: 0;
+            font-weight: 600;
+        }
+
+    .card-filter {
+        display: flex;
+        gap: 12px;
+    }
+
+        .card-filter select {
+            min-width: 120px;
+            padding: 8px;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+        }
+
+    .project-card-body {
+        padding: 20px;
+    }
+
+
+    #projectTable {
+        width: 100%;
+    }
+
+        #projectTable thead th {
+            background: #e9edf2;
+            color: #111827;
+            font-weight: 600;
+            padding: 13px;
+        }
+
+        #projectTable tbody td {
+            padding: 13px;
+            vertical-align: middle;
+        }
+
+
+    .priority-dot {
+        font-size: 16px;
+        margin-right: 5px;
+    }
+
+    .priority-high {
+        color: #ef4444;
+    }
+
+    .priority-medium {
+        color: #f59e0b;
+    }
+
+    .priority-low {
+        color: #22c55e;
+    }
+
+
+    .status-active {
+        background: #10b981;
+        color: white;
+        padding: 4px 11px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+    .status-inactive {
+        background: #ef4444;
+        color: white;
+        padding: 4px 11px;
+        border-radius: 4px;
+        font-size: 12px;
+    }
+
+
+    .team-images {
+        display: flex;
+        align-items: center;
+    }
+
+    .team-placeholder {
+        width: 31px;
+        height: 31px;
+        border-radius: 50%;
+        background: #dbeafe;
+        border: 2px solid white;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        margin-left: -8px;
+    }
+
+        .team-placeholder:first-child {
+            margin-left: 0;
+        }
+
+
+    .action-button {
+        border: none;
+        background: transparent;
+        padding: 4px 7px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+
+        .action-button:hover {
+            opacity: 0.7;
+        }
+
+
+    #addProjectSection {
+        display: none;
+    }
+
+    .form-card {
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 7px;
+        padding: 25px;
+    }
+
+        .form-card h4 {
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+
+    .form-label {
+        font-weight: 500;
+        margin-bottom: 7px;
+    }
+
+    .form-control,
+    .form-select {
+        min-height: 44px;
+    }
+
+    textarea.form-control {
+        min-height: 100px;
+    }
+
+    .team-dropdown-button {
+        background: #397d91;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        padding: 10px 15px;
+    }
+
+    .team-dropdown-menu {
+        min-width: 240px;
+        max-height: 280px;
+        overflow-y: auto;
+        padding: 12px;
+    }
+
+    .save-area {
+        display: flex;
+        justify-content: flex-end;
+        margin-top: 25px;
+    }
+
+    .save-btn {
+        background: #ff5e14;
+        color: white;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 5px;
+    }
+
+    .back-btn {
+        background: #6c757d;
+        color: white;
+        border: none;
+        padding: 10px 22px;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+</style>
+
+
+<div class="projects-page">
+
+
+    <div id="projectListSection">
+
+        <div class="project-header">
+
+            <div>
+
+                <h2>Projects</h2>
+
+                <div class="breadcrumb-text">
+                    ⌂ / Employee / Projects List
+                </div>
+
+            </div>
+
+
+            <div class="top-buttons">
+
+                <button type="button"
+                        class="normal-btn">
+                    ☷
+                </button>
+
+                <button type="button"
+                        class="normal-btn">
+                    ▦
+                </button>
+
+
+                <div class="dropdown">
+
+                    <button class="normal-btn dropdown-toggle"
+                            type="button"
+                            data-bs-toggle="dropdown">
+
+                        Export
+
+                    </button>
+
+                    <ul class="dropdown-menu">
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Export as PDF
+                            </a>
+                        </li>
+
+                        <li>
+                            <a class="dropdown-item" href="#">
+                                Export as Excel
+                            </a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <button type="button"
+                        class="add-project-btn"
+                        onclick="showAddProject()">
+
+                    ⊕ Add Project
+
+                </button>
+
+            </div>
+
+        </div>
+
+
+
+        <div class="project-card">
+
+            <div class="project-card-header">
+
+                <h5>Project List</h5>
+
+                <div class="card-filter">
+
+                    <select>
+                        <option>All</option>
+                        <option>Active</option>
+                        <option>Inactive</option>
+                    </select>
+
+                    <select id="sortProject">
+
+                        <option value="">
+                            Sort By
+                        </option>
+
+                        <option value="asc">
+                            Ascending
+                        </option>
+
+                        <option value="desc">
+                            Descending
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <div class="project-card-body">
+
+                <table id="projectTable"
+                       class="table">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>Project Id</th>
+                            <th>Project Name</th>
+                            <th>Team Members</th>
+                            <th>Deadline</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Action</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @foreach (var item in Model)
+                        {
+                            <tr>
+
+                                <!-- PROJECT ID -->
+
+                                <td>
+                                    @item.ProjectsId
+                                </td>
+
+
+                                <!-- PROJECT NAME -->
+
+                                <td>
+
+                                    <strong>
+                                        @item.ProjectName
+                                    </strong>
+
+                                </td>
+
+
+                                <!-- TEAM -->
+
+                                <td>
+
+                                    <div class="team-images">
+
+                                        <span class="team-placeholder">
+                                            U
+                                        </span>
+
+                                        <span class="team-placeholder">
+                                            U
+                                        </span>
+
+                                    </div>
+
+                                </td>
+
+
+                                <!-- DEADLINE -->
+
+                                <td>
+                                    @item.EndDate
+                                </td>
+
+
+                                <!-- PRIORITY -->
+
+                                <td>
+
+                                    @if (item.Priority == "High")
+                                    {
+                                        <span class="priority-high">
+
+                                            <span class="priority-dot">
+                                                ●
+                                            </span>
+
+                                            High
+
+                                        </span>
+                                    }
+                                    else if (item.Priority == "Medium")
+                                    {
+                                        <span class="priority-medium">
+
+                                            <span class="priority-dot">
+                                                ●
+                                            </span>
+
+                                            Medium
+
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="priority-low">
+
+                                            <span class="priority-dot">
+                                                ●
+                                            </span>
+
+                                            @item.Priority
+
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                <!-- STATUS -->
+
+                                <td>
+
+                                    @if (item.Status == "Active")
+                                    {
+                                        <span class="status-active">
+                                            ● Active
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-inactive">
+                                            ● @item.Status
+                                        </span>
+                                    }
+
+                                </td>
+
+
+                                
+                                <td>
+
+                                    
+                                    <button type="button"
+                                            class="action-button"
+                                            title="Edit"
+                                            onclick="openEditModal(this)"
+                                            data-id="@item.ProjectsId"
+                                            data-projectname="@item.ProjectName"
+                                            data-clientname="@item.ClientName"
+                                            data-description="@item.Description"
+                                            data-startdate="@item.StartDate"
+                                            data-enddate="@item.EndDate"
+                                            data-priority="@item.Priority"
+                                            data-projectvalue="@item.ProjectValue"
+                                            data-pricetype="@item.PriceType"
+                                            data-status="@item.Status"
+                                            data-manager="@item.ManagerName">
+
+                                        Edit
+
+                                    </button>
+
+
+                                    
+                                    <form asp-controller="Projects"
+                                          asp-action="Delete"
+                                          method="post"
+                                          style="display:inline;">
+
+                                        <input type="hidden"
+                                               name="id"
+                                               value="@item.ProjectsId" />
+
+                                        <button type="submit"
+                                                class="action-button"
+                                                title="Delete"
+                                                onclick="return confirm('Are you sure you want to delete this project?')">
+
+                                            Delete
+
+                                        </button>
+
+                                    </form>
+
+                                </td>
+
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    
+    <div id="addProjectSection">
+
+        <div class="form-card">
+
+            <div>
+
+                <h2>Projects</h2>
+
+                <div class="breadcrumb-text mb-4">
+                    ⌂ / Employee / Add Project
+                </div>
+
+            </div>
+
+
+            <h4>Add Project</h4>
+
+
+            <form asp-controller="Projects"
+                  asp-action="AddProject"
+                  method="post"
+                  enctype="multipart/form-data">
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        ProjectName
+                    </label>
+
+                    <input type="text"
+                           name="ProjectName"
+                           class="form-control"
+                           required />
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        ClientName
+                    </label>
+
+                    <input type="text"
+                           name="ClientName"
+                           class="form-control"
+                           required />
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Description
+                    </label>
+
+                    <textarea name="Description"
+                              class="form-control">
+                    </textarea>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        StartDate
+                    </label>
+
+                    <input type="date"
+                           name="StartDate"
+                           class="form-control" />
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        EndDate
+                    </label>
+
+                    <input type="date"
+                           name="EndDate"
+                           class="form-control" />
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Priority
+                    </label>
+
+                    <select name="Priority"
+                            class="form-select">
+
+                        <option value="">
+                            Select Priority
+                        </option>
+
+                        <option value="High">
+                            High
+                        </option>
+
+                        <option value="Medium">
+                            Medium
+                        </option>
+
+                        <option value="Low">
+                            Low
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        ProjectValue
+                    </label>
+
+                    <input type="number"
+                           name="ProjectValue"
+                           class="form-control" />
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        PriceType
+                    </label>
+
+                    <select name="PriceType"
+                            class="form-select">
+
+                        <option value="">
+                            Select Currency Type
+                        </option>
+
+                        <option value="INR">
+                            INR
+                        </option>
+
+                        <option value="USD">
+                            USD
+                        </option>
+
+                        <option value="EUR">
+                            EUR
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Status
+                    </label>
+
+                    <select name="Status"
+                            class="form-select">
+
+                        <option value="">
+                            Select Status
+                        </option>
+
+                        <option value="Active">
+                            Active
+                        </option>
+
+                        <option value="Inactive">
+                            Inactive
+                        </option>
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label d-block">
+                        Team Members
+                    </label>
+
+                    <div class="dropdown">
+
+                        <button class="btn team-dropdown-button dropdown-toggle"
+                                type="button"
+                                id="teamDropdown"
+                                data-bs-toggle="dropdown"
+                                data-bs-auto-close="outside">
+
+                            Select Team Members
+
+                        </button>
+
+
+                        <div class="dropdown-menu team-dropdown-menu">
+
+                            @if (ViewBag.Users != null)
+                            {
+                                @foreach (var user in ViewBag.Users)
+                                {
+                                    <div class="form-check mb-2">
+
+                                        <input class="form-check-input"
+                                               type="checkbox"
+                                               name="TeamMemberIds"
+                                               value="@user.Id"
+                                               id="user_@user.Id" />
+
+                                        <label class="form-check-label"
+                                               for="user_@user.Id">
+
+                                            @user.FirstName @user.LastName
+
+                                        </label>
+
+                                    </div>
+                                }
+                            }
+                            else
+                            {
+                                <span class="text-muted">
+                                    No users found
+                                </span>
+                            }
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        ManagerName
+                    </label>
+
+                    <select name="ManagerName"
+                            class="form-select">
+
+                        <option value="">
+                            Select Project Manager
+                        </option>
+
+                        @if (ViewBag.Managers != null)
+                        {
+                            @foreach (var manager in ViewBag.Managers)
+                            {
+                                <option value="@($"{manager.FirstName} {manager.LastName}")">
+
+                                    @manager.FirstName @manager.LastName
+
+                                </option>
+                            }
+                        }
+
+                    </select>
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Upload Project Logo
+                    </label>
+
+                    <input type="file"
+                           name="ProjectLogo"
+                           class="form-control"
+                           accept="image/*" />
+
+                </div>
+
+
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Upload File
+                    </label>
+
+                    <input type="file"
+                           name="ProjectFile"
+                           class="form-control" />
+
+                </div>
+
+
+
+                <div class="save-area">
+
+                    <button type="button"
+                            class="back-btn"
+                            onclick="showProjectList()">
+
+                        Back
+
+                    </button>
+
+                    <button type="submit"
+                            class="save-btn">
+
+                        Save
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<div class="modal fade"
+     id="editProjectModal"
+     tabindex="-1">
+
+    <div class="modal-dialog modal-lg">
+
+        <div class="modal-content">
+
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    Edit Project
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+
+            <form asp-controller="Projects"
+                  asp-action="Update"
+                  method="post">
+
+
+                <div class="modal-body">
+
+
+                    <!-- ID -->
+
+                    <input type="hidden"
+                           id="editProjectsId"
+                           name="ProjectsId" />
+
+
+                    <!-- PROJECT NAME -->
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Project Name
+                        </label>
+
+                        <input type="text"
+                               id="editProjectName"
+                               name="ProjectName"
+                               class="form-control"
+                               required />
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Client Name
+                        </label>
+
+                        <input type="text"
+                               id="editClientName"
+                               name="ClientName"
+                               class="form-control" />
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Description
+                        </label>
+
+                        <textarea id="editDescription"
+                                  name="Description"
+                                  class="form-control"></textarea>
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Start Date
+                        </label>
+
+                        <input type="date"
+                               id="editStartDate"
+                               name="StartDate"
+                               class="form-control" />
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            End Date
+                        </label>
+
+                        <input type="date"
+                               id="editEndDate"
+                               name="EndDate"
+                               class="form-control" />
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Priority
+                        </label>
+
+                        <select id="editPriority"
+                                name="Priority"
+                                class="form-select">
+
+                            <option value="High">
+                                High
+                            </option>
+
+                            <option value="Medium">
+                                Medium
+                            </option>
+
+                            <option value="Low">
+                                Low
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Project Value
+                        </label>
+
+                        <input type="number"
+                               id="editProjectValue"
+                               name="ProjectValue"
+                               class="form-control" />
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Price Type
+                        </label>
+
+                        <select id="editPriceType"
+                                name="PriceType"
+                                class="form-select">
+
+                            <option value="INR">
+                                INR
+                            </option>
+
+                            <option value="USD">
+                                USD
+                            </option>
+
+                            <option value="EUR">
+                                EUR
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Status
+                        </label>
+
+                        <select id="editStatus"
+                                name="Status"
+                                class="form-select">
+
+                            <option value="Active">
+                                Active
+                            </option>
+
+                            <option value="Inactive">
+                                Inactive
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+
+                    <div class="mb-3">
+
+                        <label class="form-label">
+                            Manager
+                        </label>
+
+                        <select id="editManagerName"
+                                name="ManagerName"
+                                class="form-select">
+
+                            <option value="">
+                                Select Project Manager
+                            </option>
+
+                            @if (ViewBag.Managers != null)
+                            {
+                                @foreach (var manager in ViewBag.Managers)
+                                {
+                                    <option value="@($"{manager.FirstName} {manager.LastName}")">
+
+                                        @manager.FirstName @manager.LastName
+
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-secondary"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+
+                    <button type="submit"
+                            class="save-btn">
+
+                        Update
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+<script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+
+        var table = $('#projectTable').DataTable({
+
+            pageLength: 10,
+
+            lengthMenu: [
+                [10, 25, 50, 100],
+                [10, 25, 50, 100]
+            ],
+
+            searching: true,
+
+            ordering: true,
+
+            paging: true,
+
+            info: true,
+
+            autoWidth: false
+
+        });
+
+
+
+        $('#sortProject').change(function () {
+
+            var value = $(this).val();
+
+            if (value == "asc") {
+
+                table
+                    .order([1, 'asc'])
+                    .draw();
+            }
+
+            if (value == "desc") {
+
+                table
+                    .order([1, 'desc'])
+                    .draw();
+            }
+
+        });
+
+    });
+
+
+
+    function showAddProject() {
+
+        document
+            .getElementById("projectListSection")
+            .style.display = "none";
+
+        document
+            .getElementById("addProjectSection")
+            .style.display = "block";
+
+        window.scrollTo(0, 0);
+    }
+
+
+
+    function showProjectList() {
+
+        document
+            .getElementById("addProjectSection")
+            .style.display = "none";
+
+        document
+            .getElementById("projectListSection")
+            .style.display = "block";
+
+        window.scrollTo(0, 0);
+    }
+
+
+
+    function openEditModal(button) {
+
+        var id =
+            button.getAttribute("data-id");
+
+        var projectName =
+            button.getAttribute("data-projectname");
+
+        var clientName =
+            button.getAttribute("data-clientname");
+
+        var description =
+            button.getAttribute("data-description");
+
+        var startDate =
+            button.getAttribute("data-startdate");
+
+        var endDate =
+            button.getAttribute("data-enddate");
+
+        var priority =
+            button.getAttribute("data-priority");
+
+        var projectValue =
+            button.getAttribute("data-projectvalue");
+
+        var priceType =
+            button.getAttribute("data-pricetype");
+
+        var status =
+            button.getAttribute("data-status");
+
+        var manager =
+            button.getAttribute("data-manager");
+
+
+        document.getElementById("editProjectsId").value =
+            id;
+
+        document.getElementById("editProjectName").value =
+            projectName;
+
+        document.getElementById("editClientName").value =
+            clientName;
+
+        document.getElementById("editDescription").value =
+            description;
+
+        document.getElementById("editPriority").value =
+            priority;
+
+        document.getElementById("editProjectValue").value =
+            projectValue;
+
+        document.getElementById("editPriceType").value =
+            priceType;
+
+        document.getElementById("editStatus").value =
+            status;
+
+        document.getElementById("editManagerName").value =
+            manager;
+
+
+        if (startDate) {
+
+            document.getElementById("editStartDate").value =
+                startDate.substring(0, 10);
+        }
+
+
+        if (endDate) {
+
+            document.getElementById("editEndDate").value =
+                endDate.substring(0, 10);
+        }
+
+
+        var modal =
+            new bootstrap.Modal(
+                document.getElementById("editProjectModal")
+            );
+
+        modal.show();
+    }
+
+</script>

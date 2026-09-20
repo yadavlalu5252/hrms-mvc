@@ -1,0 +1,238 @@
+﻿@using hrms_mvc.Models
+
+@model User
+
+<div class="modal fade"
+     id="editEmployeeModal"
+     tabindex="-1"
+     aria-labelledby="editEmployeeModalLabel"
+     aria-hidden="true">
+
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+
+        <div class="modal-content border-0 shadow">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title fw-bold" id="editEmployeeModalLabel">
+                    Edit Employee
+                </h5>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="modal">
+                </button>
+
+            </div>
+
+            <form asp-controller="EmployeeDetails"
+                  asp-action="EditEmployee"
+                  method="post">
+
+                <div class="modal-body">
+
+                    <h6 class="fw-bold text-orange border-bottom pb-2 mb-4">
+                        Basic Information
+                    </h6>
+
+                    <input type="hidden"
+                           name="Id"
+                           value="@Model?.Id" />
+
+                    <!-- Profile Image -->
+                    <div class="p-3 mb-4 bg-light rounded">
+
+                        <div class="d-flex align-items-center">
+
+                            <div class="me-3">
+
+                                <img src="@Model?.ProfilePicture"
+                                     alt="Profile Picture"
+                                     class="rounded-circle border"
+                                     style="width: 85px; height: 85px; object-fit: cover;" />
+
+                            </div>
+
+                            <div>
+
+                                <h6 class="mb-1 fw-bold">
+                                    Upload Profile Image
+                                </h6>
+
+                                <small class="text-muted d-block mb-2">
+                                    Image should be below 4 mb
+                                </small>
+
+                                <button type="button"
+                                        class="btn btn-sm text-white"
+                                        style="background-color: #ff6a00;">
+
+                                    Upload
+
+                                </button>
+
+                                <button type="button"
+                                        class="btn btn-sm btn-light">
+
+                                    Cancel
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+
+                        <!-- First Name -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                First Name <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   name="FirstName"
+                                   value="@Model?.FirstName"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+                        <!-- Last Name -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Last Name
+                            </label>
+
+                            <input type="text"
+                                   name="LastName"
+                                   value="@Model?.LastName"
+                                   class="form-control" />
+
+                        </div>
+
+                        <!-- Date of Birth -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Date of Birth <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="date"
+                                   name="DateOfBirth"
+                                   value="@Model?.DateOfBirth.ToString("yyyy-MM-dd")"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+                        <!-- Email -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Email <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="email"
+                                   name="Email"
+                                   value="@Model?.Email"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Phone Number <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   name="MobileNumber"
+                                   value="@Model?.MobileNumber"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+                        <!-- Address -->
+                        <div class="col-md-6 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                Address <span class="text-danger">*</span>
+                            </label>
+
+                            <input type="text"
+                                   name="Address"
+                                   value="@Model?.Address"
+                                   class="form-control"
+                                   required />
+
+                        </div>
+
+                        <!-- About Employee -->
+                        <div class="col-md-12 mb-3">
+
+                            <label class="form-label fw-semibold">
+                                About <span class="text-danger">*</span>
+                            </label>
+
+                            <textarea name="AboutEmployee"
+                                      class="form-control"
+                                      rows="4"
+                                      required>@Model?.AboutEmployee</textarea>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <div class="modal-footer">
+
+                    <button type="button"
+                            class="btn btn-light border"
+                            data-bs-dismiss="modal">
+
+                        Cancel
+
+                    </button>
+
+                    <button type="submit"
+                            class="btn text-white"
+                            style="background-color: #ff6a00;">
+
+                        Save
+
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .text-orange {
+        color: #ff6a00;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        min-height: 42px;
+    }
+
+    .form-control:focus {
+        border-color: #ff6a00;
+        box-shadow: 0 0 0 0.15rem rgba(255, 106, 0, 0.15);
+    }
+</style>
