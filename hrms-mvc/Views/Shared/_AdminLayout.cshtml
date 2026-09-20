@@ -45,7 +45,7 @@
                 </a>
 
                 <!-- Employees -->
-                <details open>
+                <details>
                     <summary class="sidebar-link">
                         <span>♙</span>
                         Employees
@@ -90,6 +90,7 @@
                 <!-- Events -->
                 <details>
                     <summary class="sidebar-link">
+                        <i class="bi bi-calendar-event"></i>
                         Events
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -116,7 +117,7 @@
 <!-- Projects -->
 <details>
     <summary class="sidebar-link">
-        <span>♧</span>
+        <i class="bi bi-kanban"></i>
         Projects
         <span class="menu-arrow">⌄</span>
     </summary>
@@ -143,7 +144,7 @@
 <!-- Leave -->
 <details>
     <summary class="sidebar-link">
-        <span>♧</span>
+        <i class="bi bi-calendar-x"></i>
         Leave
         <span class="menu-arrow">⌄</span>
     </summary>
@@ -175,7 +176,7 @@
 <!-- Attendance -->
 <details>
     <summary class="sidebar-link">
-        <span>♧</span>
+        <i class="bi bi-calendar-check"></i>
         Attendance
         <span class="menu-arrow">⌄</span>
     </summary>
@@ -192,7 +193,7 @@
 <!-- Timesheet -->
 <details>
     <summary class="sidebar-link">
-        <span>♧</span>
+        <i class="bi bi-clock-history"></i>
         Timesheet
         <span class="menu-arrow">⌄</span>
     </summary>
@@ -208,7 +209,7 @@
                 <!-- Training -->
                 <details>
                     <summary class="sidebar-link">
-                        <span>✎</span>
+                        <i class="bi bi-mortarboard"></i>
                         Training
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -219,24 +220,12 @@
                     </div>
                 </details>
 
-                <!-- Performance and Goal -->
-                <details>
-                    <summary class="sidebar-link">
-                        <span>▱</span>
-                        Performance &amp; Goal
-                        <span class="menu-arrow">⌄</span>
-                    </summary>
-
-                    <div class="submenu">
-                        <a href="#">Performance List</a>
-                        <a href="#">Add Goal</a>
-                    </div>
-                </details>
+                
 
                 <!-- Reports -->
                 <details>
                     <summary class="sidebar-link">
-                        <span>▱</span>
+                        <i class="bi bi-bar-chart-line"></i>
                         Reports
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -284,7 +273,7 @@
                 <!-- Master Documents -->
                 <details>
                     <summary class="sidebar-link">
-                        <span>▱</span>
+                        <i class="bi bi-folder2-open"></i>
                         Master Documents
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -298,7 +287,7 @@
                 <!-- Documents -->
                 <details>
                     <summary class="sidebar-link">
-                        <span>▱</span>
+                        <i class="bi bi-file-earmark-text"></i>
                         Documents
                         <span class="menu-arrow">⌄</span>
                     </summary>
@@ -312,22 +301,25 @@
                 <a asp-controller="Promotion"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Promotion
+<i class="bi bi-graph-up-arrow"></i>
+                    <span>Promotion</span>
+                    
                 </a>
                 <!-- Resignation -->
                 <a asp-controller="Resignation"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Resignation
+                   <i class="bi bi-person-dash"></i>
+                    <span>Resignation</span>
+                    
                 </a>
                 <!-- Termination -->
                 <a asp-controller="Termination"
                    asp-action="Index"
                    class="sidebar-link">
-                    <span>⌂</span>
-                    Termination
+                   <i class="bi bi-person-x"></i>
+                    <span>Termination</span>
+                    
                 </a>
 
                 <!-- Logout -->
