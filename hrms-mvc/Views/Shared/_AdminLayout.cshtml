@@ -259,6 +259,26 @@
                             Leave Report
                         </a>
 
+                        <a asp-controller="Reports"
+                           asp-action="PayslipReport">
+                            Payslip Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="ProjectReport">
+                            Project Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="TaskReport">
+                            Task Report
+                        </a>
+
+                        <a asp-controller="Reports"
+                           asp-action="DailyReport">
+                            Daily Report
+                        </a>
+
                     </div>
                 </details>
 
@@ -451,7 +471,7 @@
             </footer>
             <script src="~/lib/jquery/dist/jquery.min.js"></script>
             <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-
+           
             @await RenderSectionAsync("Scripts", required: false)
         </div>
 

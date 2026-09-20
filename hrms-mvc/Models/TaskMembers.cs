@@ -11,7 +11,7 @@ namespace hrms_mvc.Models
         [ForeignKey("Task")]
         public int? TaskId { get; set; }
 
-        public Tasks Task { get; set; }
+        public Tasks? Task { get; set; }
 
     }
 }

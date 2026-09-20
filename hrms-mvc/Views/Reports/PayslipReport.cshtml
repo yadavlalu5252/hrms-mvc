@@ -1,0 +1,1028 @@
+﻿@model List<hrms_mvc.Models.Payslips>
+
+@{
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    ViewData["Title"] = "Payslip Report";
+}
+
+<div class="container-fluid">
+
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h3 class="mb-1">Payslip Report</h3>
+
+            <p class="text-muted mb-0">
+                View employee salary and payslip information
+            </p>
+        </div>
+
+        <!-- Export -->
+        <div class="dropdown">
+
+            <button class="btn btn-outline-secondary dropdown-toggle"
+                    type="button"
+                    data-bs-toggle="dropdown">
+
+                <i class="bi bi-download me-1"></i>
+                Export
+
+            </button>
+
+            <ul class="dropdown-menu dropdown-menu-end">
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportExcel">
+
+                        <i class="bi bi-file-earmark-excel me-2 text-success"></i>
+                        Excel
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPdf">
+
+                        <i class="bi bi-file-earmark-pdf me-2 text-danger"></i>
+                        PDF
+
+                    </a>
+                </li>
+
+                <li>
+                    <a class="dropdown-item"
+                       href="#"
+                       id="exportPrint">
+
+                        <i class="bi bi-printer me-2"></i>
+                        Print
+
+                    </a>
+                </li>
+
+            </ul>
+
+        </div>
+
+    </div>
+
+
+    <!-- Cards + Chart -->
+    <div class="row g-3 mb-4">
+
+
+        <!-- Left Cards -->
+        <div class="col-lg-6">
+
+            <div class="row g-3">
+
+                <!-- Total Payroll -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Total Payroll
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        ₹@Convert.ToDecimal(ViewBag.TotalPayroll).ToString("N2")
+                                    </h3>
+
+                                    <small class="text-success">
+                                        Current total
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-primary bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-cash-stack fs-4 text-primary"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Deductions -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Deductions
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        ₹@Convert.ToDecimal(ViewBag.TotalDeductions).ToString("N2")
+                                    </h3>
+
+                                    <small class="text-success">
+                                        Current total
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-danger bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-dash-circle fs-4 text-danger"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Net Pay -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Net Pay
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        ₹@Convert.ToDecimal(ViewBag.NetPay).ToString("N2")
+                                    </h3>
+
+                                    <small class="text-success">
+                                        Current total
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-success bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-wallet2 fs-4 text-success"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- Earnings -->
+                <div class="col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
+
+                        <div class="card-body">
+
+                            <div class="d-flex justify-content-between align-items-center">
+
+                                <div>
+
+                                    <p class="text-muted mb-1">
+                                        Earnings
+                                    </p>
+
+                                    <h3 class="mb-0">
+                                        ₹@Convert.ToDecimal(ViewBag.TotalEarnings).ToString("N2")
+                                    </h3>
+
+                                    <small class="text-success">
+                                        Current total
+                                    </small>
+
+                                </div>
+
+                                <div class="bg-info bg-opacity-10 rounded-circle p-3">
+
+                                    <i class="bi bi-graph-up fs-4 text-info"></i>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- Chart -->
+        <div class="col-lg-6">
+
+            <div class="card border-0 shadow-sm h-100">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+
+                        <h5 class="mb-0 fw-semibold">
+
+                            <i class="bi bi-bar-chart-fill text-danger me-2"></i>
+
+                            Payroll
+
+                        </h5>
+
+
+                        <select id="payrollYearFilter"
+                                class="form-select form-select-sm"
+                                style="width:110px;">
+
+                            <option value="all">
+                                All Data
+                            </option>
+
+                            <option value="2026">
+                                2026
+                            </option>
+
+                            <option value="2025">
+                                2025
+                            </option>
+
+                            <option value="2024">
+                                2024
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div style="height:310px;">
+
+                        <canvas id="payrollChart"></canvas>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- Filters -->
+    <div class="card shadow-sm border-0 mb-4">
+
+        <div class="card-body">
+
+            <form method="get"
+                  asp-controller="Reports"
+                  asp-action="PayslipReport"
+                  id="payslipFilterForm">
+
+                <div class="row g-3">
+
+
+                    <!-- Month -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Month
+                        </label>
+
+                        <select name="month"
+                                class="form-select"
+                                onchange="document.getElementById('payslipFilterForm').submit();">
+
+                            <option value="">
+                                All Months
+                            </option>
+
+                            <option value="January"
+                                    selected="@(ViewBag.Month == "January" ? "selected" : null)">
+                                January
+                            </option>
+
+                            <option value="February"
+                                    selected="@(ViewBag.Month == "February" ? "selected" : null)">
+                                February
+                            </option>
+
+                            <option value="March"
+                                    selected="@(ViewBag.Month == "March" ? "selected" : null)">
+                                March
+                            </option>
+
+                            <option value="April"
+                                    selected="@(ViewBag.Month == "April" ? "selected" : null)">
+                                April
+                            </option>
+
+                            <option value="May"
+                                    selected="@(ViewBag.Month == "May" ? "selected" : null)">
+                                May
+                            </option>
+
+                            <option value="June"
+                                    selected="@(ViewBag.Month == "June" ? "selected" : null)">
+                                June
+                            </option>
+
+                            <option value="July"
+                                    selected="@(ViewBag.Month == "July" ? "selected" : null)">
+                                July
+                            </option>
+
+                            <option value="August"
+                                    selected="@(ViewBag.Month == "August" ? "selected" : null)">
+                                August
+                            </option>
+
+                            <option value="September"
+                                    selected="@(ViewBag.Month == "September" ? "selected" : null)">
+                                September
+                            </option>
+
+                            <option value="October"
+                                    selected="@(ViewBag.Month == "October" ? "selected" : null)">
+                                October
+                            </option>
+
+                            <option value="November"
+                                    selected="@(ViewBag.Month == "November" ? "selected" : null)">
+                                November
+                            </option>
+
+                            <option value="December"
+                                    selected="@(ViewBag.Month == "December" ? "selected" : null)">
+                                December
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <!-- Sort -->
+                    <div class="col-md-4">
+
+                        <label class="form-label fw-semibold">
+                            Sort By
+                        </label>
+
+                        <select name="sortBy"
+                                class="form-select"
+                                onchange="document.getElementById('payslipFilterForm').submit();">
+
+                            <option value=""
+                                    selected="@(string.IsNullOrEmpty(ViewBag.SortBy) ? "selected" : null)">
+                                Recent
+                            </option>
+
+                            <option value="Ascending"
+                                    selected="@(ViewBag.SortBy == "Ascending" ? "selected" : null)">
+                                Payslip ID - Ascending
+                            </option>
+
+                            <option value="Descending"
+                                    selected="@(ViewBag.SortBy == "Descending" ? "selected" : null)">
+                                Payslip ID - Descending
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- Payslip Table -->
+    <div class="card shadow-sm border-0">
+
+        <div class="card-body">
+
+            <div class="d-flex justify-content-between align-items-center mb-3">
+
+                <h5 class="mb-0">
+                    Payslip List
+                </h5>
+
+                <span class="text-muted">
+
+                    @Model.Count record(s)
+
+                </span>
+
+            </div>
+
+
+            <div class="table-responsive">
+
+                <table id="payslipTable"
+                       class="table table-hover align-middle mb-0">
+
+                    <thead class="table-light">
+
+                        <tr>
+
+                            <th>Payslip ID</th>
+
+                            <th>Name</th>
+
+                            <th>Paid Amount</th>
+
+                            <th>Paid Month</th>
+
+                            <th>Paid Year</th>
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        @if (Model != null && Model.Any())
+                        {
+
+                            foreach (var payslip in Model)
+                            {
+
+                                <tr>
+
+                                    <!-- ID -->
+
+                                    <td>
+                                        @payslip.Id
+                                    </td>
+
+
+                                    <!-- Name -->
+
+                                    <td>
+
+                                        @if (payslip.User != null)
+                                        {
+
+                                            <div class="fw-semibold">
+
+                                                @payslip.User.FirstName
+                                                @payslip.User.LastName
+
+                                            </div>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span class="text-muted">
+                                                N/A
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Amount -->
+
+                                    <td>
+
+                                        @if (ViewBag.PaidAmounts != null &&
+                                             ViewBag.PaidAmounts.ContainsKey(payslip.UserId))
+                                        {
+
+                                            <span>
+                                                ₹@Convert.ToDecimal(
+                                                                                                    ViewBag.PaidAmounts[payslip.UserId]
+                                                                                                ).ToString("N2")
+                                            </span>
+
+                                        }
+                                        else
+                                        {
+
+                                            <span>
+                                                -
+                                            </span>
+
+                                        }
+
+                                    </td>
+
+
+                                    <!-- Month -->
+
+                                    <td>
+                                        @payslip.Month
+                                    </td>
+
+
+                                    <!-- Year -->
+
+                                    <td>
+                                        @payslip.Year
+                                    </td>
+
+                                </tr>
+
+                            }
+
+                        }
+                        else
+                        {
+
+                            <tr>
+
+                                <td colspan="5"
+                                    class="text-center text-muted py-5">
+
+                                    <i class="bi bi-receipt fs-2"></i>
+
+                                    <p class="mt-2 mb-0">
+                                        No payslip records found.
+                                    </p>
+
+                                </td>
+
+                            </tr>
+
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<style>
+
+    #payslipTable th {
+        white-space: nowrap;
+    }
+
+    #payslipTable td {
+        white-space: nowrap;
+        vertical-align: middle;
+    }
+
+    .dataTables_wrapper .dataTables_filter input {
+        margin-left: 8px;
+    }
+
+</style>
+
+
+@section Scripts
+{
+
+    <!-- DataTables -->
+
+    <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
+
+    <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
+
+
+    <!-- DataTables Buttons -->
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/dataTables.buttons.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/pdfmake.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdfmake/0.2.7/vfs_fonts.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.html5.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/2.4.2/js/buttons.print.min.js"></script>
+
+
+    <!-- Chart.js -->
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+
+    <script>
+
+        $(document).ready(function() {
+
+
+            // DataTable
+
+            const payslipTable = $('#payslipTable').DataTable({
+
+                pageLength: 5,
+
+                lengthMenu: [
+
+                    [5, 10, 25, 50, 100, -1],
+
+                    [5, 10, 25, 50, 100, "All"]
+
+                ],
+
+                order: [[0, 'asc']],
+
+                dom:
+
+                    '<"row mb-3"' +
+
+                    '<"col-md-6"l>' +
+
+                    '<"col-md-6"f>' +
+
+                    '>' +
+
+                    'rt' +
+
+                    '<"row mt-3"' +
+
+                    '<"col-md-6"i>' +
+
+                    '<"col-md-6"p>' +
+
+                    '>',
+
+                buttons: [
+
+                    {
+
+                        extend: 'excel',
+
+                        title: 'Payslip Report',
+
+                        filename: 'PayslipReport',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    },
+
+                    {
+
+                        extend: 'pdf',
+
+                        title: 'Payslip Report',
+
+                        filename: 'PayslipReport',
+
+                        orientation: 'landscape',
+
+                        pageSize: 'A4',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        },
+
+                        customize: function(doc) {
+
+                            doc.content[0].alignment = 'center';
+
+                            doc.content[0].fontSize = 18;
+
+                            doc.content[0].bold = true;
+
+                            doc.content[0].margin = [0, 0, 0, 15];
+
+                        }
+
+                    },
+
+                    {
+
+                        extend: 'print',
+
+                        title: 'Payslip Report',
+
+                        exportOptions: {
+
+                            columns: ':visible',
+
+                            modifier: {
+
+                                search: 'applied'
+
+                            }
+
+                        }
+
+                    }
+
+                ]
+
+            });
+
+
+            // Excel
+
+            $('#exportExcel').on('click', function(e) {
+
+                e.preventDefault();
+
+                payslipTable
+                    .button('.buttons-excel')
+                    .trigger();
+
+            });
+
+
+            // PDF
+
+            $('#exportPdf').on('click', function(e) {
+
+                e.preventDefault();
+
+                payslipTable
+                    .button('.buttons-pdf')
+                    .trigger();
+
+            });
+
+
+            // Print
+
+            $('#exportPrint').on('click', function(e) {
+
+                e.preventDefault();
+
+                payslipTable
+                    .button('.buttons-print')
+                    .trigger();
+
+            });
+
+
+            // Payroll Chart
+
+            const payrollCanvas =
+                document.getElementById('payrollChart');
+
+
+            if (payrollCanvas && typeof Chart !== 'undefined') {
+
+
+                const payrollLabels = [
+
+                    '2025'
+
+                ];
+
+
+                const payrollData = [
+
+                    @Convert.ToDecimal(ViewBag.TotalPayroll)
+
+                ];
+
+
+                const payrollChart = new Chart(
+
+                    payrollCanvas,
+
+                    {
+
+                        type: 'line',
+
+                        data: {
+
+                            labels: payrollLabels,
+
+                            datasets: [
+
+                                {
+
+                                    label: 'Total Salary',
+
+                                    data: payrollData,
+
+                                    borderColor: '#ff6384',
+
+                                    backgroundColor: '#ff6384',
+
+                                    borderWidth: 3,
+
+                                    pointRadius: 5,
+
+                                    pointHoverRadius: 7,
+
+                                    tension: 0.4,
+
+                                    fill: false
+
+                                }
+
+                            ]
+
+                        },
+
+
+                        options: {
+
+                            responsive: true,
+
+                            maintainAspectRatio: false,
+
+
+                            plugins: {
+
+                                legend: {
+
+                                    display: true,
+
+                                    position: 'top'
+
+                                },
+
+
+                                tooltip: {
+
+                                    callbacks: {
+
+                                        label: function(context) {
+
+                                            return 'Total Salary: ₹' +
+
+                                                Number(
+                                                    context.raw
+                                                ).toLocaleString(
+                                                    'en-IN',
+                                                    {
+                                                        minimumFractionDigits: 2
+                                                    }
+                                                );
+
+                                        }
+
+                                    }
+
+                                }
+
+                            },
+
+
+                            scales: {
+
+                                y: {
+
+                                    beginAtZero: true,
+
+                                    ticks: {
+
+                                        callback: function(value) {
+
+                                            return '₹' +
+
+                                                Number(value)
+                                                    .toLocaleString('en-IN');
+
+                                        }
+
+                                    },
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Salary'
+
+                                    }
+
+                                },
+
+
+                                x: {
+
+                                    title: {
+
+                                        display: true,
+
+                                        text: 'Year'
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    }
+
+                );
+
+
+                // Year Filter
+
+                $('#payrollYearFilter').on('change', function() {
+
+                    const selectedYear = $(this).val();
+
+
+                    if (selectedYear === 'all') {
+
+                        payrollChart.data.labels = [
+
+                            '2025'
+
+                        ];
+
+                        payrollChart.data.datasets[0].data = [
+
+                            @Convert.ToDecimal(ViewBag.TotalPayroll)
+
+                        ];
+
+                    }
+
+                    else {
+
+                        payrollChart.data.labels = [
+
+                            selectedYear
+
+                        ];
+
+                        payrollChart.data.datasets[0].data = [
+
+                            @Convert.ToDecimal(ViewBag.TotalPayroll)
+
+                        ];
+
+                    }
+
+
+                    payrollChart.update();
+
+                });
+
+            }
+
+        });
+
+    </script>
+
+}

@@ -66,12 +66,14 @@ namespace hrms_mvc.Services
 
         public async Task<int> TotalHalfDays()
         {
-            return await db.Attendances.CountAsync(x => x.Status == "Half Day");
+            return 0;
+           // return await db.Events.CountAsync(x => x.EventType == "Half Day");
         }
 
         public async Task<int> TotalHolidays()
         {
             return 0;
+           // return await db.Events.CountAsync(x => x.EventType == "Holiday");
         }
 
         public async Task<int> TotalLeaveTaken()
