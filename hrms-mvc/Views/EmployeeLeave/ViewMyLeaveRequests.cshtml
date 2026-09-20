@@ -1,118 +1,148 @@
 ﻿@model List<hrms_mvc.Models.LeaveRequest>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    ViewData["Title"] = "My Leave Requests";
 
-    var balances =
-        ViewBag.LeaveBalances
-        as List<hrms_mvc.Models.LeaveBalance>;
+    var leaveBalances =
+        ViewBag.LeaveBalances as List<hrms_mvc.Models.LeaveBalance>;
 
     var leaveTypes =
-        ViewBag.LeaveTypes
-        as List<hrms_mvc.Models.MasterLeaveType>;
+        ViewBag.LeaveTypes as List<hrms_mvc.Models.MasterLeaveType>;
 
-    int userId =
-        ViewBag.UserId ?? 0;
+    leaveBalances ??=
+        new List<hrms_mvc.Models.LeaveBalance>();
+
+    leaveTypes ??=
+        new List<hrms_mvc.Models.MasterLeaveType>();
 }
 
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
 
-<div class="container-fluid">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-
-
-    <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <div>
-
-            <h2>Leave Requests</h2>
-
-            <p class="text-muted mb-0">
-                Employee / Leave Requests
-            </p>
-
-        </div>
+<link rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" />
 
 
-        <button type="button"
-                class="btn btn-success"
-                data-bs-toggle="modal"
-                data-bs-target="#applyLeaveModal">
+<div class="container-fluid bg-light min-vh-100 py-4">
 
-            <i class="bi bi-plus-circle"></i>
-            Apply Leave
+    <div class="container-fluid">
 
-        </button>
+        <div class="d-flex justify-content-between align-items-center mb-4">
 
-    </div>
+            <div>
+                <h2 class="fw-bold text-primary mb-1">
+                    Employee Leave
+                </h2>
 
-
-
-    @if (TempData["success"] != null)
-    {
-        <div class="alert alert-success alert-dismissible fade show">
-
-            @TempData["success"]
+                <p class="text-muted mb-0">
+                    Employee / Leave Requests
+                </p>
+            </div>
 
             <button type="button"
-                    class="btn-close"
-                    data-bs-dismiss="alert">
+                    class="btn btn-warning"
+                    data-bs-toggle="modal"
+                    data-bs-target="#applyLeaveModal">
+
+                <i class="bi bi-plus-circle me-1"></i>
+                Apply Leave
+
             </button>
 
         </div>
-    }
 
 
-
-    <div class="row g-4 mb-5">
-
-        @if (balances != null && balances.Count > 0)
+        @if (TempData["success"] != null)
         {
-            foreach (var balance in balances)
-            {
-                <div class="col-md-4">
+            <div class="alert alert-success alert-dismissible fade show shadow-sm"
+                 role="alert">
 
-                    <div class="card shadow-sm border-0">
+                <i class="bi bi-check-circle-fill me-2"></i>
+
+                @TempData["success"]
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert">
+                </button>
+
+            </div>
+        }
+
+
+        <div class="row g-4 mb-4">
+
+            @foreach (var balance in leaveBalances)
+            {
+                var usedDays =
+                    Model?
+                        .Where(x =>
+                            x.LeaveTypeId ==
+                            balance.DepartmentLeaves.LeaveTypeId &&
+                            (x.Status == "Approved" ||
+                             x.Status == "Pending"))
+                        .Sum(x => x.NumberOfDays) ?? 0;
+
+                var remaining =
+                    balance.DepartmentLeaves.LeavesCount -
+                    usedDays;
+
+                if (remaining < 0)
+                {
+                    remaining = 0;
+                }
+
+                <div class="col-xl-3 col-md-6">
+
+                    <div class="card border-0 shadow-sm h-100">
 
                         <div class="card-body">
 
-                            <div class="d-flex justify-content-between align-items-center">
+                            <div class="bg-primary text-white rounded-3
+                                        p-2 d-inline-flex mb-3">
 
-                                <div>
+                                <i class="bi bi-calendar-check fs-5"></i>
 
-                                    <p class="text-muted mb-2">
+                            </div>
 
-                                        @balance.DepartmentLeaves
-                                        ?.MasterLeaveType
-                                        ?.Leave
+                            <h4 class="fw-bold text-primary mb-1">
 
-                                    </p>
+                                @balance.DepartmentLeaves.MasterLeaveType.Leave
 
+                            </h4>
 
-                                    <h3 class="mb-2">
+                            <p class="text-muted mb-3">
+                                Total Leaves :
+                                @balance.DepartmentLeaves.LeavesCount
+                            </p>
 
-                                        @balance.TotalLeaves
+                            <hr />
 
-                                    </h3>
+                            <div class="d-flex justify-content-between">
 
+                                <span class="text-success fw-semibold">
+                                    Remaining
+                                </span>
 
-                                    <span class="badge bg-primary">
+                                <span class="fw-bold text-success">
+                                    @remaining
+                                </span>
 
-                                        Remaining Leaves :
-                                        @balance.RemainingLeaves
+                            </div>
 
-                                    </span>
+                            <div class="d-flex justify-content-between mt-2">
 
-                                </div>
+                                <span class="text-muted">
+                                    Used
+                                </span>
 
-
-                                <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center"
-                                     style="width:70px;height:70px;">
-
-                                    <i class="bi bi-calendar3"
-                                       style="font-size:28px;">
-                                    </i>
-
-                                </div>
+                                <span class="fw-semibold">
+                                    @usedDays
+                                </span>
 
                             </div>
 
@@ -122,156 +152,223 @@
 
                 </div>
             }
-        }
-        else
-        {
-            <div class="col-12">
 
-                <div class="alert alert-info">
-                    No leave balance available.
+            @if (!leaveBalances.Any())
+            {
+                <div class="col-12">
+
+                    <div class="alert alert-info mb-0">
+
+                        <i class="bi bi-info-circle me-2"></i>
+
+                        No leave balance has been assigned to you.
+
+                    </div>
+
                 </div>
-
-            </div>
-        }
-
-    </div>
-
-
-
-    <div class="card shadow-sm">
-
-        <div class="card-header bg-white">
-
-            <h5 class="mb-0">
-                My Leave Requests
-            </h5>
+            }
 
         </div>
 
 
-        <div class="card-body">
+        <div class="card border-0 shadow-sm">
 
-            <div class="table-responsive">
+            <div class="card-header bg-white border-0 py-3">
 
-                <table id="myLeaveTable"
-                       class="table table-bordered table-hover align-middle w-100">
+                <div class="row align-items-end g-3">
 
-                    <thead class="table-light">
+                    <div class="col-lg-4">
 
-                        <tr>
+                        <h5 class="fw-bold text-primary mb-0">
+                            My Leave Requests
+                        </h5>
 
-                            <th>
-                                Leave ID
-                            </th>
+                    </div>
 
-                            <th>
-                                Leave Type
-                            </th>
+                    <div class="col-lg-3">
 
-                            <th>
-                                Start Date
-                            </th>
+                        <label class="form-label fw-semibold">
+                            Status
+                        </label>
 
-                            <th>
-                                End Date
-                            </th>
+                        <select id="statusFilter"
+                                class="form-select">
 
-                            <th>
-                                Reason
-                            </th>
+                            <option value="">
+                                All Status
+                            </option>
 
-                            <th>
-                                No of Days
-                            </th>
+                            <option value="Pending">
+                                Pending
+                            </option>
 
-                            <th>
-                                Status
-                            </th>
+                            <option value="Approved">
+                                Approved
+                            </option>
 
-                        </tr>
+                            <option value="Rejected">
+                                Rejected
+                            </option>
 
-                    </thead>
+                        </select>
+
+                    </div>
+
+                </div>
+
+            </div>
 
 
-                    <tbody>
+            <div class="card-body">
 
-                        @if (Model != null && Model.Count > 0)
-                        {
-                            foreach (var item in Model)
+                <div class="table-responsive">
+
+                    <table id="leaveTable"
+                           class="table table-bordered
+                                  table-hover align-middle w-100">
+
+                        <thead class="table-light">
+
+                            <tr>
+
+                                <th>
+                                    Leave ID
+                                </th>
+
+                                <th>
+                                    Leave Type
+                                </th>
+
+                                <th>
+                                    Start Date
+                                </th>
+
+                                <th>
+                                    End Date
+                                </th>
+
+                                <th>
+                                    Days
+                                </th>
+
+                                <th>
+                                    Reason
+                                </th>
+
+                                <th>
+                                    Approved By
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            @if (Model != null &&
+                                 Model.Any())
+                            {
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+
+                                        <td>
+                                            @item.Id
+                                        </td>
+
+                                        <td>
+                                            @item.MasterLeaveType?.Leave
+                                        </td>
+
+                                        <td>
+                                            @item.StartDate.ToString(
+                                                "yyyy-MM-dd")
+                                        </td>
+
+                                        <td>
+                                            @item.EndDate.ToString(
+                                                "yyyy-MM-dd")
+                                        </td>
+
+                                        <td>
+                                            @item.NumberOfDays
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(
+                                                item.Reason)
+                                                ? "-"
+                                                : item.Reason)
+                                        </td>
+
+                                        <td>
+                                            @(string.IsNullOrWhiteSpace(
+                                                item.ApprovedBy)
+                                                ? "-"
+                                                : item.ApprovedBy)
+                                        </td>
+
+                                        <td>
+
+                                            @if (item.Status == "Approved")
+                                            {
+                                                <span class="badge bg-success">
+                                                    <i class="bi bi-check-circle me-1"></i>
+                                                    Approved
+                                                </span>
+                                            }
+                                            else if (item.Status == "Rejected")
+                                            {
+                                                <span class="badge bg-danger">
+                                                    <i class="bi bi-x-circle me-1"></i>
+                                                    Rejected
+                                                </span>
+                                            }
+                                            else if (item.Status == "Pending")
+                                            {
+                                                <span class="badge bg-warning text-dark">
+                                                    <i class="bi bi-clock me-1"></i>
+                                                    Pending
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    @item.Status
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                    </tr>
+                                }
+                            }
+                            else
                             {
                                 <tr>
 
-                                    <td>
-                                        @item.Id
-                                    </td>
+                                    <td colspan="8"
+                                        class="text-center text-muted py-4">
 
+                                        <i class="bi bi-calendar-x fs-3 d-block mb-2"></i>
 
-                                    <td>
-                                        @item.MasterLeaveType?.Leave
-                                    </td>
-
-
-                                    <td>
-                                        @item.StartDate.ToString("dd-MM-yyyy")
-                                    </td>
-
-
-                                    <td>
-                                        @item.EndDate.ToString("dd-MM-yyyy")
-                                    </td>
-
-
-                                    <td>
-
-                                        @if (!string.IsNullOrWhiteSpace(item.Reason))
-                                        {
-                                            @item.Reason
-                                        }
-                                        else
-                                        {
-                                            <span class="text-muted">
-                                                nil
-                                            </span>
-                                        }
-
-                                    </td>
-
-
-                                    <td>
-                                        @item.NumberOfDays
-                                    </td>
-
-
-                                    <td>
-
-                                        @if (item.Status == "Approved")
-                                        {
-                                            <span class="badge bg-success">
-                                                ● Approved
-                                            </span>
-                                        }
-                                        else if (item.Status == "Rejected")
-                                        {
-                                            <span class="badge bg-danger">
-                                                ● Rejected
-                                            </span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-warning text-dark">
-                                                ● @item.Status
-                                            </span>
-                                        }
+                                        No leave requests found.
 
                                     </td>
 
                                 </tr>
                             }
-                        }
 
-                    </tbody>
+                        </tbody>
 
-                </table>
+                    </table>
+
+                </div>
 
             </div>
 
@@ -282,15 +379,14 @@
 </div>
 
 
-
 <div class="modal fade"
      id="applyLeaveModal"
-     tabindex="-1">
+     tabindex="-1"
+     aria-hidden="true">
 
     <div class="modal-dialog modal-lg modal-dialog-centered">
 
         <div class="modal-content">
-
 
             <form asp-controller="Leave"
                   asp-action="ApplyLeave"
@@ -298,11 +394,13 @@
 
                 @Html.AntiForgeryToken()
 
-
                 <div class="modal-header">
 
-                    <h5 class="modal-title">
+                    <h5 class="modal-title fw-bold text-primary">
+
+                        <i class="bi bi-calendar-plus me-2"></i>
                         Apply Leave
+
                     </h5>
 
                     <button type="button"
@@ -315,88 +413,91 @@
 
                 <div class="modal-body">
 
-                    <input type="hidden"
-                           name="UserId"
-                           value="@userId" />
+                    <div class="row g-3">
+
+                        <div class="col-md-6">
+
+                            <label class="form-label fw-semibold">
+                                Leave Type
+                            </label>
+
+                          <select name="LeaveTypeId"
+        class="form-select"
+        required>
+
+    <option value="">
+        Select Leave Type
+    </option>
+
+    @foreach (var leaveType in leaveTypes)
+    {
+        <option value="@leaveType.Id">
+            @leaveType.Leave
+        </option>
+    }
+
+</select>
+
+                        </div>
 
 
+                        <div class="col-md-6">
 
-                    <div class="mb-3">
+                            <label class="form-label fw-semibold">
+                                Number of Days
+                            </label>
 
-                        <label class="form-label">
-                            Leave Type
-                        </label>
+                            <input type="text"
+                                   id="numberOfDays"
+                                   class="form-control"
+                                   readonly />
 
-                        <select name="LeaveTypeId"
-                                class="form-select"
-                                required>
-
-                            <option value="">
-                                Select Leave Type
-                            </option>
-
-                            @if (leaveTypes != null)
-                            {
-                                foreach (var leaveType in leaveTypes)
-                                {
-                                    <option value="@leaveType.Id">
-
-                                        @leaveType.Leave
-
-                                    </option>
-                                }
-                            }
-
-                        </select>
-
-                    </div>
+                        </div>
 
 
+                        <div class="col-md-6">
 
-                    <div class="row">
-
-                        <div class="col-md-6 mb-3">
-
-                            <label class="form-label">
+                            <label class="form-label fw-semibold">
                                 Start Date
                             </label>
 
                             <input type="date"
                                    name="StartDate"
+                                   id="startDate"
                                    class="form-control"
                                    required />
 
                         </div>
 
 
-                        <div class="col-md-6 mb-3">
+                        <div class="col-md-6">
 
-                            <label class="form-label">
+                            <label class="form-label fw-semibold">
                                 End Date
                             </label>
 
                             <input type="date"
                                    name="EndDate"
+                                   id="endDate"
                                    class="form-control"
                                    required />
 
                         </div>
 
-                    </div>
 
+                        <div class="col-12">
 
+                            <label class="form-label fw-semibold">
+                                Reason
+                            </label>
 
-                    <div class="mb-3">
+                            <textarea name="Reason"
+                                      class="form-control"
+                                      rows="4"
+                                      placeholder="Enter reason for leave"
+                                      required></textarea>
 
-                        <label class="form-label">
-                            Reason
-                        </label>
-
-                        <textarea name="Reason"
-                                  class="form-control"
-                                  rows="4"
-                                  placeholder="Enter reason"
-                                  required></textarea>
+                        </div>
 
                     </div>
 
@@ -413,10 +514,10 @@
 
                     </button>
 
-
                     <button type="submit"
-                            class="btn btn-success">
+                            class="btn btn-warning">
 
+                        <i class="bi bi-send me-1"></i>
                         Apply Leave
 
                     </button>
@@ -434,6 +535,10 @@
 
 @section Scripts
 {
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="https://cdn.datatables.net/1.13.8/js/jquery.dataTables.min.js"></script>
 
     <script src="https://cdn.datatables.net/1.13.8/js/dataTables.bootstrap5.min.js"></script>
@@ -441,22 +546,108 @@
 
     <script>
 
-        $(document).ready(function() {
+        $(document).ready(function () {
 
-            $('#myLeaveTable').DataTable({
+            var table =
+                $("#leaveTable").DataTable({
 
-                pageLength: 5,
+                    pageLength: 10,
 
-                order: [[0, 'desc']],
+                    lengthMenu: [
+                        [5, 10, 25, 50],
+                        [5, 10, 25, 50]
+                    ],
 
-                columnDefs: [
-                    {
-                        orderable: false,
-                        targets: []
+                    ordering: true,
+
+                    searching: true,
+
+                    responsive: true,
+
+                    order: [
+                        [0, "desc"]
+                    ],
+
+                    language: {
+
+                        search: "Search:",
+
+                        lengthMenu:
+                            "Show _MENU_ entries",
+
+                        info:
+                            "Showing _START_ to _END_ of _TOTAL_ entries",
+
+                        emptyTable:
+                            "No leave requests found."
+
                     }
-                ]
 
-            });
+                });
+
+
+            $("#statusFilter").on(
+                "change",
+                function () {
+
+                    table
+                        .column(7)
+                        .search(this.value)
+                        .draw();
+
+                }
+            );
+
+
+            function calculateDays() {
+
+                var start =
+                    $("#startDate").val();
+
+                var end =
+                    $("#endDate").val();
+
+                if (!start || !end) {
+
+                    $("#numberOfDays").val("");
+
+                    return;
+
+                }
+
+                var startDate =
+                    new Date(start);
+
+                var endDate =
+                    new Date(end);
+
+                if (endDate < startDate) {
+
+                    $("#numberOfDays").val("");
+
+                    return;
+
+                }
+
+                var difference =
+                    endDate.getTime() -
+                    startDate.getTime();
+
+                var days =
+                    Math.floor(
+                        difference /
+                        (1000 * 60 * 60 * 24)
+                    ) + 1;
+
+                $("#numberOfDays").val(days);
+
+            }
+
+
+            $("#startDate, #endDate").on(
+                "change",
+                calculateDays
+            );
 
         });
 

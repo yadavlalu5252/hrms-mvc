@@ -1,16 +1,16 @@
-﻿namespace hrms_mvc.Repository
+﻿using hrms_mvc.Models;
+
+namespace hrms_mvc.Repository
 {
     public interface IAdminService
     {
         Task<int> GetTotalEmployees();
 
-        Task<int> GetPresentEmployees();
+        Task<int> GetPresentEmployees(DateTime date);
 
-        Task<int> GetHalfDayEmployees();
+        Task<int> GetHalfDayEmployees(DateTime date);
 
-        Task<int> GetAbsentEmployees();
-
-        Task<int> GetTotalProjects();
+        Task<int> GetAbsentEmployees(DateTime date);
 
         Task<int> GetTotalClients();
 
@@ -18,8 +18,8 @@
 
         Task<decimal> GetTotalEarnings();
 
-
         Task<int> GetNewHires();
+        Task<int> GetTotalProjects();
 
         Task<decimal> GetProductionHours();
 
@@ -35,5 +35,14 @@
 
         Task<int> GetPendingTasks();
 
+        Task<List<DepartmentEmployeeViewModel>> GetEmployeesByDepartment();
+
+        Task<List<AttendanceDashboardViewModel>> GetClockInOutRecords(DateTime date);
+
+        Task<List<AdminEmployeeDashboardViewModel>> GetEmployees();
+
+        Task<List<ProjectDashboardViewModel>> GetProjects();
+
+        Task<List<TaskStatisticsViewModel>> GetTaskStatistics();
     }
 }

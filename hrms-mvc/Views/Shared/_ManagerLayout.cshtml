@@ -1,30 +1,39 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <title>@ViewData["Title"] - HRMS Manager</title>
-    <link rel="stylesheet"
-          href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0" />
+
+    <title>
+        @ViewData["Title"] - HRMS Manager
+    </title>
 
     <link rel="stylesheet"
-          href="~/css/site.css" />
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+
     <link rel="stylesheet"
           href="https://cdn.datatables.net/1.13.8/css/dataTables.bootstrap5.min.css" />
 
     <link rel="stylesheet"
           href="https://cdn.datatables.net/buttons/2.4.2/css/buttons.bootstrap5.min.css" />
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
-    <link rel="stylesheet" href="~/css/site.css" />
-    
+    <link rel="stylesheet"
+          href="~/css/site.css" />
+
 </head>
+
 
 <body>
 
     <div class="manager-layout">
+
 
         <aside class="manager-sidebar">
 
@@ -32,80 +41,275 @@
 
             <nav>
 
-                <a asp-controller="Auth"
-                   asp-action="ManagerD">
-                    Dashboard
+                <a asp-controller="Manager"
+                   asp-action="Index">
+
+                    <i class="bi bi-speedometer2"></i>
+
+                    <span>
+                        Dashboard
+                    </span>
+
                 </a>
+
 
                 <a asp-controller="Manager"
                    asp-action="Team">
-                    My Team
+
+                    <i class="bi bi-people"></i>
+
+                    <span>
+                        My Team
+                    </span>
+
                 </a>
+
 
                 <a asp-controller="Manager"
                    asp-action="LeaveRequests">
-                    Leave Requests
+
+                    <i class="bi bi-calendar-x"></i>
+
+                    <span>
+                        Leave Requests
+                    </span>
+
                 </a>
+
 
                 <details>
 
                     <summary class="sidebar-link">
-                        <span>♧</span>
-                        Projects
-                        <span class="menu-arrow">⌄</span>
+
+                        <i class="bi bi-folder"></i>
+
+                        <span>
+                            Projects
+                        </span>
+
+                        <span class="menu-arrow">
+                            ⌄
+                        </span>
+
                     </summary>
 
+
                     <div class="submenu">
+
                         <a asp-controller="Projects"
                            asp-action="GetProject">
-                            Projects
-                        </a>
-                    </div>
 
-                    <div class="submenu">
+                            Projects
+
+                        </a>
+
+
                         <a asp-controller="Task"
                            asp-action="Index">
-                            Task
-                        </a>
-                    </div>
 
-                    <div class="submenu">
+                            Task
+
+                        </a>
+
+
                         <a asp-controller="TaskBoard"
                            asp-action="TaskBoard">
+
                             TaskBoard
+
                         </a>
+
                     </div>
 
                 </details>
 
+
                 <a asp-controller="Auth"
                    asp-action="Logout">
-                    Logout
+
+                    <i class="bi bi-box-arrow-right"></i>
+
+                    <span>
+                        Logout
+                    </span>
+
                 </a>
 
             </nav>
 
         </aside>
 
+
         <div class="manager-content">
 
+
             <header class="manager-header">
-                <h2>HRMS - Manager Panel</h2>
+
+
+                <div class="manager-header-left">
+
+
+                    <div class="manager-search">
+
+                        <i class="bi bi-search"></i>
+
+                        <input type="text"
+                               id="managerSearch"
+                               placeholder="Search in HRMS" />
+
+                    </div>
+
+                </div>
+
+
+                <div class="manager-header-right">
+
+
+                    <div class="manager-profile-dropdown">
+
+
+                        <button type="button"
+                                class="manager-profile-button"
+                                id="managerProfileButton">
+
+                            <div class="manager-profile-icon">
+
+                                <i class="bi bi-person"></i>
+
+                            </div>
+
+                        </button>
+
+
+                        <div class="manager-profile-menu"
+                             id="managerProfileMenu">
+
+
+                            <div class="manager-profile-header">
+
+                                <div class="manager-profile-menu-icon">
+
+                                    <i class="bi bi-person"></i>
+
+                                </div>
+
+
+                                <div>
+
+                                    <strong>
+                                        @Context.Session.GetString("Email")
+                                    </strong>
+
+                                    <small>
+                                        Manager
+                                    </small>
+
+                                </div>
+
+                            </div>
+
+
+                            <div class="manager-profile-divider"></div>
+
+
+                            <a asp-controller="Manager"
+                               asp-action="Index"
+                               class="manager-profile-item">
+
+                                <i class="bi bi-person"></i>
+
+                                <span>
+                                    My Profile
+                                </span>
+
+                            </a>
+
+
+                            <a asp-controller="Auth"
+                               asp-action="Logout"
+                               class="manager-profile-item manager-logout">
+
+                                <i class="bi bi-power"></i>
+
+                                <span>
+                                    Logout
+                                </span>
+
+                            </a>
+
+
+                        </div>
+
+                    </div>
+
+                </div>
+
             </header>
 
+
             <main>
+
                 @RenderBody()
+
             </main>
 
-            <footer>
-                <p>Manager Layout</p>
+
+            <footer class="manager-footer">
+
+                <p>
+                    © 2026 HRMS - Manager Panel
+                </p>
+
             </footer>
+
 
         </div>
 
     </div>
 
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js">
+    </script>
+
+
+    <script>
+
+        const managerProfileButton =
+            document.getElementById("managerProfileButton");
+
+        const managerProfileMenu =
+            document.getElementById("managerProfileMenu");
+
+
+        if (managerProfileButton && managerProfileMenu) {
+
+            managerProfileButton.addEventListener("click", function (event) {
+
+                event.stopPropagation();
+
+                managerProfileMenu.classList.toggle("show");
+
+            });
+
+
+            document.addEventListener("click", function (event) {
+
+                if (!managerProfileMenu.contains(event.target) &&
+                    !managerProfileButton.contains(event.target)) {
+
+                    managerProfileMenu.classList.remove("show");
+
+                }
+
+            });
+
+        }
+
+    </script>
+
+
     @await RenderSectionAsync("Scripts", required: false)
 
 </body>
+
 </html>

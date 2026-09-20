@@ -32,6 +32,21 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+builder.Services
+    .AddAuthentication()
+    .AddCookie("GoogleCookie")
+    .AddGoogle(options =>
+    {
+        options.ClientId =
+            builder.Configuration["Authentication:Google:ClientId"]!;
+
+        options.ClientSecret =
+            builder.Configuration["Authentication:Google:ClientSecret"]!;
+
+        options.SignInScheme = "GoogleCookie";
+    });
+
+
 // Scoped dependency
 builder.Services.AddScoped<IAuthService, AuthService>();
 
@@ -55,6 +70,8 @@ builder.Services.AddScoped<IEmployeeDetailsService, EmployeeDetailsService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IProjects, ProjectsService>();
 builder.Services.AddScoped<ITask, TaskService>();
+builder.Services.AddScoped<IManagerService, ManagerService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 
 
 
@@ -67,8 +84,8 @@ builder.Services.AddScoped<ITask, TaskService>();
 
 var app = builder.Build();
 
-//// Global exception handling
-//app.UseExceptionHandler("/Error/Index");
+// Global exception handling
+app.UseExceptionHandler("/Error/Index");
 
 if (!app.Environment.IsDevelopment())
 {
@@ -82,7 +99,7 @@ app.UseRouting();
 app.UseStatusCodePagesWithReExecute("/Error/NotFound");
 
 app.UseSession();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();

@@ -14,6 +14,6 @@ namespace hrms_mvc.Models
         public string? CreatedBy { get; set; }
         public string? ModifiedBy { get; set; }
         public DateTime? ModifiedAt { get; set; }
-        public List<User>? Users { get; set; }
+        public List<User> Users { get; set; } = new();
     }
 }

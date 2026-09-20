@@ -1,16 +1,19 @@
-﻿using hrms_mvc.Repository;
+﻿using hrms_mvc.Models;
+using hrms_mvc.Repository;
 using Microsoft.AspNetCore.Mvc;
 
 namespace hrms_mvc.Controllers
 {
     public class AdminController : Controller
     {
-        private readonly IAdminService ias;
-        public AdminController(IAdminService ias)
+        private readonly IAdminService iaas;
+
+        public AdminController(IAdminService iaas)
         {
-            this.ias = ias;;
+            this.iaas = iaas;
         }
-        public async Task<IActionResult> Index()
+
+        public async Task<IActionResult> Index(DateTime? date)
         {
             string? role = HttpContext.Session.GetString("Role");
 
@@ -21,40 +24,78 @@ namespace hrms_mvc.Controllers
                     "Auth"
                 );
             }
-            ViewBag.TotalEmployees = await ias.GetTotalEmployees();
 
-            ViewBag.PresentEmployees = await ias.GetPresentEmployees();
+            DateTime selectedDate = date?.Date ?? DateTime.Today;
 
-            ViewBag.HalfDayEmployees = await ias.GetHalfDayEmployees();
+            var model = new AdminDashboardViewModel
+            {
+                SelectedDate = selectedDate,
 
-            ViewBag.AbsentEmployees = await ias.GetAbsentEmployees();
+                EmployeesByDepartment =
+                    await iaas.GetEmployeesByDepartment(),
 
-            ViewBag.TotalProjects = await ias.GetTotalProjects();
+                ClockInOutRecords =
+                    await iaas.GetClockInOutRecords(selectedDate),
 
-            ViewBag.TotalClients = await ias.GetTotalClients();
+                Employees =
+                    await iaas.GetEmployees(),
 
-            ViewBag.TotalTasks = await ias.GetTotalTasks();
+                Projects =
+                    await iaas.GetProjects(),
 
-            ViewBag.TotalEarnings = await ias.GetTotalEarnings();
+                TaskStatistics =
+                    await iaas.GetTaskStatistics()
+            };
 
+            ViewBag.TotalEmployees =
+                await iaas.GetTotalEmployees();
 
-            ViewBag.NewHires = await ias.GetNewHires();
+            ViewBag.PresentEmployees =
+                await iaas.GetPresentEmployees(selectedDate);
 
-            ViewBag.ProductionHours = await ias.GetProductionHours();
+            ViewBag.HalfDayEmployees =
+                await iaas.GetHalfDayEmployees(selectedDate);
 
-            ViewBag.WorkingHours = await ias.GetWorkingHours();
+            ViewBag.AbsentEmployees =
+                await iaas.GetAbsentEmployees(selectedDate);
 
-            ViewBag.BreakHours = await ias.GetBreakHours();
+            ViewBag.TotalProjects =
+                await iaas.GetTotalProjects();
 
-            ViewBag.CompletedTasks = await ias.GetCompletedTasks();
+            ViewBag.TotalClients =
+                await iaas.GetTotalClients();
 
-            ViewBag.OnHoldTasks = await ias.GetOnHoldTasks();
+            ViewBag.TotalTasks =
+                await iaas.GetTotalTasks();
 
-            ViewBag.InProgressTasks = await ias.GetInProgressTasks();
+            ViewBag.TotalEarnings =
+                await iaas.GetTotalEarnings();
 
-            ViewBag.PendingTasks = await ias.GetPendingTasks();
-            return View();
+            ViewBag.NewHires =
+                await iaas.GetNewHires();
+
+            ViewBag.ProductionHours =
+                await iaas.GetProductionHours();
+
+            ViewBag.WorkingHours =
+                await iaas.GetWorkingHours();
+
+            ViewBag.BreakHours =
+                await iaas.GetBreakHours();
+
+            ViewBag.CompletedTasks =
+                await iaas.GetCompletedTasks();
+
+            ViewBag.OnHoldTasks =
+                await iaas.GetOnHoldTasks();
+
+            ViewBag.InProgressTasks =
+                await iaas.GetInProgressTasks();
+
+            ViewBag.PendingTasks =
+                await iaas.GetPendingTasks();
+
+            return View(model);
         }
-        
     }
 }
