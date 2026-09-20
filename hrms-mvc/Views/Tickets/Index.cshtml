@@ -2,14 +2,25 @@
 
 @using Microsoft.AspNetCore.Http
 
+
 @{
-    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var role = Context.Session.GetString("Role");
     ViewData["Title"] = "Tickets";
 
-    var role = Context.Session.GetString("Role");
     var currentUserId = Context.Session.GetInt32("UserId");
+    if (role == "Admin")
+    {
+        Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    }
+    else if (role == "Employee")
+    {
+        Layout = "~/Views/Shared/_EmployeeLayout.cshtml";
+    }
+    else if (role == "Manager")
+    {
+        Layout = "~/Views/Shared/_ManagerLayout.cshtml";
+    }
 }
-
 <div class="container-fluid">
 
     <div class="d-flex justify-content-between align-items-center mb-3">
