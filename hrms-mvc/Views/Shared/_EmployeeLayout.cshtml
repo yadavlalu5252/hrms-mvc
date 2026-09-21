@@ -99,19 +99,24 @@
                 </details>
 
 
-               
+                       <!-- Documents-->
+                <details>
+                    <summary class="sidebar-link">
+                      <i class="bi bi-file-earmark-text"></i>
+
+                        Documents
+                        <span class="menu-arrow">⌄</span>
+                    </summary>
+
+                    <div class="submenu">
+                        <a asp-controller="CompanyLetters" asp-action="Index">Company Letters</a>
+                        <a asp-controller="MyDocument" asp-action="Index">My Document</a>
+                        <a asp-controller="EmployeeUploadDocument" asp-action="Index">Upload Document</a>
+                    </div>
+                </details>
 
 
-                <a asp-controller="Document"
-                   asp-action="Index">
-
-                    <i class="bi bi-file-earmark-text"></i>
-
-                    <span>
-                        Document
-                    </span>
-
-                </a>
+                <!-- Tickets-->
                 <a asp-controller="Tickets"
                    asp-action="Index">
 
