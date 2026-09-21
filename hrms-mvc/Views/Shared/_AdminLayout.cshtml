@@ -215,8 +215,18 @@
                     </summary>
 
                     <div class="submenu">
-                        <a href="#">Training List</a>
-                        <a href="#">Add Training</a>
+                        <a asp-controller="TrainingList"
+                           asp-action="FetchAll">
+                            Training List
+                        </a>
+                        <a asp-controller="Trainer"
+                           asp-action="FetchAll">
+                            Trainers
+                        </a>
+                        <a asp-controller="TrainingType"
+                           asp-action="FetchAll">
+                            Training Type
+                        </a>
                     </div>
                 </details>
 
@@ -270,33 +280,99 @@
                     </div>
                 </details>
 
-                <!-- Master Documents -->
-                <details>
-                    <summary class="sidebar-link">
-                        <i class="bi bi-folder2-open"></i>
-                        Master Documents
-                        <span class="menu-arrow">⌄</span>
-                    </summary>
+              <!-- Master Documents -->
+<details>
+    <summary class="sidebar-link">
+        <i class="bi bi-folder2-open"></i>
+        Master Documents
+        <span class="menu-arrow">⌄</span>
+    </summary>
 
-                    <div class="submenu">
-                        <a href="#">Document Categories</a>
-                        <a href="#">Document Types</a>
-                    </div>
-                </details>
+    <div class="submenu">
 
-                <!-- Documents -->
-                <details>
-                    <summary class="sidebar-link">
-                        <i class="bi bi-file-earmark-text"></i>
-                        Documents
-                        <span class="menu-arrow">⌄</span>
-                    </summary>
+        <!-- Add Master Documents -->
+        <details>
+            <summary class="sidebar-link">
+                Add Master Documents
+                <span class="menu-arrow">⌄</span>
+            </summary>
 
-                    <div class="submenu">
-                        <a href="#">All Documents</a>
-                        <a href="#">Upload Document</a>
-                    </div>
-                </details>
+            <div class="submenu">
+
+                <a asp-controller="MasterDocAdmin"
+                   asp-action="AddAdminDocument">
+                    Add Document Name (Admin)
+                </a>
+
+                <a asp-controller="MasterDocEmp"
+                   asp-action="AddEmpDoc">
+                    Add Document Name (Employee)
+                </a>
+
+            </div>
+        </details>
+
+        <!-- Master Document List -->
+        <details>
+            <summary class="sidebar-link">
+                Add Document List
+                <span class="menu-arrow">⌄</span>
+            </summary>
+
+            <div class="submenu">
+
+                <a asp-controller="MasterDocAdmin"
+                   asp-action="FetchAll">
+                    Admin Document List
+                </a>
+
+                <a asp-controller="MasterDocEmp"
+                   asp-action="FetchAllEmpDoc">
+                    Employee Document List
+                </a>
+
+            </div>
+        </details>
+
+    </div>
+</details>
+
+<!-- Documents -->
+<details>
+    <summary class="sidebar-link">
+        <i class="bi bi-file-earmark-text"></i>
+        Documents
+        <span class="menu-arrow">⌄</span>
+    </summary>
+
+    <div class="submenu">
+
+        <!-- Upload Documents -->
+        <details>
+            <summary class="sidebar-link">
+                Upload Documents
+                <span class="menu-arrow">⌄</span>
+            </summary>
+
+            <div class="submenu">
+
+                <a asp-controller="AdminFilesUpload"
+                   asp-action="Index">
+                    Upload Document
+                </a>
+
+                                <a asp-controller="AdminUploadFileList"
+                   asp-action="Index">
+                    Document List
+                </a>
+
+            </div>
+        </details>
+    </div>
+</details>
+
+
+
                 <!-- Promotion -->
                 <a asp-controller="Promotion"
                    asp-action="Index"

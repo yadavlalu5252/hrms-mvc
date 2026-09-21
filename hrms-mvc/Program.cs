@@ -97,7 +97,7 @@ builder.Services.AddScoped<IAttendanceService, AttendanceService>();
 builder.Services.AddScoped<ILeaveService, LeaveService>();
 builder.Services.AddScoped<ITimesheetService, TimesheetService>();
 builder.Services.AddScoped<ITrainerService, TrainerService>();
-builder.Services.AddScoped<ITraininglistService, TraininglistService>();
+builder.Services.AddScoped<ITrainingListService, TrainingListService>();
 
 
 
